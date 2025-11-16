@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>インタラクティブ診断アプリケーション</title>
+    <link rel="stylesheet" href="../public/css/main.css" />
+    <style>
+        .container { background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 900px; width: 100%; padding: 50px; animation: fadeIn 0.8s ease-in; margin: 40px auto; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px);} to { opacity: 1; transform: translateY(0);} }
+        .subtitle { text-align: center; color: #666; font-size: 1.2em; margin-bottom: 40px; }
+        .description { color: #555; line-height: 1.8; font-size: 1.1em; margin-bottom: 30px; }
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 40px 0; }
+        .feature-card { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); padding: 25px; border-radius: 15px; transition: transform 0.3s ease; }
+        .feature-card:hover { transform: translateY(-5px); }
+        .feature-card h3 { color: #333; margin-bottom: 10px; font-size: 1.3em; }
+        .feature-card p  { color: #666; font-size: 0.95em; }
+        .button-container { display: flex; gap: 20px; justify-content: center; margin-top: 40px; flex-wrap: wrap; }
+        button { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 18px 40px; font-size: 1.2em; border-radius: 50px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); font-weight: 600; }
+        button:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6); }
+        button:active { transform: translateY(0); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 インタラクティブ診断アプリケーション</h1>
+        <p class="subtitle">質問に答えて診断結果を確認しよう！</p>
+        <div class="description">
+            このアプリケーションは、複数の質問に答えることで診断結果を表示するインタラクティブなWebアプリケーションです。
+            選択肢に応じて結果が変わり、画像やリンクも表示できます。
+        </div>
+        <div class="features">
+            <div class="feature-card"><h3>📝 選択式質問</h3><p>複数の質問から選択して回答できます。</p></div>
+            <div class="feature-card"><h3>🎯 診断結果表示</h3><p>回答内容に基づいて診断結果を表示します。</p></div>
+            <div class="feature-card"><h3>🖼️ 画像・リンク対応</h3><p>結果に画像や外部リンクを含められます。</p></div>
+        </div>
+        <div class="button-container">
+            <button onclick="startDemo()">デモを開始</button>
+            <button onclick="showInfo()">使い方を見る</button>
+        </div>
+    </div>
+    <script>
+        function startDemo() {
+            if (confirm('診断デモを開始しますか？')) {
+                localStorage.clear();
+                window.location.href = 'demo.html';
+            }
+        }
+        function showInfo() {
+            const info = `使用方法：
+1) 「デモを開始」ボタンをクリック
+2) 表示される質問に答える
+3) 最後に診断結果が表示される
+
+カスタマイズ：
+1) CSVに設問を定義
+2) 908.py を実行し HTML 生成
+3) 生成物をブラウザで開く`;
+            alert(info);
+        }
+        window.addEventListener('load', function() {
+            const container = document.querySelector('.container');
+            container.style.animation = 'fadeIn 0.8s ease-in';
+        });
+    </script>
+</body>
+</html>
+
+

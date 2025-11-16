@@ -1,0 +1,12 @@
+{
+  "name": "nocode-site",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "npx http-server -p 5173 -c-1 .",
+    "dev": "npm run serve"
+  }
+}
+
+
+

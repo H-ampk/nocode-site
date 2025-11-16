@@ -1,0 +1,19 @@
+{
+  "nodes": [
+    {
+      "id": "q_0",
+      "type": "question",
+      "title": "導入クイズ",
+      "text": "AとBどちら？",
+      "choices": [
+        { "text": "A", "value": 1, "nextId": "r_a" },
+        { "text": "B", "value": 0, "nextId": "r_b" }
+      ]
+    },
+    { "id": "r_a", "type": "result", "title": "結果A", "text": "A を選択" },
+    { "id": "r_b", "type": "result", "title": "結果B", "text": "B を選択" }
+  ]
+}
+
+
+

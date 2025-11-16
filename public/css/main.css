@@ -1,0 +1,28 @@
+body {
+  font-family: sans-serif;
+  padding: 2rem;
+  background: #f4f4f4;
+}
+
+h1 {
+  margin-bottom: 2rem;
+}
+
+.menu a {
+  display: block;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  font-size: 1.2rem;
+  border: 1px solid #ddd;
+}
+
+.menu a:hover {
+  background: #e8e8e8;
+}
+
+
+

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Manager</title>
+  <link rel="stylesheet" href="../public/css/main.css" />
+  <script src="../src/core/config.js"></script>
+  <script src="../src/auth/pin.js" defer></script>
+  <script>window.addEventListener('DOMContentLoaded',function(){ if(window.AdminAuth) AdminAuth.init({admin:true}); });</script>
+</head>
+<body>
+  <h1>公開設定・プロジェクト設定</h1>
+  <div class="menu">
+    <a href="admin.html">← 管理ダッシュボードに戻る</a>
+  </div>
+
+  <div style="background:#fff;padding:1rem;border:1px solid #ddd;border-radius:8px;max-width:640px;">
+    <label>プロジェクトID:
+      <input id="projectId" value="default" />
+    </label>
+    <br/><br/>
+    <fieldset style="border:1px solid #eee;padding:1rem;">
+      <legend>公開方式</legend>
+      <label><input type="radio" name="mode" value="public" checked> 一般公開（public）</label><br/>
+      <label><input type="radio" name="mode" value="pin"> PINアクセス（pin）</label><br/>
+      <div id="pinArea" style="margin:0.5rem 0 0 1.5rem; display:none;">
+        <label>PINコード（4桁）:
+          <input id="pinCode" maxlength="8" placeholder="1234" />
+        </label>
+      </div>
+      <label><input type="radio" name="mode" value="login"> ログイン制（login）※将来機能</label>
+    </fieldset>
+    <br/><br/>
+    <button id="loadBtn">設定を読み込む</button>
+    <button id="saveBtn">project.json をダウンロード</button>
+  </div>
+
+  <script>
+    function currentMode() {
+      var els = document.querySelectorAll('input[name="mode"]');
+      for (var i=0;i<els.length;i++){ if (els[i].checked) return els[i].value; }
+      return 'public';
+    }
+    function setMode(mode) {
+      var els = document.querySelectorAll('input[name="mode"]');
+      els.forEach(function(el){ el.checked = (el.value === mode); });
+      document.getElementById('pinArea').style.display = (mode === 'pin') ? 'block' : 'none';
+    }
+    document.querySelectorAll('input[name="mode"]').forEach(function(el){
+      el.addEventListener('change', function(){ setMode(this.value); });
+    });
+    function getCurrentProjectId() {
+      return localStorage.getItem('projectId') || 'default';
+    }
+    function loadConfig() {
+      var pid = document.getElementById('projectId').value || getCurrentProjectId();
+      ProjectConfig.load(pid, { admin: true })
+        .then(function (cfg){
+          var mode = cfg.access_mode || 'public';
+          setMode(mode);
+          document.getElementById('pinCode').value = cfg.pin_code || '';
+          document.getElementById('projectId').value = cfg.project_id || pid;
+        })
+        .catch(function (){
+          alert('project.json の読み込みに失敗しました');
+        });
+    }
+    function saveConfig() {
+      var pid = document.getElementById('projectId').value || getCurrentProjectId();
+      var mode = currentMode();
+      var pin = (mode === 'pin') ? (document.getElementById('pinCode').value || '') : null;
+      var data = {
+        project_id: pid,
+        access_mode: mode,
+        pin_code: pin
+      };
+      try { localStorage.setItem('projectId', pid); } catch(e) {}
+      ProjectConfig.download(pid, data);
+    }
+    document.getElementById('loadBtn').addEventListener('click', loadConfig);
+    document.getElementById('saveBtn').addEventListener('click', saveConfig);
+    // 初期状態は public
+    setMode('public');
+    // 初回自動読み込み
+    loadConfig();
+  </script>
+</body>
+</html>
+
+

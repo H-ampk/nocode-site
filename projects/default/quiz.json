@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "startNode": "q_0",
+  "questions": [
+    {
+      "id": "q_0",
+      "type": "question",
+      "title": "導入クイズ",
+      "question_text": "最初の質問です。AとBどちら？",
+      "choices": [
+        { "id": "a", "text": "A", "nextId": "r_a", "isCorrect": true },
+        { "id": "b", "text": "B", "nextId": "r_b", "isCorrect": false }
+      ]
+    }
+  ],
+  "results": [
+    { "id": "r_a", "type": "result", "text": "A を選びました！" },
+    { "id": "r_b", "type": "result", "text": "B を選びました。" }
+  ]
+}
+
+
+

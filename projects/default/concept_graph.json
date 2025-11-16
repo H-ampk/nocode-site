@@ -1,0 +1,12 @@
+{
+  "nodes": [
+    { "id": "concept.analysis", "label": "分析力", "prerequisites": [] },
+    { "id": "concept.logic", "label": "論理", "prerequisites": ["concept.analysis"] }
+  ],
+  "edges": [
+    { "from": "concept.analysis", "to": "concept.logic", "weight": 0.7 }
+  ]
+}
+
+
+
