@@ -1,0 +1,31 @@
+{
+  "domain_definition": "心理学は、人間の心と行動を科学的に研究する学問分野です。",
+  "keywords": ["認知", "行動", "感情", "発達", "社会"],
+  "terms": {
+    "psychology.cognition": {
+      "id": "psychology.cognition",
+      "name": "認知",
+      "definition": "情報を獲得し、処理し、利用する心的プロセス。",
+      "domain_definition": "心理学における認知は、知覚、記憶、思考、判断などの心的機能を指す。",
+      "example": "問題解決における認知プロセスを分析する。",
+      "note": "認知心理学の主要な研究対象。"
+    },
+    "psychology.memory": {
+      "id": "psychology.memory",
+      "name": "記憶",
+      "definition": "過去の経験や情報を保持し、想起する能力。",
+      "domain_definition": "短期記憶、長期記憶、作業記憶などに分類される。",
+      "example": "エピソード記憶と意味記憶の違いを理解する。",
+      "note": "記憶のメカニズムは神経科学とも関連が深い。"
+    },
+    "psychology.attention": {
+      "id": "psychology.attention",
+      "name": "注意",
+      "definition": "特定の情報や刺激に意識を向ける心的機能。",
+      "domain_definition": "選択的注意、分割的注意、持続的注意などがある。",
+      "example": "複数のタスクを同時に処理する際の注意の配分。",
+      "note": "注意のメカニズムは認知負荷理論と関連する。"
+    }
+  }
+}
+

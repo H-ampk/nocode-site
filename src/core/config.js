@@ -14,6 +14,20 @@
     var cfg = Object.assign({}, config);
     if (!cfg.access_mode) cfg.access_mode = 'public';
     if (cfg.access_mode !== 'pin') cfg.pin_code = null;
+    // glossary_policy のデフォルト値
+    if (!cfg.glossary_policy) {
+      cfg.glossary_policy = {
+        mode: 'project',
+        domains: []
+      };
+    } else {
+      if (!cfg.glossary_policy.mode) {
+        cfg.glossary_policy.mode = 'project';
+      }
+      if (!cfg.glossary_policy.domains || !Array.isArray(cfg.glossary_policy.domains)) {
+        cfg.glossary_policy.domains = [];
+      }
+    }
     return cfg;
   }
   function toBlob(config) {

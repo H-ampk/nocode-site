@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glossary Loader Test</title>
+  <link rel="stylesheet" href="../public/css/main.css" />
+  <script src="../src/core/config.js"></script>
+  <script src="../src/core/GlossaryLoader.js"></script>
+  <script src="../src/auth/pin.js" defer></script>
+  <script>window.addEventListener('DOMContentLoaded',function(){ if(window.AdminAuth) AdminAuth.init({admin:true}); });</script>
+  <style>
+    .test-section {
+      margin: 1rem 0;
+      padding: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #f9f9f9;
+    }
+    .result {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    button {
+      margin: 0.5rem 0.5rem 0.5rem 0;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Glossary Loader テスト</h1>
+  <div class="menu">
+    <a href="admin.html">← 管理ダッシュボードに戻る</a>
+  </div>
+
+  <div class="test-section">
+    <h2>1. プロジェクトGlossary読み込みテスト</h2>
+    <label>プロジェクトID: <input type="text" id="projectId" value="default" /></label>
+    <button onclick="testProjectGlossary()">読み込む</button>
+    <div id="projectResult" class="result" style="display:none;"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>2. ドメインGlossary読み込みテスト</h2>
+    <label>ドメイン名: 
+      <select id="domainName">
+        <option value="psychology">psychology</option>
+        <option value="AI">AI</option>
+      </select>
+    </label>
+    <button onclick="testDomainGlossary()">読み込む</button>
+    <div id="domainResult" class="result" style="display:none;"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>3. グローバルGlossary読み込みテスト</h2>
+    <button onclick="testGlobalGlossary()">読み込む</button>
+    <div id="globalResult" class="result" style="display:none;"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>4. マージテスト</h2>
+    <button onclick="testMerge()">マージ実行</button>
+    <div id="mergeResult" class="result" style="display:none;"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>5. Policy ベース読み込みテスト</h2>
+    <fieldset>
+      <legend>glossary_policy 設定</legend>
+      <label>Mode: 
+        <select id="policyMode">
+          <option value="project">project</option>
+          <option value="domain">domain</option>
+          <option value="global">global</option>
+        </select>
+      </label>
+      <br/>
+      <label>Domains (カンマ区切り): 
+        <input type="text" id="policyDomains" value="psychology,AI" />
+      </label>
+    </fieldset>
+    <button onclick="testPolicyLoad()">読み込む</button>
+    <div id="policyResult" class="result" style="display:none;"></div>
+  </div>
+
+  <script>
+    function testProjectGlossary() {
+      var projectId = document.getElementById('projectId').value || 'default';
+      var resultDiv = document.getElementById('projectResult');
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = '<p>読み込み中...</p>';
+      
+      GlossaryLoader.loadProjectGlossary(projectId, { admin: true })
+        .then(function(glossary) {
+          resultDiv.innerHTML = '<h3>結果:</h3><pre>' + JSON.stringify(glossary, null, 2) + '</pre>';
+        })
+        .catch(function(error) {
+          resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
+        });
+    }
+
+    function testDomainGlossary() {
+      var domainName = document.getElementById('domainName').value;
+      var resultDiv = document.getElementById('domainResult');
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = '<p>読み込み中...</p>';
+      
+      GlossaryLoader.loadDomainGlossary(domainName, { admin: true })
+        .then(function(glossary) {
+          resultDiv.innerHTML = '<h3>結果:</h3><pre>' + JSON.stringify(glossary, null, 2) + '</pre>';
+        })
+        .catch(function(error) {
+          resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
+        });
+    }
+
+    function testGlobalGlossary() {
+      var resultDiv = document.getElementById('globalResult');
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = '<p>読み込み中...</p>';
+      
+      GlossaryLoader.loadGlobalGlossary({ admin: true })
+        .then(function(glossary) {
+          resultDiv.innerHTML = '<h3>結果:</h3><pre>' + JSON.stringify(glossary, null, 2) + '</pre>';
+        })
+        .catch(function(error) {
+          resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
+        });
+    }
+
+    function testMerge() {
+      var resultDiv = document.getElementById('mergeResult');
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = '<p>読み込み中...</p>';
+      
+      Promise.all([
+        GlossaryLoader.loadGlobalGlossary({ admin: true }),
+        GlossaryLoader.loadDomainGlossary('psychology', { admin: true }),
+        GlossaryLoader.loadProjectGlossary('default', { admin: true })
+      ]).then(function(glossaries) {
+        var merged = GlossaryLoader.mergeGlossaries(glossaries);
+        resultDiv.innerHTML = '<h3>マージ結果:</h3><pre>' + JSON.stringify(merged, null, 2) + '</pre>';
+      })
+      .catch(function(error) {
+        resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
+      });
+    }
+
+    function testPolicyLoad() {
+      var projectId = document.getElementById('projectId').value || 'default';
+      var mode = document.getElementById('policyMode').value;
+      var domainsStr = document.getElementById('policyDomains').value;
+      var domains = domainsStr ? domainsStr.split(',').map(function(s) { return s.trim(); }).filter(function(s) { return s; }) : [];
+      
+      var policy = {
+        mode: mode,
+        domains: domains
+      };
+      
+      var resultDiv = document.getElementById('policyResult');
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = '<p>読み込み中...</p>';
+      
+      GlossaryLoader.loadGlossaryByPolicy(projectId, policy, { admin: true })
+        .then(function(glossary) {
+          resultDiv.innerHTML = '<h3>Policy: ' + JSON.stringify(policy, null, 2) + '</h3>' +
+            '<h3>統合結果:</h3><pre>' + JSON.stringify(glossary, null, 2) + '</pre>';
+        })
+        .catch(function(error) {
+          resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
+        });
+    }
+  </script>
+</body>
+</html>
+

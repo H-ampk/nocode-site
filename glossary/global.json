@@ -1,0 +1,29 @@
+{
+  "terms": {
+    "concept.logic": {
+      "id": "concept.logic",
+      "name": "論理",
+      "definition": "物事を筋道立てて考えること。推論や判断の基礎となる思考の方法。",
+      "fields": ["reasoning", "analysis"],
+      "links": ["https://example.com/logic"],
+      "example": "三段論法は論理的な推論の一例である。"
+    },
+    "concept.analysis": {
+      "id": "concept.analysis",
+      "name": "分析",
+      "definition": "物事を細かく分けて、その構成要素や関係を明らかにすること。",
+      "fields": ["methodology", "research"],
+      "links": [],
+      "example": "データを分析して傾向を把握する。"
+    },
+    "concept.synthesis": {
+      "id": "concept.synthesis",
+      "name": "統合",
+      "definition": "複数の要素を組み合わせて、新しい全体を構成すること。",
+      "fields": ["integration", "combination"],
+      "links": [],
+      "example": "異なる理論を統合して新しいモデルを構築する。"
+    }
+  }
+}
+

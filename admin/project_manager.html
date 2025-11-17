@@ -8,6 +8,24 @@
   <script src="../src/core/config.js"></script>
   <script src="../src/auth/pin.js" defer></script>
   <script>window.addEventListener('DOMContentLoaded',function(){ if(window.AdminAuth) AdminAuth.init({admin:true}); });</script>
+  <style>
+    .glossary-policy-section {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    .domain-checkboxes {
+      margin-top: 0.5rem;
+      margin-left: 1.5rem;
+      display: none;
+    }
+    .domain-checkboxes label {
+      display: block;
+      margin: 0.3rem 0;
+    }
+  </style>
 </head>
 <body>
   <h1>公開設定・プロジェクト設定</h1>
@@ -31,6 +49,42 @@
       </div>
       <label><input type="radio" name="mode" value="login"> ログイン制（login）※将来機能</label>
     </fieldset>
+
+    <div class="glossary-policy-section">
+      <h3>Glossary 接続設定</h3>
+      <fieldset style="border:1px solid #eee;padding:1rem;">
+        <legend>接続方式</legend>
+        <label>
+          <input type="radio" name="glossaryMode" value="project" checked>
+          プロジェクトのみ
+        </label><br/>
+        <label>
+          <input type="radio" name="glossaryMode" value="domain">
+          学問別で共有する
+        </label>
+        <div id="domainArea" class="domain-checkboxes">
+          <label><input type="checkbox" name="domain" value="psychology"> 心理学 (psychology)</label>
+          <label><input type="checkbox" name="domain" value="AI"> 人工知能 (AI)</label>
+          <label><input type="checkbox" name="domain" value="mathematics"> 数学 (mathematics)</label>
+          <label><input type="checkbox" name="domain" value="physics"> 物理学 (physics)</label>
+          <label><input type="checkbox" name="domain" value="biology"> 生物学 (biology)</label>
+          <label><input type="checkbox" name="domain" value="chemistry"> 化学 (chemistry)</label>
+        </div>
+        <label>
+          <input type="radio" name="glossaryMode" value="global">
+          グローバル辞書と接続する
+        </label>
+        <div id="globalDomainArea" class="domain-checkboxes">
+          <label><input type="checkbox" name="globalDomain" value="psychology"> 心理学 (psychology)</label>
+          <label><input type="checkbox" name="globalDomain" value="AI"> 人工知能 (AI)</label>
+          <label><input type="checkbox" name="globalDomain" value="mathematics"> 数学 (mathematics)</label>
+          <label><input type="checkbox" name="globalDomain" value="physics"> 物理学 (physics)</label>
+          <label><input type="checkbox" name="globalDomain" value="biology"> 生物学 (biology)</label>
+          <label><input type="checkbox" name="globalDomain" value="chemistry"> 化学 (chemistry)</label>
+        </div>
+      </fieldset>
+    </div>
+
     <br/><br/>
     <button id="loadBtn">設定を読み込む</button>
     <button id="saveBtn">project.json をダウンロード</button>
@@ -50,6 +104,37 @@
     document.querySelectorAll('input[name="mode"]').forEach(function(el){
       el.addEventListener('change', function(){ setMode(this.value); });
     });
+
+    // Glossary設定のUI制御
+    function setGlossaryMode(mode) {
+      var els = document.querySelectorAll('input[name="glossaryMode"]');
+      els.forEach(function(el){ el.checked = (el.value === mode); });
+      document.getElementById('domainArea').style.display = (mode === 'domain') ? 'block' : 'none';
+      document.getElementById('globalDomainArea').style.display = (mode === 'global') ? 'block' : 'none';
+    }
+    function getGlossaryMode() {
+      var els = document.querySelectorAll('input[name="glossaryMode"]');
+      for (var i=0;i<els.length;i++){ if (els[i].checked) return els[i].value; }
+      return 'project';
+    }
+    function getSelectedDomains() {
+      var mode = getGlossaryMode();
+      var domains = [];
+      if (mode === 'domain') {
+        document.querySelectorAll('input[name="domain"]:checked').forEach(function(el){
+          domains.push(el.value);
+        });
+      } else if (mode === 'global') {
+        document.querySelectorAll('input[name="globalDomain"]:checked').forEach(function(el){
+          domains.push(el.value);
+        });
+      }
+      return domains;
+    }
+    document.querySelectorAll('input[name="glossaryMode"]').forEach(function(el){
+      el.addEventListener('change', function(){ setGlossaryMode(this.value); });
+    });
+
     function getCurrentProjectId() {
       return localStorage.getItem('projectId') || 'default';
     }
@@ -61,6 +146,22 @@
           setMode(mode);
           document.getElementById('pinCode').value = cfg.pin_code || '';
           document.getElementById('projectId').value = cfg.project_id || pid;
+          
+          // Glossary設定を読み込む
+          var glossaryPolicy = cfg.glossary_policy || { mode: 'project', domains: [] };
+          setGlossaryMode(glossaryPolicy.mode || 'project');
+          
+          // ドメインのチェックボックスを設定
+          var domains = glossaryPolicy.domains || [];
+          if (glossaryPolicy.mode === 'domain') {
+            document.querySelectorAll('input[name="domain"]').forEach(function(el){
+              el.checked = domains.indexOf(el.value) !== -1;
+            });
+          } else if (glossaryPolicy.mode === 'global') {
+            document.querySelectorAll('input[name="globalDomain"]').forEach(function(el){
+              el.checked = domains.indexOf(el.value) !== -1;
+            });
+          }
         })
         .catch(function (){
           alert('project.json の読み込みに失敗しました');
@@ -70,10 +171,17 @@
       var pid = document.getElementById('projectId').value || getCurrentProjectId();
       var mode = currentMode();
       var pin = (mode === 'pin') ? (document.getElementById('pinCode').value || '') : null;
+      var glossaryMode = getGlossaryMode();
+      var domains = getSelectedDomains();
+      
       var data = {
         project_id: pid,
         access_mode: mode,
-        pin_code: pin
+        pin_code: pin,
+        glossary_policy: {
+          mode: glossaryMode,
+          domains: domains
+        }
       };
       try { localStorage.setItem('projectId', pid); } catch(e) {}
       ProjectConfig.download(pid, data);
