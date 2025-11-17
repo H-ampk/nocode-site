@@ -28,6 +28,31 @@
         cfg.glossary_policy.domains = [];
       }
     }
+    // timing_profile のデフォルト値
+    if (!cfg.timing_profile) {
+      cfg.timing_profile = {
+        instant_threshold: 3,
+        deliberate_threshold: 15,
+        profile_name: 'default'
+      };
+    } else {
+      if (typeof cfg.timing_profile.instant_threshold !== 'number' || cfg.timing_profile.instant_threshold < 0) {
+        cfg.timing_profile.instant_threshold = 3;
+      }
+      if (typeof cfg.timing_profile.deliberate_threshold !== 'number' || cfg.timing_profile.deliberate_threshold < 0) {
+        cfg.timing_profile.deliberate_threshold = 15;
+      }
+      if (!cfg.timing_profile.profile_name) {
+        cfg.timing_profile.profile_name = 'default';
+      }
+      // 不正値のチェック: instant_threshold > deliberate_threshold の場合
+      if (cfg.timing_profile.instant_threshold > cfg.timing_profile.deliberate_threshold) {
+        // 自動修正: 値を入れ替える
+        var temp = cfg.timing_profile.instant_threshold;
+        cfg.timing_profile.instant_threshold = cfg.timing_profile.deliberate_threshold;
+        cfg.timing_profile.deliberate_threshold = temp;
+      }
+    }
     return cfg;
   }
   function toBlob(config) {

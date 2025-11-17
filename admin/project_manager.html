@@ -85,6 +85,31 @@
       </fieldset>
     </div>
 
+    <div class="glossary-policy-section">
+      <h3>🕒 反応時間プロファイル設定</h3>
+      <p style="font-size: 0.9em; color: #666; margin-bottom: 1rem;">
+        反応の速さは能力を示すものではありません。学習スタイルや思考パターンの違いを反映します。
+      </p>
+      <fieldset style="border:1px solid #eee;padding:1rem;">
+        <legend>プロファイル選択</legend>
+        <label><input type="radio" name="timingProfile" value="general" checked> general（標準）</label><br/>
+        <label><input type="radio" name="timingProfile" value="slow"> slow（ASD・境界知能などを想定）</label><br/>
+        <label><input type="radio" name="timingProfile" value="fast"> fast（ギフテッド想定）</label><br/>
+        <label><input type="radio" name="timingProfile" value="custom"> custom（カスタム）</label>
+      </fieldset>
+      <div id="timingProfileCustom" style="margin-top: 1rem; padding: 1rem; background: #f0f0f0; border-radius: 5px; display: none;">
+        <label>直感の判定（秒）:
+          <input type="number" id="instantThreshold" min="0" step="0.1" value="3" style="width: 80px;" />
+        </label><br/><br/>
+        <label>熟慮の判定（秒）:
+          <input type="number" id="deliberateThreshold" min="0" step="0.1" value="15" style="width: 80px;" />
+        </label><br/><br/>
+        <label>プロファイル名:
+          <input type="text" id="profileName" value="custom" style="width: 200px;" />
+        </label>
+      </div>
+    </div>
+
     <br/><br/>
     <button id="loadBtn">設定を読み込む</button>
     <button id="saveBtn">project.json をダウンロード</button>
@@ -135,6 +160,58 @@
       el.addEventListener('change', function(){ setGlossaryMode(this.value); });
     });
 
+    // 反応時間プロファイル設定のUI制御
+    var timingProfilePresets = {
+      general: { instant: 3, deliberate: 15, name: 'general' },
+      slow: { instant: 7, deliberate: 25, name: 'slow' },
+      fast: { instant: 1.5, deliberate: 8, name: 'fast' },
+      custom: { instant: 3, deliberate: 15, name: 'custom' }
+    };
+
+    function setTimingProfile(profileType) {
+      var els = document.querySelectorAll('input[name="timingProfile"]');
+      els.forEach(function(el){ el.checked = (el.value === profileType); });
+      
+      var customArea = document.getElementById('timingProfileCustom');
+      if (profileType === 'custom') {
+        customArea.style.display = 'block';
+      } else {
+        customArea.style.display = 'none';
+        var preset = timingProfilePresets[profileType];
+        if (preset) {
+          document.getElementById('instantThreshold').value = preset.instant;
+          document.getElementById('deliberateThreshold').value = preset.deliberate;
+          document.getElementById('profileName').value = preset.name;
+        }
+      }
+    }
+
+    function getTimingProfile() {
+      var selectedProfile = null;
+      document.querySelectorAll('input[name="timingProfile"]').forEach(function(el){
+        if (el.checked) selectedProfile = el.value;
+      });
+      
+      if (selectedProfile === 'custom') {
+        return {
+          instant_threshold: parseFloat(document.getElementById('instantThreshold').value) || 3,
+          deliberate_threshold: parseFloat(document.getElementById('deliberateThreshold').value) || 15,
+          profile_name: document.getElementById('profileName').value || 'custom'
+        };
+      } else {
+        var preset = timingProfilePresets[selectedProfile] || timingProfilePresets.general;
+        return {
+          instant_threshold: preset.instant,
+          deliberate_threshold: preset.deliberate,
+          profile_name: preset.name
+        };
+      }
+    }
+
+    document.querySelectorAll('input[name="timingProfile"]').forEach(function(el){
+      el.addEventListener('change', function(){ setTimingProfile(this.value); });
+    });
+
     function getCurrentProjectId() {
       return localStorage.getItem('projectId') || 'default';
     }
@@ -162,6 +239,27 @@
               el.checked = domains.indexOf(el.value) !== -1;
             });
           }
+          
+          // 反応時間プロファイル設定を読み込む
+          var timingProfile = cfg.timing_profile || { instant_threshold: 3, deliberate_threshold: 15, profile_name: 'default' };
+          // プリセットと一致するか確認
+          var matchedPreset = null;
+          Object.keys(timingProfilePresets).forEach(function(key) {
+            var preset = timingProfilePresets[key];
+            if (preset.instant === timingProfile.instant_threshold && 
+                preset.deliberate === timingProfile.deliberate_threshold) {
+              matchedPreset = key;
+            }
+          });
+          
+          if (matchedPreset) {
+            setTimingProfile(matchedPreset);
+          } else {
+            setTimingProfile('custom');
+            document.getElementById('instantThreshold').value = timingProfile.instant_threshold || 3;
+            document.getElementById('deliberateThreshold').value = timingProfile.deliberate_threshold || 15;
+            document.getElementById('profileName').value = timingProfile.profile_name || 'custom';
+          }
         })
         .catch(function (){
           alert('project.json の読み込みに失敗しました');
@@ -173,6 +271,15 @@
       var pin = (mode === 'pin') ? (document.getElementById('pinCode').value || '') : null;
       var glossaryMode = getGlossaryMode();
       var domains = getSelectedDomains();
+      var timingProfile = getTimingProfile();
+      
+      // 値の検証
+      if (timingProfile.instant_threshold > timingProfile.deliberate_threshold) {
+        alert('警告: 直感の閾値が熟慮の閾値より大きいです。値を自動修正します。');
+        var temp = timingProfile.instant_threshold;
+        timingProfile.instant_threshold = timingProfile.deliberate_threshold;
+        timingProfile.deliberate_threshold = temp;
+      }
       
       var data = {
         project_id: pid,
@@ -181,7 +288,8 @@
         glossary_policy: {
           mode: glossaryMode,
           domains: domains
-        }
+        },
+        timing_profile: timingProfile
       };
       try { localStorage.setItem('projectId', pid); } catch(e) {}
       ProjectConfig.download(pid, data);
