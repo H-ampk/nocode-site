@@ -92,10 +92,10 @@
       </p>
       <fieldset style="border:1px solid #eee;padding:1rem;">
         <legend>プロファイル選択</legend>
-        <label><input type="radio" name="timingProfile" value="general" checked> general（標準）</label><br/>
-        <label><input type="radio" name="timingProfile" value="slow"> slow（ASD・境界知能などを想定）</label><br/>
-        <label><input type="radio" name="timingProfile" value="fast"> fast（ギフテッド想定）</label><br/>
-        <label><input type="radio" name="timingProfile" value="custom"> custom（カスタム）</label>
+        <label><input type="radio" name="timingProfile" value="profileA" checked> プロファイルA（速めの判定）</label><br/>
+        <label><input type="radio" name="timingProfile" value="profileB"> プロファイルB（標準）</label><br/>
+        <label><input type="radio" name="timingProfile" value="profileC"> プロファイルC（ゆっくり）</label><br/>
+        <label><input type="radio" name="timingProfile" value="custom"> カスタム</label>
       </fieldset>
       <div id="timingProfileCustom" style="margin-top: 1rem; padding: 1rem; background: #f0f0f0; border-radius: 5px; display: none;">
         <label>直感の判定（秒）:
@@ -103,9 +103,6 @@
         </label><br/><br/>
         <label>熟慮の判定（秒）:
           <input type="number" id="deliberateThreshold" min="0" step="0.1" value="15" style="width: 80px;" />
-        </label><br/><br/>
-        <label>プロファイル名:
-          <input type="text" id="profileName" value="custom" style="width: 200px;" />
         </label>
       </div>
     </div>
@@ -162,10 +159,10 @@
 
     // 反応時間プロファイル設定のUI制御
     var timingProfilePresets = {
-      general: { instant: 3, deliberate: 15, name: 'general' },
-      slow: { instant: 7, deliberate: 25, name: 'slow' },
-      fast: { instant: 1.5, deliberate: 8, name: 'fast' },
-      custom: { instant: 3, deliberate: 15, name: 'custom' }
+      profileA: { instant: 2, deliberate: 10, preset: 'profileA' },
+      profileB: { instant: 3, deliberate: 15, preset: 'profileB' },
+      profileC: { instant: 6, deliberate: 25, preset: 'profileC' },
+      custom: { instant: 3, deliberate: 15, preset: 'custom' }
     };
 
     function setTimingProfile(profileType) {
@@ -181,7 +178,6 @@
         if (preset) {
           document.getElementById('instantThreshold').value = preset.instant;
           document.getElementById('deliberateThreshold').value = preset.deliberate;
-          document.getElementById('profileName').value = preset.name;
         }
       }
     }
@@ -194,16 +190,16 @@
       
       if (selectedProfile === 'custom') {
         return {
+          preset: 'custom',
           instant_threshold: parseFloat(document.getElementById('instantThreshold').value) || 3,
-          deliberate_threshold: parseFloat(document.getElementById('deliberateThreshold').value) || 15,
-          profile_name: document.getElementById('profileName').value || 'custom'
+          deliberate_threshold: parseFloat(document.getElementById('deliberateThreshold').value) || 15
         };
       } else {
-        var preset = timingProfilePresets[selectedProfile] || timingProfilePresets.general;
+        var preset = timingProfilePresets[selectedProfile] || timingProfilePresets.profileB;
         return {
+          preset: preset.preset,
           instant_threshold: preset.instant,
-          deliberate_threshold: preset.deliberate,
-          profile_name: preset.name
+          deliberate_threshold: preset.deliberate
         };
       }
     }
@@ -241,24 +237,29 @@
           }
           
           // 反応時間プロファイル設定を読み込む
-          var timingProfile = cfg.timing_profile || { instant_threshold: 3, deliberate_threshold: 15, profile_name: 'default' };
-          // プリセットと一致するか確認
-          var matchedPreset = null;
-          Object.keys(timingProfilePresets).forEach(function(key) {
-            var preset = timingProfilePresets[key];
-            if (preset.instant === timingProfile.instant_threshold && 
-                preset.deliberate === timingProfile.deliberate_threshold) {
-              matchedPreset = key;
-            }
-          });
+          var timingProfile = cfg.timing_profile || { preset: 'profileB', instant_threshold: 3, deliberate_threshold: 15 };
           
-          if (matchedPreset) {
+          // presetが指定されている場合はそれを使用、なければ数値から推測
+          var matchedPreset = null;
+          if (timingProfile.preset && timingProfilePresets[timingProfile.preset]) {
+            matchedPreset = timingProfile.preset;
+          } else {
+            // 旧形式（profile_name）からの移行: 数値から推測
+            Object.keys(timingProfilePresets).forEach(function(key) {
+              var preset = timingProfilePresets[key];
+              if (preset.instant === timingProfile.instant_threshold && 
+                  preset.deliberate === timingProfile.deliberate_threshold) {
+                matchedPreset = key;
+              }
+            });
+          }
+          
+          if (matchedPreset && matchedPreset !== 'custom') {
             setTimingProfile(matchedPreset);
           } else {
             setTimingProfile('custom');
             document.getElementById('instantThreshold').value = timingProfile.instant_threshold || 3;
             document.getElementById('deliberateThreshold').value = timingProfile.deliberate_threshold || 15;
-            document.getElementById('profileName').value = timingProfile.profile_name || 'custom';
           }
         })
         .catch(function (){

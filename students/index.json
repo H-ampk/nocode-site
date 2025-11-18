@@ -1,0 +1,10 @@
+{
+  "datasets": [
+    {
+      "file": "quiz_log_dummy.json",
+      "dataset_name": "quiz_log_dummy",
+      "type": "class"
+    }
+  ]
+}
+

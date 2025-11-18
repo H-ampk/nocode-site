@@ -41,9 +41,9 @@
       .then(function (config) {
         // timing_profile を取得
         timingProfile = config.timing_profile || {
+          preset: 'profileB',
           instant_threshold: 3,
-          deliberate_threshold: 15,
-          profile_name: 'default'
+          deliberate_threshold: 15
         };
         
         // Glossaryを読み込む
@@ -60,9 +60,9 @@
         glossary = {};
         GlossaryRecommendation.setGlossary({});
         timingProfile = {
+          preset: 'profileB',
           instant_threshold: 3,
-          deliberate_threshold: 15,
-          profile_name: 'default'
+          deliberate_threshold: 15
         };
         return { glossary_policy: { mode: 'project', domains: [] } };
       });

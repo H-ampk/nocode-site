@@ -31,20 +31,46 @@
     // timing_profile のデフォルト値
     if (!cfg.timing_profile) {
       cfg.timing_profile = {
+        preset: 'profileB',
         instant_threshold: 3,
-        deliberate_threshold: 15,
-        profile_name: 'default'
+        deliberate_threshold: 15
       };
     } else {
+      // 旧形式（profile_name）からの移行対応
+      if (cfg.timing_profile.profile_name && !cfg.timing_profile.preset) {
+        // profile_nameをpresetに変換（後方互換性）
+        var oldName = cfg.timing_profile.profile_name;
+        if (oldName === 'general' || oldName === 'default') {
+          cfg.timing_profile.preset = 'profileB';
+        } else if (oldName === 'slow') {
+          cfg.timing_profile.preset = 'profileC';
+        } else if (oldName === 'fast') {
+          cfg.timing_profile.preset = 'profileA';
+        } else {
+          cfg.timing_profile.preset = 'custom';
+        }
+        // profile_nameを削除
+        delete cfg.timing_profile.profile_name;
+      }
+      
+      // presetのデフォルト値
+      if (!cfg.timing_profile.preset) {
+        cfg.timing_profile.preset = 'profileB';
+      }
+      
+      // 有効なpreset値かチェック
+      var validPresets = ['profileA', 'profileB', 'profileC', 'custom'];
+      if (validPresets.indexOf(cfg.timing_profile.preset) === -1) {
+        cfg.timing_profile.preset = 'profileB';
+      }
+      
       if (typeof cfg.timing_profile.instant_threshold !== 'number' || cfg.timing_profile.instant_threshold < 0) {
         cfg.timing_profile.instant_threshold = 3;
       }
       if (typeof cfg.timing_profile.deliberate_threshold !== 'number' || cfg.timing_profile.deliberate_threshold < 0) {
         cfg.timing_profile.deliberate_threshold = 15;
       }
-      if (!cfg.timing_profile.profile_name) {
-        cfg.timing_profile.profile_name = 'default';
-      }
+      
       // 不正値のチェック: instant_threshold > deliberate_threshold の場合
       if (cfg.timing_profile.instant_threshold > cfg.timing_profile.deliberate_threshold) {
         // 自動修正: 値を入れ替える
