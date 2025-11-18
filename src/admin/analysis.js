@@ -671,6 +671,12 @@
     renderResponseTimeStats(responseTimeStats);
     renderPathStats(pathStats);
     renderGlossaryStats(glossaryStats);
+    
+    // 反応時間フィッティング分析を実行
+    var responseTimes = logs.map(function(log) { return log.response_time || 0; }).filter(function(rt) { return rt > 0 && rt != null; });
+    if (responseTimes.length > 0) {
+      runRTFitting(responseTimes);
+    }
   }
 
   /**
@@ -681,6 +687,213 @@
     var div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+  }
+
+  /**
+   * 反応時間フィッティング分析（指数分布・正規分布）
+   * @param {Array} responseTimeArray - 反応時間の配列
+   */
+  function runRTFitting(responseTimeArray) {
+    if (!responseTimeArray || responseTimeArray.length === 0) {
+      return;
+    }
+
+    // 1. 前処理（0 や null を除外）
+    var validTimes = responseTimeArray.filter(function(rt) {
+      return rt != null && rt > 0 && isFinite(rt);
+    });
+
+    if (validTimes.length === 0) {
+      return;
+    }
+
+    // 2. 指数分布の λ を計算（λ = 1 / 平均値）
+    var mean = validTimes.reduce(function(sum, rt) { return sum + rt; }, 0) / validTimes.length;
+    var lambda = 1.0 / mean;
+
+    // 3. 正規分布の μ（平均）・σ（標準偏差）を計算
+    var variance = 0;
+    if (validTimes.length > 1) {
+      variance = validTimes.reduce(function(sum, rt) {
+        return sum + Math.pow(rt - mean, 2);
+      }, 0) / (validTimes.length - 1);
+    }
+    var sigma = Math.sqrt(variance);
+    var mu = mean;
+
+    // 4. 自然言語解釈を生成
+    var interpretation = interpretRT(lambda, mu, sigma);
+
+    // 5. 結果を表示
+    var resultContainer = document.getElementById('rt-fitting-result');
+    var section = document.getElementById('rt-fitting-section');
+    if (resultContainer && section) {
+      section.style.display = 'block';
+      resultContainer.innerHTML = 
+        '<strong>パラメータ:</strong><br>' +
+        '指数分布 λ = ' + lambda.toFixed(6) + '<br>' +
+        '正規分布 μ = ' + mu.toFixed(3) + '秒, σ = ' + sigma.toFixed(3) + '秒<br><br>' +
+        '<strong>解釈:</strong><br>' +
+        interpretation;
+    }
+
+    // 6. Chart.js でヒストグラム + フィット曲線を描画
+    var canvas = document.getElementById('rt-fitting-chart');
+    if (canvas && window.Chart) {
+      // 既存のチャートを破棄
+      if (chartInstances['rt-fitting']) {
+        chartInstances['rt-fitting'].destroy();
+      }
+
+      // ヒストグラム用のビンを作成
+      var minTime = Math.min.apply(null, validTimes);
+      var maxTime = Math.max.apply(null, validTimes);
+      var binCount = 20;
+      var binWidth = (maxTime - minTime) / binCount;
+      var bins = Array(binCount).fill(0);
+      var binLabels = [];
+      var binCenters = [];
+
+      for (var i = 0; i < binCount; i++) {
+        var binStart = minTime + i * binWidth;
+        var binEnd = minTime + (i + 1) * binWidth;
+        binLabels.push(binStart.toFixed(1) + '-' + binEnd.toFixed(1));
+        binCenters.push((binStart + binEnd) / 2);
+      }
+
+      // データをビンに分配
+      validTimes.forEach(function(rt) {
+        var binIndex = Math.min(Math.floor((rt - minTime) / binWidth), binCount - 1);
+        bins[binIndex]++;
+      });
+
+      // フィット曲線のデータをビンセンターにマッピング
+      var sampleCount = validTimes.length;
+      var expPdfData = [];
+      var normalPdfData = [];
+      
+      binCenters.forEach(function(center) {
+        // 指数分布のPDF値を計算
+        var expVal = lambda * Math.exp(-lambda * center) * sampleCount * binWidth;
+        expPdfData.push(expVal);
+        
+        // 正規分布のPDF値を計算
+        var normalVal = (1 / (sigma * Math.sqrt(2 * Math.PI))) * 
+          Math.exp(-0.5 * Math.pow((center - mu) / sigma, 2)) * sampleCount * binWidth;
+        normalPdfData.push(normalVal);
+      });
+
+      // Chart.js で描画（混合チャート）
+      chartInstances['rt-fitting'] = new Chart(canvas, {
+        type: 'bar',
+        data: {
+          labels: binLabels,
+          datasets: [
+            {
+              label: '観測データ（ヒストグラム）',
+              data: bins,
+              backgroundColor: 'rgba(156, 39, 176, 0.6)',
+              borderColor: 'rgba(156, 39, 176, 1)',
+              borderWidth: 1,
+              order: 3
+            },
+            {
+              label: '指数分布フィット (λ=' + lambda.toFixed(4) + ')',
+              data: expPdfData,
+              type: 'line',
+              borderColor: 'rgba(244, 67, 54, 1)',
+              backgroundColor: 'rgba(244, 67, 54, 0.1)',
+              borderWidth: 2,
+              pointRadius: 0,
+              fill: false,
+              order: 1,
+              tension: 0.1
+            },
+            {
+              label: '正規分布フィット (μ=' + mu.toFixed(2) + ', σ=' + sigma.toFixed(2) + ')',
+              data: normalPdfData,
+              type: 'line',
+              borderColor: 'rgba(33, 150, 243, 1)',
+              backgroundColor: 'rgba(33, 150, 243, 0.1)',
+              borderWidth: 2,
+              pointRadius: 0,
+              fill: false,
+              order: 2,
+              tension: 0.1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top'
+            },
+            title: {
+              display: true,
+              text: '反応時間分布とフィッティング曲線'
+            }
+          },
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: '反応時間（秒）'
+              }
+            },
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: '頻度'
+              }
+            }
+          }
+        }
+      });
+    }
+  }
+
+  /**
+   * 反応時間フィッティングの自然言語解釈を生成
+   * @param {number} lambda - 指数分布パラメータ
+   * @param {number} mu - 正規分布平均
+   * @param {number} sigma - 正規分布標準偏差
+   * @returns {string} 自然言語解釈テキスト
+   */
+  function interpretRT(lambda, mu, sigma) {
+    var result = [];
+
+    // λ interpretation
+    if (lambda > 0.25) {
+      result.push('反応が速く、直感的に判断する傾向があります。');
+    } else if (lambda > 0.1) {
+      result.push('やや慎重で、確認を挟んでから回答するタイプです。');
+    } else {
+      result.push('非常に慎重で、じっくり考えてから回答します。');
+    }
+
+    // μ interpretation
+    if (mu < 5) {
+      result.push('全体的に判断が速い学習者です。');
+    } else if (mu < 10) {
+      result.push('平均的な判断スピードです。');
+    } else {
+      result.push('丁寧に読み、確認してから回答する学習スタイルです。');
+    }
+
+    // σ interpretation
+    if (sigma < 2) {
+      result.push('思考スピードは安定しています。');
+    } else if (sigma < 5) {
+      result.push('問題によって迷いやすさに少し差が見られます。');
+    } else {
+      result.push('理解のムラが大きく、つまずき概念が存在する可能性があります。');
+    }
+
+    return result.join(' ');
   }
 
   /**
@@ -811,12 +1024,48 @@ function runJuliaAnalysis(studentData) {
                 }
             });
 
+            // 反応時間の分布フィッティング（簡易版）
+            var rtFitting = null;
+            if (responseTimes.length > 0) {
+                // 基本統計量
+                var mean_rt = parseFloat(avgResponseTime);
+                var std_rt = 0;
+                var variance = 0;
+                if (responseTimes.length > 1) {
+                    variance = responseTimes.reduce(function(sum, rt) {
+                        return sum + Math.pow(rt - mean_rt, 2);
+                    }, 0) / (responseTimes.length - 1);
+                    std_rt = Math.sqrt(variance);
+                }
+
+                // 指数分布のパラメータ推定（λ = 1 / mean）
+                var lambda = mean_rt > 0 ? 1.0 / mean_rt : 0;
+
+                // 正規分布のパラメータ推定（μ = mean, σ = std）
+                var mu = mean_rt;
+                var sigma = std_rt;
+
+                rtFitting = {
+                    lambda: lambda,
+                    mu: mu,
+                    sigma: sigma,
+                    mean: mean_rt,
+                    median: responseTimes.length > 0 ? 
+                        (responseTimes.slice().sort(function(a, b) { return a - b; })[Math.floor(responseTimes.length / 2)]) : 0,
+                    std: std_rt,
+                    min: Math.min.apply(null, responseTimes),
+                    max: Math.max.apply(null, responseTimes),
+                    graph: null // Julia分析で生成されるグラフのパス
+                };
+            }
+
             var result = {
                 totalAnswers: totalAnswers,
                 correctCount: correctCount,
                 correctRate: parseFloat(correctRate),
                 avgResponseTime: parseFloat(avgResponseTime),
                 uniqueConcepts: conceptTags.length,
+                rtFitting: rtFitting,
                 message: 'クライアント側での簡易分析結果（Julia 分析はサーバー側で実行する必要があります）'
             };
 
@@ -824,6 +1073,57 @@ function runJuliaAnalysis(studentData) {
         } catch (error) {
             reject(error);
         }
+    });
+}
+
+// ----------------------
+// 📊 サーバー側Julia分析実行（オプション）
+// ----------------------
+function runServerSideJuliaAnalysis(studentData, basicResult) {
+    return new Promise(function(resolve) {
+        // サーバー側APIが利用可能かチェック
+        // エラーが発生した場合は、クライアント側の結果をそのまま返す
+        if (!studentData) {
+            resolve(basicResult);
+            return;
+        }
+
+        // サーバー側のJulia分析エンドポイントを呼び出し（エラー時はフォールバック）
+        fetch('/analyze/reaction-time', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(studentData)
+        })
+        .then(function(res) {
+            if (!res.ok) {
+                throw new Error('サーバー側分析に失敗しました: ' + res.status);
+            }
+            return res.json();
+        })
+        .then(function(rtResult) {
+            // Julia分析の結果を統合
+            if (rtResult && rtResult.lambda !== undefined) {
+                basicResult.rtFitting = {
+                    lambda: rtResult.lambda,
+                    mu: rtResult.mu,
+                    sigma: rtResult.sigma,
+                    mean: rtResult.mean || basicResult.avgResponseTime,
+                    median: rtResult.median || basicResult.avgResponseTime,
+                    std: rtResult.std || 0,
+                    min: rtResult.min || 0,
+                    max: rtResult.max || 0,
+                    graph: rtResult.plot ? 'data:image/png;base64,' + rtResult.plot : null
+                };
+            }
+            resolve(basicResult);
+        })
+        .catch(function(error) {
+            // サーバー側分析が失敗した場合は、クライアント側の結果をそのまま返す
+            console.warn('サーバー側Julia分析が利用できません:', error.message);
+            resolve(basicResult);
+        });
     });
 }
 
@@ -854,10 +1154,17 @@ document.addEventListener('DOMContentLoaded', function() {
             runAnalysisBtn.textContent = '分析中...';
 
             // DatasetLoader を使用して他のタブと同じ方法でデータを読み込む
+            var loadedStudentData = null;
             DatasetLoader.loadDataset(selectedDataset)
                 .then(function(studentData) {
-                    // 取得した JSON をそのまま Julia 分析に渡す
+                    loadedStudentData = studentData;
+                    // まずクライアント側で簡易分析を実行
                     return runJuliaAnalysis(studentData);
+                })
+                .then(function(basicResult) {
+                    // サーバー側でJulia分析を実行（オプション）
+                    // サーバー側APIが利用可能な場合は、分布フィッティンググラフを取得
+                    return runServerSideJuliaAnalysis(loadedStudentData, basicResult);
                 })
                 .then(function(result) {
                     if (result.error) {
@@ -965,7 +1272,46 @@ function renderAnalysisReport(result) {
     html += '</div>';
     html += '</div>';
     
-    // 4. Notes（メッセージ）セクション
+    // 4. 反応時間分布フィッティングセクション
+    if (result.rtFitting) {
+        html += '<div class="report-card">';
+        html += '<h3>📈 反応時間分布フィッティング（指数分布・正規分布）</h3>';
+        html += '<div class="report-rt-block">';
+        html += '<div class="report-stats">';
+        html += '<div class="report-stat-item">';
+        html += '<div class="report-stat-label">指数分布パラメータ λ</div>';
+        html += '<div class="report-number" style="color:#E91E63;">' + result.rtFitting.lambda.toFixed(6) + '</div>';
+        html += '</div>';
+        html += '<div class="report-stat-item">';
+        html += '<div class="report-stat-label">正規分布平均 μ</div>';
+        html += '<div class="report-number" style="color:#2196F3;">' + result.rtFitting.mu.toFixed(3) + '</div>';
+        html += '</div>';
+        html += '<div class="report-stat-item">';
+        html += '<div class="report-stat-label">正規分布標準偏差 σ</div>';
+        html += '<div class="report-number" style="color:#4CAF50;">' + result.rtFitting.sigma.toFixed(3) + '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '<div class="report-comment">';
+        html += '指数分布パラメータ λ = ' + result.rtFitting.lambda.toFixed(6) + '（平均反応時間の逆数）<br>';
+        html += '正規分布パラメータ μ = ' + result.rtFitting.mu.toFixed(3) + '秒, σ = ' + result.rtFitting.sigma.toFixed(3) + '秒（最尤推定）';
+        html += '</div>';
+        
+        // グラフ表示エリア
+        if (result.rtFitting.graph) {
+            html += '<div style="margin-top:20px;text-align:center;">';
+            html += '<img src="' + escapeHtml(result.rtFitting.graph) + '" alt="反応時間分布グラフ" style="max-width:100%;border:1px solid #ddd;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);">';
+            html += '</div>';
+        } else {
+            html += '<div class="report-comment" style="margin-top:15px;background:#fff3cd;border-left-color:#ffc107;">';
+            html += '⚠️ 分布グラフはJulia分析で生成されます。サーバー側でJulia分析を実行すると、ヒストグラムとフィッティング曲線を含むグラフが表示されます。';
+            html += '</div>';
+        }
+        
+        html += '</div>';
+        html += '</div>';
+    }
+    
+    // 5. Notes（メッセージ）セクション
     if (result.message) {
         html += '<div class="report-notes">';
         html += '<h4>📝 注意事項</h4>';

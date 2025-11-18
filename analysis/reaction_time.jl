@@ -49,20 +49,34 @@ mu = mean_rt
 sigma = std_rt
 
 # ヒストグラムを生成
-histogram(
+h = histogram(
     reaction_times,
     bins=30,
     xlabel="反応時間 (秒)",
     ylabel="頻度",
-    title="反応時間の分布",
-    legend=false,
-    dpi=300
+    title="反応時間の分布（指数分布・正規分布フィッティング）",
+    legend=true,
+    dpi=300,
+    alpha=0.6
 )
+
+# 分布曲線をプロットに追加
+x_range = range(minimum(reaction_times), stop=maximum(reaction_times), length=200)
+
+# 指数分布の曲線（スケール調整）
+exp_dist = Exponential(1/lambda)
+exp_pdf = [pdf(exp_dist, x) * length(reaction_times) * (maximum(reaction_times) - minimum(reaction_times)) / 30 for x in x_range]
+plot!(h, x_range, exp_pdf, label="指数分布 (λ=$(round(lambda, digits=4)))", linewidth=2, color=:red)
+
+# 正規分布の曲線（スケール調整）
+normal_dist = Normal(mu, sigma)
+normal_pdf = [pdf(normal_dist, x) * length(reaction_times) * (maximum(reaction_times) - minimum(reaction_times)) / 30 for x in x_range]
+plot!(h, x_range, normal_pdf, label="正規分布 (μ=$(round(mu, digits=2)), σ=$(round(sigma, digits=2)))", linewidth=2, color=:blue)
 
 # プロットをPNGファイルとして保存
 plot_dir = dirname(output_json_file)
-plot_file = joinpath(plot_dir, "rt_plot.png")
-savefig(plot_file)
+plot_file = joinpath(plot_dir, "rt_fit.png")
+savefig(h, plot_file)
 
 # 結果をJSON形式で保存
 result = Dict(
@@ -73,7 +87,8 @@ result = Dict(
     "max" => max_rt,
     "lambda" => lambda,
     "mu" => mu,
-    "sigma" => sigma
+    "sigma" => sigma,
+    "graph" => "rt_fit.png"
 )
 
 # JSONファイルに書き込む
