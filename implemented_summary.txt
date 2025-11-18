@@ -1,0 +1,257 @@
+# 実装サマリー（改善ログより抽出）
+
+## 2025-10-31 実装内容
+
+### Web対応
+- PythonベースのゲームをHTML形式に変換
+- index.html（メインページ）を作成
+- demo.html（デモ診断アプリケーション）を作成
+- README.html（使い方ガイド）を作成
+- インタラクティブな診断アプリケーションをWebブラウザで実行可能に
+- レスポンシブデザイン対応
+- 質問と回答のフロー管理機能を実装
+- 診断結果の表示機能（画像、リンク対応）を実装
+
+### ファイル名の英語化
+- dataフォルダ内の30ファイルを英語名にリネーム
+- 画像ファイル（.png）7ファイルをリネーム
+- 音声ファイル（.mp3）4ファイルをリネーム
+- CSVファイル17ファイルをリネーム
+- テキストファイル2ファイルをリネーム
+
+### ノーコードゲームエディタの実装
+- editor.html（エディタページ）を作成
+- editor.js（エディタ機能）を作成
+- EDITOR_README.md（使い方ガイド）を作成
+- 質問ノードの作成・編集機能を実装
+- 選択肢の追加・削除・編集機能を実装
+- 各選択肢から次のノードへの分岐設定機能を実装
+- 結果ノードの作成機能を実装
+- 結果テキスト・画像ファイル名・URL・ボタンテキストの設定機能を実装
+- JSON形式でのプロジェクト保存機能を実装
+- プロジェクトの読み込み機能を実装
+- CSV形式でのエクスポート機能（908.py互換形式）を実装
+- プレビュー機能（選択中のノードのプレビュー表示）を実装
+
+
+## 2025-11-14 実装内容
+
+### 分岐機能の改善
+- 各選択肢から「次のノード」を選択するドロップダウンメニューを改善
+- 現在編集中のノードを除外してループを防止
+- ノードタイプ（質問/結果）をアイコンで視覚的に表示
+- プレビューパネルで各選択肢がどのノードに接続されているかを表示
+- 接続あり/なしを色分けで視覚的に表示
+
+### 実行可能プレビュー機能の実装
+- 実際にゲームを実行できるプレビュー機能を実装
+- 質問に回答すると設定した分岐に従って遷移
+- 戻る機能を実装
+- 最初からやり直し機能を実装
+- 進捗（質問数）を表示
+
+### デザイン設定機能の追加
+- 質問文のフォント設定機能を実装
+- 選択肢のフォント設定機能を実装
+- カスタムCSS機能を追加
+- GUIベースのデザイン設定機能を実装
+- 背景タイプの選択機能（単色/画像/グラデーション）を実装
+- 背景色設定機能（カラーピッカー対応）を実装
+- 背景画像設定機能（デフォルト画像/カスタム画像）を実装
+- グラデーション設定機能を実装
+- 質問文のスタイル設定機能（フォント・サイズ・色）を実装
+- 選択肢ボタンのスタイル設定機能を実装
+- GUI設定から自動的にCSSを生成する機能を実装
+
+### 背景画像プレビュー機能
+- エディタ内プレビューを実装
+- 右側プレビュー画面で背景画像を表示
+
+### カスタム画像追加機能
+- ファイル選択で画像を追加する機能を実装
+- ドラッグ&ドロップで画像を追加する機能を実装
+- 複数の画像を同時に選択可能に
+- 画像をBase64エンコードしてlocalStorageに保存
+- 追加した画像は背景画像の選択肢に自動追加
+- JPEG/PNG/GIF形式に対応
+
+### 診断テンプレート & スコアリング拡張
+- 診断用ノード（diagnostic_question）を導入
+- 単一／複数選択、YES/NO、スケール、自由記述を切り替え可能に
+- テンプレート読み込みボタンを追加（選択式クイズ/復習カード/理解度チェック診断）
+- Player側スコアリングエンジンを実装
+- 回答時にベクトルを累積し、結果画面・スコアサマリ画面でJSON/リストを表示
+- 戻る操作時にはスコア差分を巻き戻して整合性を確保
+- 診断専用分岐ロジックを実装
+- 通常クイズの正誤判定オプションを追加
+
+
+## 2025-11-17 実装内容
+
+### プロジェクト再構成
+- ルート直下のHTML/JSを役割別フォルダへ強制移動
+- src/フォルダを作成（ロジック本体: core/, editor/, player/, glossary/, concepts/, diagnostic/, explanation/, utils/, auth/）
+- public/フォルダを作成（静的ファイル: public/css/, public/img/）
+- player/フォルダを作成（一般利用画面: player/index.html, player/demo.html）
+- admin/フォルダを作成（管理画面: admin/admin.html, admin/editor.html, admin/glossary.html, admin/project_manager.html, admin/login.html）
+- projects/フォルダを作成（ユーザープロジェクト）
+- docs/フォルダを作成（ドキュメント）
+- archive/フォルダを作成（一時退避）
+- エントリーポイントをmain.htmlに統一
+
+### 公開方式（public/pin/login）導入
+- projects/{id}/project.jsonに公開方式を保存する機能を実装
+- access_mode（"public" | "pin" | "login"）を設定可能に
+- pin_code設定機能を実装
+
+### 管理画面のPIN認証
+- src/auth/pin.jsを作成
+- PIN認証機能を実装
+- project.json.pin_code一致時にlocalStorageに認証フラグ保存
+- public/pin/login各モードに対応
+
+### エントリ/UI
+- main.htmlを入口に統一
+- メニュー（Player・Admin・Projects）を実装
+- 公開設定UI（main/admin両方）を実装
+- 共通設定ユーティリティ（src/core/config.js）を作成
+
+### 静的ファイル整理
+- CSSをpublic/css/main.cssに統一
+- 各HTMLの<link>を更新
+
+### Glossary システム（3層構造）の実装
+- GlossaryLoader.js（src/core/GlossaryLoader.js）を新規作成
+- プロジェクト固有の用語集を読み込む機能を実装
+- 学問領域ごとの用語集を読み込む機能を実装
+- 分野横断の基底辞書を読み込む機能を実装
+- 複数のGlossaryを統合する機能を実装（優先順位: project > domain > global）
+- project.jsonにglossary_policyプロパティを追加
+- Glossary接続設定UIをadmin/project_manager.htmlに追加
+- 3つのモード（プロジェクトのみ/学問別で共有/グローバル辞書と接続）を選択可能に
+- ドメイン選択チェックボックスを実装
+- サンプルファイル（glossary/global.json, glossary/domains/psychology.json, glossary/domains/AI.json）を作成
+- admin/glossary_test.html（テストページ）を追加
+
+### Glossary Editor（フォームベース編集）の実装
+- admin/glossary.jsを新規作成
+- 既存のglossary.jsonを読み込む機能を実装
+- 用語一覧を動的に表示する機能を実装
+- 用語を追加または更新する機能を実装
+- 用語を編集モードでフォームに読み込む機能を実装
+- 用語を削除する機能を実装
+- glossary.jsonをBlobでダウンロードする機能を実装
+- カスタム分野を追加する機能を実装（カンマ区切りで複数追加可能）
+- admin/glossary.htmlにフォームベースのUIを追加
+- 用語名・説明文・分野チェックボックスの入力フォームを実装
+
+### Player の理解ログ取得・解析・Glossary 自動提示システムの実装
+- src/player/logging.jsを新規作成
+- 問題表示開始を記録する機能を実装
+- 選択肢クリックを記録する機能を実装（choiceIdと相対時間）
+- 回答確定時にログを完成させる機能を実装
+- quiz_log.jsonをダウンロードする機能を実装
+- src/player/recommendation.jsを新規作成
+- 選択肢タグから関連用語を検索する機能を実装
+- 迷いパターンを解析する機能を実装
+- 誤答時に最適な解説を推奨する機能を実装
+- src/player/player.jsを新規作成
+- プロジェクト設定とGlossaryを読み込む機能を実装
+- クイズデータを読み込む機能を実装
+- 問題を表示する機能を実装
+- 選択肢クリックを処理する機能を実装
+- 回答確定とGlossary解説表示を実装
+- player/demo.htmlに解説エリアを追加
+- 学習ログダウンロードボタンを追加
+- 選択肢の選択状態を視覚化
+- 正誤フィードバックを表示
+
+### Glossary Recommendation Algorithm の実装
+- recommendation.jsのanalyze()関数を実装
+- conceptTagとglossary.tagsの一致度を計算する機能を実装（0-1のスコア）
+- 用語の深さレベルを判定する機能を実装（'basic' | 'intermediate' | 'deep'）
+- path（迷いの軌跡）を解析する機能を実装
+- 反応時間による分類機能を実装
+- 同じ誤答パターンが複数回続くかチェックする機能を実装
+- 反応時間による分類（短い/中間/長い）で用語レベルを選択
+- ユニーク要素数によるpath解析（即答型/概念混同/深い混乱）
+- conceptTagとglossary.tagsの一致度計算でソート
+- 同じ誤答パターンが複数回続く場合、linksを持つ用語を優先提示
+- Player UIに理由表示を追加
+- 複数の推奨用語に対応
+
+### Player の反応時間プロファイル設定機能の実装
+- config.jsにtiming_profileのデフォルト値を追加
+- instant_threshold（直感の判定閾値）を設定可能に
+- deliberate_threshold（熟慮の判定閾値）を設定可能に
+- project_manager.htmlに反応時間プロファイル設定UIを追加
+- プロファイルプリセット機能（general/slow/fast/custom）を実装
+- カスタム設定（直感の閾値、熟慮の閾値）を実装
+- recommendation.jsのclassifyByResponseTime()をtiming_profileに対応
+- 思考タイプに応じたGlossary提示内容を実装（instant/searching/deliberate）
+
+
+## 2025-11-18 実装内容
+
+### 教師向けデータ分析ダッシュボードの実装
+- admin/analysis.htmlを作成
+- quiz_log.json（学習者の行動ログ）を読み込んで分析する機能を実装
+- 生徒の理解・迷い・反応時間・誤答傾向を可視化
+- タブ切り替えUI（6つのセクション: 全体概要/問題別分析/概念混同分析/反応時間プロファイル集計/迷いパターン分析/Glossary提示履歴の集計）を実装
+- Chart.js 4.4.0を導入（棒グラフ・円グラフ・ヒストグラムの描画）
+- src/admin/analysis.jsを作成
+- quiz_log.jsonを読み込む機能を実装（バージョン1.0形式・配列形式に対応）
+- 全体統計を計算する機能を実装（総回答数・正答率・平均反応時間・思考タイプ分布）
+- 問題別統計を計算する機能を実装
+- 概念混同分析を計算する機能を実装（誤答タグランキング・混同ペアランキング）
+- 反応時間プロファイルを計算する機能を実装（ヒストグラム用データ・最頻値・中央値・最大値・最小値）
+- 迷いパターンを計算する機能を実装（ユニーク遷移パターン・迷いのステップ数の平均・パターンランキング）
+- Glossary使用状況を計算する機能を実装（提示された用語の頻度・思考タイプ別の用語提示頻度）
+- グラフ描画機能を実装（正答率の棒グラフ・反応時間ヒストグラム・思考タイプの円グラフ・誤答タグランキングのバーグラフ）
+- admin/admin.htmlに「📊 学習データ分析（Analysis）」リンクを追加
+
+### 反応時間プロファイルのラベル排除・中立化
+- 反応時間プロファイルのラベル（ギフテッド・発達など）を完全に排除
+- プロファイル名を中立的な名称に変更（general→profileA, slow→profileB, fast→profileC）
+- 「ASD・境界知能などを想定」「ギフテッド想定」などの特性ラベルを完全に削除
+- 「速め／標準／ゆっくり」のみを表示
+- profile_name→presetに変更
+- カスタム時のプロファイル名入力欄を削除
+- プリセット値を更新（profileA: instant=2/deliberate=10, profileB: instant=3/deliberate=15, profileC: instant=6/deliberate=25）
+- src/core/config.jsに後方互換性を実装（旧形式から新形式への自動変換）
+- src/player/player.jsのprofile_name参照を削除
+
+### ダミーログデータ生成スクリプト
+- scripts/generate_dummy_logs.pyを作成
+- 50件のログエントリを含むquiz_log_dummy.jsonを生成
+- 直感即答パターン・探索的思考パターン・熟慮パターンを生成
+- 誤答データにconceptTags・recommended_termsを付与
+- scripts/generate_dummy_logs.js（JavaScript版）を作成
+- scripts/verify_dummy_logs.py（整合性検証スクリプト）を作成
+- data/quiz_log_dummy.jsonを生成
+
+### Analysis ダッシュボードのデータセット管理機能の実装
+- 手動ファイルアップロードからデータセット一覧表示方式へ移行
+- src/admin/dataset_loader.jsを新規作成
+- /data/フォルダ配下のJSONファイル一覧を取得する機能を実装
+- /students/フォルダを導入（クラスデータ・個人データの両方を扱う）
+- /students/classes/サブフォルダ（クラスデータ用）を作成
+- /students/individuals/サブフォルダ（個人データ用）を作成
+- フラット構造（A方式）へ統一（/students/直下にJSONを配置）
+- classes/individualsサブフォルダを削除
+- typeで分類（class/student）する機能を実装
+- index.jsonマスターファイル方式を採用
+- students/index.jsonを新規作成
+- directory listingへの依存を削除
+- 新規データセット作成時にindex.jsonを自動更新する機能を実装
+- students/generate_index.jsを作成（index.json自動生成機能）
+- /students/フォルダ内のすべての.jsonファイルをスキャン
+- 各ファイルからdataset_nameとtypeを取得
+- index.jsonを生成してダウンロード
+- admin/analysis.htmlに「🔄 index.jsonを再生成」ボタンを追加
+- データセット一覧表示（クラス/個人の2段階表示）を実装
+- 選択中のデータセット情報を表示（データセット名・タイプ・ログ数・作成日時）
+- 新規データファイル作成UI（タイプ選択・自動でindex.jsonを更新）を実装
+- src/admin/analysis.jsにanalyze(logs)関数を追加
+- scripts/migrate_to_flat_structure.pyを作成（既存のquiz_log.jsonファイルを新しいフォーマットに変換）
+
