@@ -1,0 +1,224 @@
+/* Dashboard 基本スタイル */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f5f5f5;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+h1 {
+  color: #333;
+  margin-bottom: 2rem;
+}
+
+.controls {
+  margin-bottom: 2rem;
+}
+
+.btn-primary {
+  background: #2196F3;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: #1976D2;
+}
+
+.results-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 🟩 分析完了バナー（Google Drive型） */
+#analysis-banner {
+  background: #4CAF50;
+  color: white;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  border-bottom: 3px solid #3e8e41;
+}
+
+#analysis-banner.hidden {
+  display: none;
+}
+
+#analysis-open {
+  text-decoration: underline;
+}
+
+/* タブメニュー */
+.tab-menu {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #ddd;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: 16px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab-btn:hover {
+  color: #2196F3;
+  background: #f5f5f5;
+}
+
+.tab-btn.active {
+  color: #2196F3;
+  border-bottom-color: #2196F3;
+  font-weight: bold;
+}
+
+.tab-pages {
+  margin-top: 2rem;
+}
+
+.tab-page {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.tab-page h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.tab-page label {
+  display: block;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.tab-page select {
+  width: 100%;
+  max-width: 400px;
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+}
+
+.analysis-btn {
+  margin-top: 12px;
+  padding: 10px 20px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.analysis-btn:hover {
+  background: #45a049;
+}
+
+.analyze-btn {
+  margin-top: 12px;
+  padding: 10px 20px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.analyze-btn:hover {
+  background: #45a049;
+}
+
+#rt-analysis-result {
+  margin-top: 20px;
+}
+
+#rt-analysis-result .stats-table {
+  width: 100%;
+  max-width: 600px;
+  margin: 20px 0;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#rt-analysis-result .stats-table th,
+#rt-analysis-result .stats-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+#rt-analysis-result .stats-table th {
+  background: #f5f5f5;
+  font-weight: 600;
+  color: #333;
+}
+
+#rt-analysis-result .stats-table tr:last-child td {
+  border-bottom: none;
+}
+
+#rt-analysis-result .plot-image {
+  max-width: 100%;
+  margin-top: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+#analysis-banner {
+  background: #4CAF50;
+  color: white;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  border-bottom: 3px solid #3e8e41;
+}
+
+#analysis-banner.hidden {
+  display: none;
+}
+
+#analysis-open {
+  text-decoration: underline;
+}
+

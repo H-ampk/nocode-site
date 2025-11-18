@@ -716,3 +716,284 @@
 
 })(window);
 
+// ----------------------
+// 📊 分析タブ 初期化
+// ----------------------
+function loadStudentListForAnalysis() {
+    // DatasetLoader を使用して他のタブと同じ方法でデータセット一覧を取得
+    if (typeof DatasetLoader === 'undefined') {
+        console.error('DatasetLoader is not available');
+        const selectEl = document.getElementById('analysis-student-file');
+        if (selectEl) {
+            selectEl.innerHTML = '<option value="">DatasetLoader が読み込まれていません</option>';
+        }
+        return;
+    }
+    
+    DatasetLoader.listDatasets()
+        .then(function(datasets) {
+            const selectEl = document.getElementById('analysis-student-file');
+            if (!selectEl) return;
+            
+            selectEl.innerHTML = "";
+            
+            if (!datasets || datasets.length === 0) {
+                selectEl.innerHTML = '<option value="">データセットが見つかりませんでした</option>';
+                return;
+            }
+            
+            // データセットを選択肢として追加（dataset オブジェクト全体を value に保存）
+            datasets.forEach(function(dataset) {
+                const opt = document.createElement('option');
+                opt.value = JSON.stringify(dataset); // dataset オブジェクト全体をJSON文字列として保存
+                opt.textContent = dataset.dataset_name + ' (' + dataset.type + ')';
+                selectEl.appendChild(opt);
+            });
+        })
+        .catch(function(error) {
+            console.error('Error loading student files:', error);
+            const selectEl = document.getElementById('analysis-student-file');
+            if (selectEl) {
+                selectEl.innerHTML = '<option value="">ファイルの読み込みに失敗しました</option>';
+            }
+        });
+}
+if (document.getElementById('analysis-student-file')) {
+    loadStudentListForAnalysis();
+}
+
+// タブ切り替え時に学生ファイル一覧を読み込む
+document.addEventListener('DOMContentLoaded', function() {
+    const analysisRunTab = document.querySelector('[data-tab="analysis-run"]');
+    if (analysisRunTab) {
+        analysisRunTab.addEventListener('click', function() {
+            loadStudentListForAnalysis();
+        });
+    }
+});
+
+// ----------------------
+// 📊 Julia 分析関数（クライアント側での簡易分析）
+// ----------------------
+function runJuliaAnalysis(studentData) {
+    return new Promise(function(resolve, reject) {
+        try {
+            // ログデータを取得
+            var logs = [];
+            if (studentData.logs && Array.isArray(studentData.logs)) {
+                logs = studentData.logs;
+            } else if (Array.isArray(studentData)) {
+                logs = studentData;
+            }
+
+            if (logs.length === 0) {
+                return resolve({ error: 'ログデータが見つかりませんでした' });
+            }
+
+            // 簡易分析（Julia 分析の代替として、基本的な統計を計算）
+            var totalAnswers = logs.length;
+            var correctCount = logs.filter(function(log) { return log.correct === true; }).length;
+            var correctRate = totalAnswers > 0 ? (correctCount / totalAnswers * 100).toFixed(2) : 0;
+            
+            var responseTimes = logs.map(function(log) { return log.response_time || 0; }).filter(function(rt) { return rt >= 0; });
+            var avgResponseTime = responseTimes.length > 0 
+                ? (responseTimes.reduce(function(sum, rt) { return sum + rt; }, 0) / responseTimes.length).toFixed(2)
+                : 0;
+
+            var conceptTags = [];
+            logs.forEach(function(log) {
+                if (log.conceptTags && Array.isArray(log.conceptTags)) {
+                    log.conceptTags.forEach(function(tag) {
+                        if (conceptTags.indexOf(tag) === -1) {
+                            conceptTags.push(tag);
+                        }
+                    });
+                }
+            });
+
+            var result = {
+                totalAnswers: totalAnswers,
+                correctCount: correctCount,
+                correctRate: parseFloat(correctRate),
+                avgResponseTime: parseFloat(avgResponseTime),
+                uniqueConcepts: conceptTags.length,
+                message: 'クライアント側での簡易分析結果（Julia 分析はサーバー側で実行する必要があります）'
+            };
+
+            resolve(result);
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+// ----------------------
+// 📊 分析実行
+// ----------------------
+document.addEventListener('DOMContentLoaded', function() {
+    const runAnalysisBtn = document.getElementById('run-analysis-btn');
+    if (runAnalysisBtn) {
+        runAnalysisBtn.addEventListener('click', function() {
+            const selectedValue = document.getElementById('analysis-student-file').value;
+            if (!selectedValue) {
+                alert('生徒データを選択してください');
+                return;
+            }
+
+            // 選択されたデータセット情報をパース
+            let selectedDataset;
+            try {
+                selectedDataset = JSON.parse(selectedValue);
+            } catch (error) {
+                alert('データセット情報の解析に失敗しました');
+                return;
+            }
+
+            // ローディング表示
+            runAnalysisBtn.disabled = true;
+            runAnalysisBtn.textContent = '分析中...';
+
+            // DatasetLoader を使用して他のタブと同じ方法でデータを読み込む
+            DatasetLoader.loadDataset(selectedDataset)
+                .then(function(studentData) {
+                    // 取得した JSON をそのまま Julia 分析に渡す
+                    return runJuliaAnalysis(studentData);
+                })
+                .then(function(result) {
+                    if (result.error) {
+                        alert('分析エラー: ' + result.error);
+                        runAnalysisBtn.disabled = false;
+                        runAnalysisBtn.textContent = '📊 このデータを分析する';
+                        return;
+                    }
+                    document.getElementById('analysis-banner').classList.remove('hidden');
+                    window.latestAnalysisResult = result;
+                    runAnalysisBtn.disabled = false;
+                    runAnalysisBtn.textContent = '📊 このデータを分析する';
+                })
+                .catch(function(error) {
+                    console.error('Error running analysis:', error);
+                    alert('分析の実行に失敗しました: ' + error.message);
+                    runAnalysisBtn.disabled = false;
+                    runAnalysisBtn.textContent = '📊 このデータを分析する';
+                });
+        });
+    }
+});
+
+// ----------------------
+// 📊 結果表示（学術レポート形式）
+// ----------------------
+function renderAnalysisReport(result) {
+    if (!result) return '';
+    
+    var html = '';
+    
+    // 1. 正答率セクション
+    html += '<div class="report-card">';
+    html += '<h3>📊 正答率分析</h3>';
+    html += '<div class="report-stats">';
+    html += '<div class="report-stat-item">';
+    html += '<div class="report-stat-label">総回答数</div>';
+    html += '<div class="report-stat-value">' + (result.totalAnswers || 0) + '</div>';
+    html += '</div>';
+    html += '<div class="report-stat-item">';
+    html += '<div class="report-stat-label">正答数</div>';
+    html += '<div class="report-stat-value" style="color:#4CAF50;">' + (result.correctCount || 0) + '</div>';
+    html += '</div>';
+    html += '<div class="report-stat-item">';
+    html += '<div class="report-stat-label">正答率</div>';
+    html += '<div class="report-number" style="color:#2196F3;">' + (result.correctRate || 0).toFixed(1) + '<span style="font-size:1rem;">%</span></div>';
+    html += '</div>';
+    html += '</div>';
+    html += '<div class="report-comment">';
+    var correctComment = '';
+    if (result.correctRate >= 80) {
+        correctComment = '優秀な成績です。理解度が高いことを示しています。';
+    } else if (result.correctRate >= 60) {
+        correctComment = '良好な成績です。さらなる向上の余地があります。';
+    } else if (result.correctRate >= 40) {
+        correctComment = '基礎的な理解が不足している可能性があります。復習を推奨します。';
+    } else {
+        correctComment = '集中的な支援が必要です。基本的な概念から見直すことを推奨します。';
+    }
+    html += correctComment;
+    html += '</div>';
+    html += '</div>';
+    
+    // 2. 反応時間セクション
+    html += '<div class="report-card">';
+    html += '<h3>⏱️ 反応時間分析</h3>';
+    html += '<div style="text-align:center;">';
+    html += '<div class="report-number" style="color:#FF9800;">' + (result.avgResponseTime || 0).toFixed(2) + '<span style="font-size:1rem;">秒</span></div>';
+    html += '<div style="color:#666;margin-top:5px;">平均反応時間</div>';
+    html += '</div>';
+    html += '<div class="report-comment">';
+    var responseTimeComment = '';
+    if (result.avgResponseTime < 3) {
+        responseTimeComment = '非常に素早い反応を示しています。直感的な理解ができている可能性があります。';
+    } else if (result.avgResponseTime < 10) {
+        responseTimeComment = '適切な反応時間です。考える時間を確保しながら効率的に回答しています。';
+    } else if (result.avgResponseTime < 20) {
+        responseTimeComment = 'やや時間がかかっています。問題の理解や解法の選択に時間を使っている可能性があります。';
+    } else {
+        responseTimeComment = '反応に時間がかかっています。問題の難易度や理解度を確認し、適切な支援を検討してください。';
+    }
+    html += responseTimeComment;
+    html += '</div>';
+    html += '</div>';
+    
+    // 3. 概念使用セクション
+    html += '<div class="report-card">';
+    html += '<h3>🧩 概念使用分析</h3>';
+    html += '<div style="text-align:center;">';
+    html += '<div class="report-number" style="color:#9C27B0;">' + (result.uniqueConcepts || 0) + '<span style="font-size:1rem;">個</span></div>';
+    html += '<div style="color:#666;margin-top:5px;">使用されたユニークな概念タグ数</div>';
+    html += '</div>';
+    html += '<div class="report-comment">';
+    var conceptComment = '';
+    if (result.uniqueConcepts === 0) {
+        conceptComment = '概念タグが記録されていません。学習ログの記録方法を確認してください。';
+    } else if (result.uniqueConcepts < 3) {
+        conceptComment = '限られた概念のみが使用されています。学習範囲の拡大を検討してください。';
+    } else if (result.uniqueConcepts < 10) {
+        conceptComment = '適切な範囲の概念が使用されています。多様な学習状況が記録されています。';
+    } else {
+        conceptComment = '広範囲の概念が使用されています。包括的な学習が行われていることが示されています。';
+    }
+    html += conceptComment;
+    html += '</div>';
+    html += '</div>';
+    
+    // 4. Notes（メッセージ）セクション
+    if (result.message) {
+        html += '<div class="report-notes">';
+        html += '<h4>📝 注意事項</h4>';
+        html += '<p>' + escapeHtml(result.message) + '</p>';
+        html += '</div>';
+    }
+    
+    return html;
+}
+
+function escapeHtml(text) {
+    if (text == null) return '';
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const analysisOpen = document.getElementById('analysis-open');
+    if (analysisOpen) {
+        analysisOpen.addEventListener('click', function() {
+            const area = document.getElementById('analysis-result-area');
+            if (!area || !window.latestAnalysisResult) return;
+            
+            // JSON の生表示ではなく、学術レポート形式で表示
+            area.innerHTML = renderAnalysisReport(window.latestAnalysisResult);
+            area.scrollIntoView({behavior:'smooth'});
+        });
+    }
+});
+

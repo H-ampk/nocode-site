@@ -271,6 +271,120 @@
       border-radius: 4px;
       margin: 1rem 0;
     }
+    .analysis-btn {
+      margin-top: 12px;
+      padding: 10px 20px;
+      background: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    .analysis-btn:hover {
+      background: #1976D2;
+    }
+    #analysis-banner {
+      background: #4CAF50;
+      color: white;
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 4px;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+    }
+    #analysis-banner.hidden {
+      display: none;
+    }
+    #analysis-open {
+      text-decoration: underline;
+    }
+    #analysis-result-area {
+      margin-top: 20px;
+    }
+    /* 学術レポート形式のスタイル */
+    .report-card {
+      padding: 20px;
+      border-radius: 8px;
+      background: #fff;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border-left: 4px solid #2196F3;
+    }
+    .report-card h3 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: #2c3e50;
+      font-size: 1.3rem;
+      font-weight: 600;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 8px;
+    }
+    .report-number {
+      font-size: 2rem;
+      color: #2196F3;
+      font-weight: 700;
+      margin: 10px 0;
+      text-align: center;
+    }
+    .report-number-large {
+      font-size: 2.5rem;
+    }
+    .report-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin: 15px 0;
+    }
+    .report-stat-item {
+      text-align: center;
+      padding: 10px;
+      background: #f5f5f5;
+      border-radius: 6px;
+    }
+    .report-stat-label {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 5px;
+    }
+    .report-stat-value {
+      font-size: 1.8rem;
+      color: #2c3e50;
+      font-weight: 600;
+    }
+    .report-comment {
+      margin-top: 15px;
+      padding: 12px;
+      background: #f9f9f9;
+      border-left: 3px solid #4CAF50;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      color: #555;
+      line-height: 1.6;
+    }
+    .report-notes {
+      padding: 15px;
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 6px;
+      margin-top: 15px;
+    }
+    .report-notes h4 {
+      margin-top: 0;
+      color: #856404;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+    .report-notes p {
+      margin: 0;
+      color: #856404;
+      line-height: 1.6;
+    }
   </style>
 </head>
 <body>
@@ -320,6 +434,7 @@
       <button class="tab" data-tab="response-time">反応時間プロファイル</button>
       <button class="tab" data-tab="paths">迷いパターン分析</button>
       <button class="tab" data-tab="glossary">Glossary 提示履歴</button>
+      <button class="tab" data-tab="analysis-run">📊 分析実行</button>
     </div>
 
     <div id="tab-overall" class="tab-content active">
@@ -350,6 +465,25 @@
     <div id="tab-glossary" class="tab-content">
       <h3>Glossary 提示履歴の集計</h3>
       <div id="glossary-stats"></div>
+    </div>
+
+    <div id="tab-analysis-run" class="tab-content">
+      <h3>📊 Julia を用いた学習データ詳細分析</h3>
+
+      <p>生徒データを選択し、Julia によるバックエグザクト解析を実行します。</p>
+
+      <label>生徒データ：</label>
+      <select id="analysis-student-file"></select>
+
+      <button id="run-analysis-btn" class="analysis-btn">
+        📊 このデータを分析する
+      </button>
+
+      <div id="analysis-banner" class="hidden">
+        📊 分析が完了しました — <span id="analysis-open">結果を見る</span>
+      </div>
+
+      <div id="analysis-result-area" style="margin-top:20px;"></div>
     </div>
   </div>
 

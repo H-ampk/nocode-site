@@ -46,7 +46,9 @@
       return Promise.reject(new Error('無効なデータセット情報です'));
     }
 
-    var filePath = '../students/' + dataset.file;
+    // folder プロパティがある場合は ../students/${folder}/${file}、ない場合は ../students/${file}
+    var folderPart = dataset.folder ? dataset.folder + '/' : '';
+    var filePath = '../students/' + folderPart + dataset.file;
 
     return fetch(filePath)
       .then(function (response) {

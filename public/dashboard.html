@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard - 学習データ分析</title>
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>学習データ分析ダッシュボード</h1>
+    
+    <!-- タブメニュー -->
+    <div class="tab-menu">
+      <button class="tab-btn active" data-tab="overview">全体概要</button>
+      <button class="tab-btn" data-tab="questions">問題別分析</button>
+      <button class="tab-btn" data-tab="confusions">概念混同分析</button>
+      <button class="tab-btn" data-tab="response-time">反応時間プロファイル</button>
+      <button class="tab-btn" data-tab="paths">迷いパターン分析</button>
+      <button class="tab-btn" data-tab="glossary-history">Glossary 提示履歴</button>
+      <button class="tab-btn" data-tab="analysis-run">📊 分析実行</button>
+      <button class="tab-btn" data-tab="rt-dist">反応時間 分布分析</button>
+    </div>
+
+    <!-- タブページ -->
+    <div class="tab-pages">
+      <!-- その他のタブページ（将来実装） -->
+      
+      <!-- 📊 分析実行タブ -->
+      <div class="tab-page" id="tab-analysis-run" style="display:none;">
+        <h2>📊 学習データ分析を実行</h2>
+
+        <p>生徒データファイルを選択し、Julia によるバックグラウンド解析を開始します。</p>
+
+        <!-- 生徒ファイル選択 -->
+        <label>生徒データファイル：</label>
+        <select id="analysis-student-file"></select>
+
+        <!-- 分析実行ボタン -->
+        <button id="run-analysis-btn" class="analysis-btn">
+          📊 このデータを分析する
+        </button>
+
+        <!-- バナー（ページ上部） -->
+        <div id="analysis-banner" class="hidden">
+          📊 分析が完了しました — <span id="analysis-open">結果を見る</span>
+        </div>
+
+        <!-- 結果表示 -->
+        <div id="analysis-result-area" style="margin-top:20px;"></div>
+      </div>
+
+      <!-- 反応時間 分布分析タブ -->
+      <div class="tab-page" id="tab-rt-dist" style="display:none;">
+        <h3>反応時間 分布分析（Julia）</h3>
+        <button id="run-rt-analysis" class="analyze-btn">Juliaで分析を実行</button>
+        <div id="rt-analysis-result"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
+
