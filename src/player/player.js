@@ -154,6 +154,23 @@
 
     // ログを完成
     var log = QuizLogging.finalizeAnswer(choiceId, isCorrect);
+    
+    // ベクトルを回答ログに付与
+    if (log && choice) {
+      // 選択肢オブジェクトからvectorを取得
+      log.vector = choice.vector || {};
+      
+      // ログ形式を統一: questionId, final_answer, correct, response_time, path, vector
+      log.questionId = currentQuestion.questionId || currentQuestion.id || ('q' + currentQuestionIndex);
+      log.final_answer = choiceId;
+      log.correct = isCorrect;
+      
+      // pathは既にQuizLoggingで設定されているが、確実に設定
+      if (!log.path) {
+        var clickHistory = QuizLogging.getCurrentLog();
+        log.path = clickHistory && clickHistory.path ? clickHistory.path : [choiceId];
+      }
+    }
 
     // 誤答の場合はGlossary解説を推奨
     var explanation = null;

@@ -153,12 +153,48 @@
     };
   }
 
+  /**
+   * プロジェクト設定を読み込む（project.json）
+   * @param {string} projectId - プロジェクトID（デフォルト: 'default'）
+   * @returns {Promise<Object>} プロジェクト設定オブジェクト
+   */
+  function loadProject(projectId) {
+    projectId = projectId || 'default';
+    var projectPath = '../projects/' + projectId + '/project.json';
+    
+    return fetch(projectPath)
+      .then(function (response) {
+        if (!response.ok) {
+          // project.jsonが存在しない場合は空のオブジェクトを返す
+          console.warn('project.json が見つかりません: ' + projectPath);
+          return {};
+        }
+        return response.json();
+      })
+      .then(function (data) {
+        // values（理想ベクトル）を含むプロジェクト設定を返す
+        return {
+          project_id: data.project_id || projectId,
+          values: data.values || {},
+          // その他のプロジェクト設定も含める
+          access_mode: data.access_mode,
+          pin_code: data.pin_code
+        };
+      })
+      .catch(function (error) {
+        console.error('プロジェクト設定の読み込みに失敗しました:', error);
+        // エラー時も空のオブジェクトを返す（後方互換性のため）
+        return {};
+      });
+  }
+
   // グローバルに公開
   global.DatasetLoader = {
     listDatasets: listDatasets,
     loadDataset: loadDataset,
     createNewDataset: createNewDataset,
-    updateIndexJson: updateIndexJson
+    updateIndexJson: updateIndexJson,
+    loadProject: loadProject
   };
 
 })(window);

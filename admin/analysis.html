@@ -469,6 +469,7 @@
       <button class="tab" data-tab="response-time">反応時間プロファイル</button>
       <button class="tab" data-tab="paths">迷いパターン分析</button>
       <button class="tab" data-tab="glossary">Glossary 提示履歴</button>
+      <button class="tab" data-tab="vector">ベクトル分析</button>
       <button class="tab" data-tab="analysis-run">📊 分析実行</button>
     </div>
 
@@ -502,6 +503,19 @@
       <div id="glossary-stats"></div>
     </div>
 
+    <div id="tab-vector" class="tab-content">
+      <h3>理解ベクトル分析</h3>
+      <div id="vector-analysis">
+        <div class="metric-box" style="background: #f9f9f9; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #2196F3;">
+          <strong style="display: block; margin-bottom: 0.5rem; color: #333;">理想構造との一致度（cosine similarity）</strong>
+          <div id="vector-similarity" style="font-size: 2rem; font-weight: bold; color: #2196F3;">--%</div>
+        </div>
+
+        <h4 style="margin-top: 2rem; color: #333; border-bottom: 2px solid #eee; padding-bottom: 0.5rem;">学習者の平均ベクトル</h4>
+        <ul id="vector-axis-list" style="list-style: none; padding: 0; margin: 1rem 0;"></ul>
+      </div>
+    </div>
+
     <div id="tab-analysis-run" class="tab-content">
       <h3>📊 Julia を用いた学習データ詳細分析</h3>
 
@@ -530,6 +544,7 @@
   </section>
 
   <script src="../src/admin/dataset_loader.js"></script>
+  <script src="../analysis/metrics/vector.js"></script>
   <script src="../src/admin/analysis.js"></script>
   <script src="../students/generate_index.js"></script>
   <script>
@@ -543,6 +558,21 @@
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         this.classList.add('active');
         document.getElementById('tab-' + tabId).classList.add('active');
+        
+        // ベクトル分析タブが選択された場合、ベクトル分析を再実行
+        if (tabId === 'vector' && currentDataset) {
+          // 現在のログデータを再取得してベクトル分析を実行
+          // （既に読み込まれているデータを使用）
+          const dashboard = document.getElementById('dashboard');
+          if (dashboard && dashboard.classList.contains('active')) {
+            // 既存のログデータを使用してベクトル分析を実行
+            // この処理は loadAndAnalyze で既に実行されているため、ここでは不要
+            // ただし、タブが切り替わった時に再描画する場合は以下を有効化
+            // DatasetLoader.loadProject('default').then(function(project) {
+            //   // ログデータを再取得する必要がある場合はここで処理
+            // });
+          }
+        }
       });
     });
 
@@ -616,8 +646,14 @@
       infoDiv.innerHTML = '<strong>読み込み中...</strong> ' + escapeHtml(dataset.dataset_name);
       infoDiv.className = 'dataset-info';
 
-      DatasetLoader.loadDataset(dataset)
-        .then(function(data) {
+      // データセットとプロジェクト設定を並行して読み込む
+      Promise.all([
+        DatasetLoader.loadDataset(dataset),
+        DatasetLoader.loadProject ? DatasetLoader.loadProject('default') : Promise.resolve({})
+      ])
+        .then(function(results) {
+          const data = results[0];
+          const projectData = results[1];
           const logs = AnalysisDashboard.loadQuizLog(data);
           
           if (logs && logs.length > 0) {
@@ -637,8 +673,8 @@
             // ダッシュボードを表示
             document.getElementById('dashboard').classList.add('active');
             
-            // 分析を実行
-            AnalysisDashboard.analyze(logs);
+            // 分析を実行（projectDataを含める）
+            AnalysisDashboard.analyze(logs, projectData);
           } else {
             throw new Error('有効なログデータが見つかりませんでした。');
           }

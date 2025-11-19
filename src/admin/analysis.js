@@ -645,9 +645,109 @@
   }
 
   /**
-   * すべての統計を計算してレンダリング
+   * ベクトル分析をレンダリング
+   * @param {Object} projectData - プロジェクト設定（valuesを含む）
+   * @param {Array} logs - ログの配列
    */
-  function renderAll(logs) {
+  function renderVectorAnalysis(projectData, logs) {
+    if (!window.VectorMetrics) {
+      console.warn('VectorMetrics が読み込まれていません');
+      return;
+    }
+
+    var container = document.getElementById('vector-analysis');
+    if (!container) return;
+
+    var results = logs || [];
+
+    // --- 1. ログから vector を集計 ---
+    var sum = {};
+    var count = 0;
+
+    for (var i = 0; i < results.length; i++) {
+      var item = results[i];
+      if (!item.vector || typeof item.vector !== 'object') {
+        continue;
+      }
+      
+      var vectorEntries = Object.entries(item.vector);
+      for (var j = 0; j < vectorEntries.length; j++) {
+        var axis = vectorEntries[j][0];
+        var val = Number(vectorEntries[j][1]) || 0;
+        sum[axis] = (sum[axis] || 0) + val;
+      }
+      count++;
+    }
+
+    var avg = {};
+    for (var axisKey in sum) {
+      avg[axisKey] = sum[axisKey] / count;
+    }
+
+    // --- 2. 理想ベクトルと実績ベクトルを比較 ---
+    var idealValues = projectData.values || {};
+    var idealVector = window.VectorMetrics.toVector(idealValues);
+    var actualVector = window.VectorMetrics.toVector(avg);
+
+    // 軸を統一（理想ベクトルと実績ベクトルの両方に存在する軸のみ）
+    var allAxes = {};
+    idealVector.forEach(function(v) {
+      allAxes[v.axis] = true;
+    });
+    actualVector.forEach(function(v) {
+      allAxes[v.axis] = true;
+    });
+
+    var axisList = Object.keys(allAxes).sort();
+    var idealArr = axisList.map(function(axis) {
+      var found = idealVector.find(function(v) { return v.axis === axis; });
+      return found ? found.value : 0;
+    });
+    var actualArr = axisList.map(function(axis) {
+      var found = actualVector.find(function(v) { return v.axis === axis; });
+      return found ? found.value : 0;
+    });
+
+    var similarity = 0;
+    if (idealArr.length > 0 && actualArr.length > 0) {
+      similarity = window.VectorMetrics.cosineSimilarity(idealArr, actualArr) * 100;
+    }
+
+    // --- 3. UI 反映 ---
+    var similarityEl = document.getElementById('vector-similarity');
+    if (similarityEl) {
+      similarityEl.textContent = similarity.toFixed(1) + '%';
+    }
+
+    var ul = document.getElementById('vector-axis-list');
+    if (ul) {
+      ul.innerHTML = '';
+      actualVector.forEach(function(v) {
+        var li = document.createElement('li');
+        li.style.padding = '0.5rem';
+        li.style.marginBottom = '0.5rem';
+        li.style.background = '#f9f9f9';
+        li.style.borderRadius = '4px';
+        li.textContent = v.axis + ': ' + v.value.toFixed(2);
+        ul.appendChild(li);
+      });
+
+      if (actualVector.length === 0) {
+        var emptyLi = document.createElement('li');
+        emptyLi.style.padding = '0.5rem';
+        emptyLi.style.color = '#666';
+        emptyLi.textContent = 'ベクトルデータがありません。ログに vector フィールドが含まれているか確認してください。';
+        ul.appendChild(emptyLi);
+      }
+    }
+  }
+
+  /**
+   * すべての統計を計算してレンダリング
+   * @param {Array} logs - ログの配列
+   * @param {Object} projectData - プロジェクト設定（オプション）
+   */
+  function renderAll(logs, projectData) {
     // すべてのチャートを破棄
     Object.keys(chartInstances).forEach(function(key) {
       if (chartInstances[key]) {
@@ -676,6 +776,25 @@
     var responseTimes = logs.map(function(log) { return log.response_time || 0; }).filter(function(rt) { return rt > 0 && rt != null; });
     if (responseTimes.length > 0) {
       runRTFitting(responseTimes);
+    }
+    
+    // ベクトル分析を実行（projectDataがある場合）
+    if (projectData) {
+      renderVectorAnalysis(projectData, logs);
+    } else {
+      // projectDataがない場合はデフォルトプロジェクトを読み込む
+      if (window.DatasetLoader && window.DatasetLoader.loadProject) {
+        window.DatasetLoader.loadProject('default')
+          .then(function(project) {
+            renderVectorAnalysis(project, logs);
+          })
+          .catch(function(error) {
+            console.warn('プロジェクト設定の読み込みに失敗しました:', error);
+            renderVectorAnalysis({}, logs);
+          });
+      } else {
+        renderVectorAnalysis({}, logs);
+      }
     }
   }
 
@@ -899,13 +1018,42 @@
   /**
    * ログデータを分析してダッシュボードを描画（外部から呼び出すための関数）
    * @param {Array} logs - ログの配列
+   * @param {Object} projectData - プロジェクト設定（オプション）
    */
-  function analyze(logs) {
+  function analyze(logs, projectData) {
     if (!logs || logs.length === 0) {
       console.warn('ログデータが空です');
       return;
     }
+    renderAll(logs, projectData);
+  }
+
+  /**
+   * すべての統計を計算してレンダリング（projectData対応版）
+   * @param {Array} logs - ログの配列
+   * @param {Object} projectData - プロジェクト設定（オプション）
+   */
+  function renderAllWithProject(logs, projectData) {
     renderAll(logs);
+    
+    // ベクトル分析を実行（projectDataがある場合）
+    if (projectData) {
+      renderVectorAnalysis(projectData, logs);
+    } else {
+      // projectDataがない場合はデフォルトプロジェクトを読み込む
+      if (window.DatasetLoader && window.DatasetLoader.loadProject) {
+        window.DatasetLoader.loadProject('default')
+          .then(function(project) {
+            renderVectorAnalysis(project, logs);
+          })
+          .catch(function(error) {
+            console.warn('プロジェクト設定の読み込みに失敗しました:', error);
+            renderVectorAnalysis({}, logs);
+          });
+      } else {
+        renderVectorAnalysis({}, logs);
+      }
+    }
   }
 
   // グローバルに公開
@@ -923,7 +1071,9 @@
     renderResponseTimeStats: renderResponseTimeStats,
     renderPathStats: renderPathStats,
     renderGlossaryStats: renderGlossaryStats,
+    renderVectorAnalysis: renderVectorAnalysis,
     renderAll: renderAll,
+    renderAllWithProject: renderAllWithProject,
     analyze: analyze
   };
 

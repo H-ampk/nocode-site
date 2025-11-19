@@ -2505,6 +2505,27 @@ function showPreview() {
 
 // プロジェクトを保存
 function saveProject() {
+    // 保存前に選択肢のvectorを設定
+    gameData.questions.forEach(function(question) {
+        if (question.vector_scores && Array.isArray(question.choices)) {
+            question.choices.forEach(function(choice) {
+                const choiceId = choice.id || choice.value;
+                if (choiceId && question.vector_scores[choiceId]) {
+                    // 選択肢オブジェクトにvectorを追加
+                    choice.vector = question.vector_scores[choiceId];
+                } else {
+                    // vector_scoresにない場合は空オブジェクトまたは既存のvectorを保持
+                    choice.vector = choice.vector || {};
+                }
+            });
+        } else if (Array.isArray(question.choices)) {
+            // vector_scoresがない場合でも、既存のvectorを保持
+            question.choices.forEach(function(choice) {
+                choice.vector = choice.vector || {};
+            });
+        }
+    });
+    
     const dataStr = JSON.stringify(gameData, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
