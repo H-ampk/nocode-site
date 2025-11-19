@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Glossary</title>
+  <link rel="stylesheet" href="../public/css/main.css" />
+  <script src="../core/config.js"></script>
+  <script src="../admin/pin.js" defer></script>
+  <script src="glossary.js" defer></script>
+  <script>window.addEventListener('DOMContentLoaded',function(){ if(window.AdminAuth) AdminAuth.init({admin:true}); });</script>
+  <style>
+    .glossary-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .form-section {
+      background: #fff;
+      padding: 1.5rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #333;
+    }
+    .form-group input[type="text"],
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 5px;
+      font-size: 1em;
+      box-sizing: border-box;
+    }
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    .form-group input[type="text"]:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    #domainCheckboxes {
+      margin-top: 0.5rem;
+    }
+    #domainCheckboxes label {
+      font-weight: normal;
+      margin-bottom: 0.3rem;
+    }
+    .custom-domain-group {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .custom-domain-group input {
+      flex: 1;
+    }
+    .custom-domain-group button {
+      white-space: nowrap;
+    }
+    .button-group {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .button-group button {
+      padding: 0.75rem 1.5rem;
+      font-size: 1em;
+    }
+    .list-section {
+      background: #fff;
+      padding: 1.5rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+    .term-item {
+      transition: box-shadow 0.2s;
+    }
+    .term-item:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .btn-danger {
+      background: #e53e3e;
+      color: white;
+    }
+    .btn-danger:hover {
+      background: #c53030;
+    }
+    .project-info {
+      background: #f7fafc;
+      padding: 0.75rem 1rem;
+      border-radius: 5px;
+      margin-bottom: 1rem;
+      font-size: 0.9em;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>Glossary（用語集管理）</h1>
+  <div class="menu">
+    <a href="../../admin/admin.html">← 管理ダッシュボードに戻る</a>
+  </div>
+
+  <div class="glossary-container">
+    <div class="project-info">
+      <strong>編集対象プロジェクト:</strong> <span id="currentProjectId">default</span>
+      <br/>
+      <small>プロジェクトIDは localStorage から自動取得されます。変更する場合は <a href="../../admin/project_manager.html">プロジェクト設定</a> で設定してください。</small>
+    </div>
+
+    <!-- 用語追加フォーム -->
+    <div id="termForm" class="form-section">
+      <h2>用語を追加・編集</h2>
+      
+      <div class="form-group">
+        <label for="termWord">用語名 <span style="color: red;">*</span></label>
+        <input type="text" id="termWord" placeholder="例: 認知" required />
+      </div>
+
+      <div class="form-group">
+        <label for="termDefinition">説明文 <span style="color: red;">*</span></label>
+        <textarea id="termDefinition" placeholder="例: 情報を獲得し、処理し、利用する心的プロセス。" required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>分野（複数選択可）</label>
+        <div id="domainCheckboxes">
+          <!-- デフォルト分野は glossary.js で動的に生成 -->
+        </div>
+        
+        <div class="custom-domain-group">
+          <input type="text" id="customDomain" placeholder="カスタム分野を入力（Enter キーで追加）" />
+          <button class="btn" id="addCustomDomainButton" type="button">分野を追加</button>
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button class="btn" id="addTermButton">用語を追加</button>
+        <button class="btn" id="saveButton">glossary.json を保存</button>
+      </div>
+    </div>
+
+    <!-- 用語一覧 -->
+    <div class="list-section">
+      <h2>用語一覧</h2>
+      <div id="termList">
+        <p style="color: #999; padding: 1rem;">読み込み中...</p>
+      </div>
+    </div>
+
+    <!-- システム情報 -->
+    <div style="background:#fff;padding:1rem;border:1px solid #ddd;border-radius:8px;max-width:640px;margin-top:1rem;">
+      <h2>Glossary システム</h2>
+      <p>3層構造のGlossaryシステムが利用可能です：</p>
+      <ul>
+        <li><strong>Project Glossary</strong>: プロジェクト固有の用語集（<code>projects/{id}/glossary.json</code>）</li>
+        <li><strong>Domain Glossary</strong>: 学問領域ごとの用語集（<code>src/glossary/domains/{domain}.json</code>）</li>
+        <li><strong>Global Glossary</strong>: 分野横断の基底辞書（<code>src/glossary/global.json</code>）</li>
+      </ul>
+      
+      <h3>設定</h3>
+      <p>Glossary接続設定は <a href="../../admin/project_manager.html">プロジェクト設定</a> で行えます。</p>
+      
+      <h3>テスト</h3>
+      <p><a href="glossary_test.html">Glossary Loader テストページ</a> で動作確認ができます。</p>
+    </div>
+  </div>
+
+  <script>
+    // DOMContentLoaded で初期化
+    window.addEventListener('DOMContentLoaded', function() {
+      if (window.GlossaryEditor) {
+        GlossaryEditor.init();
+      }
+    });
+  </script>
+</body>
+</html>
+
+

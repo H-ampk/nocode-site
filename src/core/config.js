@@ -1,6 +1,24 @@
 (function (global) {
   function getConfigPath(projectId) {
-    return 'projects/' + projectId + '/project.json';
+    // 現在のページのパスに基づいて適切なパスを計算
+    var pathname = window.location.pathname;
+    var base = '';
+    
+    if (pathname.indexOf('/src/player/') >= 0) {
+      // src/player/index.html や demo.html から見た場合
+      base = '../../';
+    } else if (pathname.indexOf('/src/') >= 0) {
+      // その他の src/ 配下から見た場合
+      base = '../../';
+    } else if (pathname.indexOf('/admin/') >= 0) {
+      // admin/ から見た場合
+      base = '../';
+    } else {
+      // ルートから見た場合（main.html など）
+      base = '';
+    }
+    
+    return base + 'projects/' + projectId + '/project.json';
   }
   function getAdminConfigPath(projectId) {
     // 現在のページのパスに基づいて適切なパスを計算
@@ -12,6 +30,15 @@
       base = '../';
     } else if (pathname.indexOf('/src/editor/') >= 0) {
       // src/editor/editor.html から見た場合
+      base = '../../';
+    } else if (pathname.indexOf('/src/glossary/') >= 0) {
+      // src/glossary/glossary.html から見た場合
+      base = '../../';
+    } else if (pathname.indexOf('/src/player/') >= 0) {
+      // src/player/index.html から見た場合
+      base = '../../';
+    } else if (pathname.indexOf('/src/admin/') >= 0) {
+      // src/admin/ から見た場合（直接アクセスは稀だが念のため）
       base = '../../';
     } else {
       // その他の場合（フォールバック）

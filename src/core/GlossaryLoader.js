@@ -3,8 +3,8 @@
  * 
  * 3層構造:
  * 1. Project Glossary: /projects/{projectId}/glossary.json
- * 2. Domain Glossary: /glossary/domains/{domainName}.json
- * 3. Global Glossary: /glossary/global.json
+ * 2. Domain Glossary: /src/glossary/domains/{domainName}.json
+ * 3. Global Glossary: /src/glossary/global.json
  */
 
 (function (global) {
@@ -12,18 +12,34 @@
 
   /**
    * 現在のページのパスに基づいて適切なベースパスを取得
-   * @param {boolean} admin - admin モードかどうか
+   * @param {boolean} admin - admin モードかどうか（現在は使用されていないが互換性のため残す）
    * @returns {string} ベースパス（例: '../', '../../', ''）
    */
   function getBasePath(admin) {
-    if (!admin) return '';
     var pathname = window.location.pathname;
-    if (pathname.indexOf('/admin/') >= 0) {
-      return '../';
-    } else if (pathname.indexOf('/src/editor/') >= 0) {
+    
+    // 現在のページのパスに基づいて適切なパスを計算
+    if (pathname.indexOf('/src/player/') >= 0) {
+      // src/player/index.html や demo.html から見た場合
       return '../../';
-    } else {
+    } else if (pathname.indexOf('/src/editor/') >= 0) {
+      // src/editor/editor.html から見た場合
+      return '../../';
+    } else if (pathname.indexOf('/src/glossary/') >= 0) {
+      // src/glossary/glossary.html から見た場合
+      return '../../';
+    } else if (pathname.indexOf('/src/admin/') >= 0) {
+      // src/admin/ から見た場合
+      return '../../';
+    } else if (pathname.indexOf('/src/') >= 0) {
+      // その他の src/ 配下から見た場合
+      return '../../';
+    } else if (pathname.indexOf('/admin/') >= 0) {
+      // admin/ から見た場合
       return '../';
+    } else {
+      // ルートから見た場合（main.html など）
+      return '';
     }
   }
 
@@ -79,7 +95,7 @@
   function loadDomainGlossary(domainName, opts) {
     var admin = opts && opts.admin;
     var base = getBasePath(admin);
-    var path = base + 'glossary/domains/' + domainName + '.json';
+    var path = base + 'src/glossary/domains/' + domainName + '.json';
     
     return fetch(path, { cache: 'no-store' })
       .then(function (response) {
@@ -115,7 +131,7 @@
   function loadGlobalGlossary(opts) {
     var admin = opts && opts.admin;
     var base = getBasePath(admin);
-    var path = base + 'glossary/global.json';
+    var path = base + 'src/glossary/global.json';
     
     return fetch(path, { cache: 'no-store' })
       .then(function (response) {
