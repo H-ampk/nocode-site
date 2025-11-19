@@ -750,6 +750,16 @@ function showQuestionEditor(question) {
         </div>
         
         <div class="form-group" style="border-top: 2px solid #e2e8f0; padding-top: 20px; margin-top: 20px;">
+            <h2 style="color: #2d3748; margin-bottom: 10px; font-size: 1.2rem;">🧩 理解分析（ベクトル設定）</h2>
+            <p style="color: #718096; font-size: 0.9em; margin-bottom: 15px;">この質問が生徒の理解傾向に与える影響を設定します。Glossaryから評価軸を自動取得します。</p>
+            <div id="vectorSettingArea"></div>
+            <div style="margin-top: 15px; padding: 10px; background: #f0f0f0; border-radius: 8px; font-size: 0.9em; color: #555;">
+                <strong>詳細表示（JSON）:</strong>
+                <pre id="vectorSettingJson" style="margin-top: 8px; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 4px; font-size: 0.85em; max-height: 200px; overflow-y: auto;"></pre>
+            </div>
+        </div>
+        
+        <div class="form-group" style="border-top: 2px solid #e2e8f0; padding-top: 20px; margin-top: 20px;">
             <h3 style="color: #2d3748; margin-bottom: 15px;">🎨 デザイン設定</h3>
             
             <div style="background: #f7fafc; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
@@ -943,6 +953,11 @@ function showQuestionEditor(question) {
     // 選択肢を表示
     updateChoicesList(question);
     
+    // 理解分析（ベクトル設定）UIを表示
+    setTimeout(function() {
+        renderVectorSettingsForQuestion(question);
+    }, 150);
+    
     // 背景タイプの変更時に表示を切り替える
     setTimeout(() => {
         const backgroundTypeSelect = document.getElementById('backgroundType');
@@ -1022,9 +1037,12 @@ function showDiagnosticQuestionEditor(question) {
         </div>
         <div class="form-group">
             <label>スコアリング設定</label>
-            <p style="color: #718096; font-size: 0.9em; margin-bottom: 10px;">choice_id（または yes/no/scale など）ごとにスコアベクトル(JSON)を設定します。</p>
+            <p style="color: #718096; font-size: 0.9em; margin-bottom: 10px;">各選択肢で影響する評価軸を設定します。Glossaryから評価軸を自動取得します。</p>
             <div id="diagnosticScoringList"></div>
-            <button class="btn" type="button" style="margin-top: 10px;" onclick="addDiagnosticScoring('${question.id}')">+ スコアルールを追加</button>
+            <div style="margin-top: 15px; padding: 10px; background: #f0f0f0; border-radius: 8px; font-size: 0.9em; color: #555;">
+                <strong>詳細表示（JSON）:</strong>
+                <pre id="diagnosticScoringJson" style="margin-top: 8px; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 4px; font-size: 0.85em; max-height: 200px; overflow-y: auto;"></pre>
+            </div>
         </div>
         <div class="form-group">
             <label>分岐設定</label>
@@ -1038,8 +1056,11 @@ function showDiagnosticQuestionEditor(question) {
     `;
     
     renderDiagnosticChoicesList(question);
-    renderDiagnosticScoringList(question);
     renderDiagnosticNextList(question);
+    // スコアリングUIは選択肢の後に表示（選択肢IDが必要なため）
+    setTimeout(function() {
+        renderDiagnosticScoringList(question);
+    }, 100);
 }
 
 function renderDiagnosticChoicesList(question) {
@@ -1068,30 +1089,458 @@ function renderDiagnosticChoicesList(question) {
     `).join('');
 }
 
+// Glossaryから評価軸を取得してスコアリングUIを表示
+let cachedGlossary = null;
+
+async function loadGlossaryForScoring() {
+    // テンプレートが読み込まれている場合は優先
+    // window.currentGlossary は terms オブジェクトそのものを保持
+    if (window.currentGlossary) {
+        return window.currentGlossary;
+    }
+    
+    if (cachedGlossary) return cachedGlossary;
+    
+    try {
+        const projectId = localStorage.getItem('projectId') || 'default';
+        const projectGlossary = await GlossaryLoader.loadProjectGlossary(projectId, { admin: false });
+        const globalGlossary = await GlossaryLoader.loadGlobalGlossary({ admin: false });
+        const merged = GlossaryLoader.mergeGlossaries([globalGlossary, projectGlossary]);
+        
+        // termsオブジェクトを取得（配列形式の場合は変換）
+        let terms = {};
+        if (merged.terms) {
+            if (Array.isArray(merged.terms)) {
+                merged.terms.forEach(function(term) {
+                    if (term && term.id) {
+                        terms[term.id] = term;
+                    }
+                });
+            } else {
+                terms = merged.terms;
+            }
+        } else {
+            // termsがない場合はmerged自体がtermsオブジェクトの可能性
+            terms = merged;
+        }
+        
+        cachedGlossary = terms;
+        return terms;
+    } catch (error) {
+        console.warn('Glossary読み込みエラー:', error);
+        return {};
+    }
+}
+
+// ベクトル設定UIを更新（テンプレート読み込み時に呼び出される）
+// 引数は glossaryTerms オブジェクト（glossary.terms を渡す）
+window.refreshVectorAxis = function(glossaryTerms) {
+    // グローバル変数に設定
+    window.currentGlossary = glossaryTerms;
+    
+    // キャッシュをクリア
+    cachedGlossary = null;
+    
+    // 現在編集中の質問がある場合は、ベクトル設定UIを再描画
+    if (selectedNodeId) {
+        const question = gameData.questions.find(function(q) { return q.id === selectedNodeId; });
+        if (question) {
+            if (question.type === 'diagnostic_question') {
+                setTimeout(function() {
+                    renderDiagnosticScoringList(question);
+                }, 100);
+            } else {
+                setTimeout(function() {
+                    renderVectorSettingsForQuestion(question);
+                }, 100);
+            }
+        }
+    }
+};
+
 function renderDiagnosticScoringList(question) {
     const container = document.getElementById('diagnosticScoringList');
     if (!container) return;
-    if (!Array.isArray(question.scoring) || question.scoring.length === 0) {
-        container.innerHTML = `<div style="padding: 10px; background: #edf2f7; border-radius: 8px;">スコア設定がありません。</div>`;
+    
+    // デバッグログ: テンプレートGlossaryの使用状況を確認
+    console.log('[Diagnostic] Using Glossary terms:', window.currentGlossary);
+    
+    // 選択肢がない場合はメッセージを表示
+    if (!Array.isArray(question.choices) || question.choices.length === 0) {
+        container.innerHTML = `<div style="padding: 10px; background: #edf2f7; border-radius: 8px;">まず選択肢を追加してください。</div>`;
+        updateScoringJson(question);
         return;
     }
-    container.innerHTML = question.scoring.map((rule, index) => `
-        <div class="choice-item" style="flex-direction: column; gap: 6px;">
-            <div style="display: flex; gap: 10px;">
-                <div style="flex: 0 0 160px;">
-                    <small>choice_id / キー</small>
-                    <input type="text" value="${escapeHtml(rule.choice_id || '')}" onchange="updateDiagnosticScoring('${question.id}', ${index}, 'choice_id', this.value)">
+    
+    container.innerHTML = '<div style="padding: 10px; background: #e6f3ff; border-radius: 8px; margin-bottom: 15px;">Glossaryから評価軸を読み込み中...</div>';
+    
+    // Glossaryを読み込んで評価軸UIを表示
+    loadGlossaryForScoring().then(function(glossaryTerms) {
+        if (!glossaryTerms || Object.keys(glossaryTerms).length === 0) {
+            container.innerHTML = `<div style="padding: 10px; background: #fff3cd; border-radius: 8px; margin-bottom: 15px;">
+                <strong>⚠️ 評価軸が見つかりません</strong><br>
+                Glossaryに用語が登録されていないか、読み込みに失敗しました。
+            </div>`;
+            updateScoringJson(question);
+            return;
+        }
+        
+        // 各選択肢ごとに評価軸UIを表示
+        const scoringHtml = question.choices.map(function(choice) {
+            const choiceId = choice.id || '';
+            if (!choiceId) return '';
+            
+            const existingRule = (question.scoring || []).find(function(r) { return r.choice_id === choiceId; });
+            const existingVector = existingRule ? existingRule.vector : {};
+            
+            return `
+                <div class="score-setting" style="margin-bottom: 25px; padding: 15px; background: #fafafa; border: 1px solid #ddd; border-radius: 8px;">
+                    <h3 style="margin-top: 0; margin-bottom: 15px; color: #333; font-size: 1.1rem;">選択肢「${escapeHtml(choice.text || choiceId)}」（ID: ${escapeHtml(choiceId)}）</h3>
+                    <div id="scoreAxisList-${escapeHtml(choiceId)}" data-choice-id="${escapeHtml(choiceId)}"></div>
                 </div>
-                <div style="flex: 1;">
-                    <small>ベクトル(JSON)</small>
-                    <textarea style="min-height: 80px;" onchange="updateDiagnosticScoringVector('${question.id}', ${index}, this.value)">${escapeHtml(JSON.stringify(rule.vector || {}, null, 2))}</textarea>
+            `;
+        }).join('');
+        
+        container.innerHTML = scoringHtml;
+        
+        // 各選択肢の評価軸UIを描画
+        question.choices.forEach(function(choice) {
+            const choiceId = choice.id || '';
+            if (!choiceId) return;
+            
+            const existingRule = (question.scoring || []).find(function(r) { return r.choice_id === choiceId; });
+            const existingVector = existingRule ? existingRule.vector : {};
+            
+            renderAxisUI(glossaryTerms, choiceId, question.id, existingVector);
+        });
+        
+        updateScoringJson(question);
+    });
+}
+
+// 評価軸UIを描画
+function renderAxisUI(glossaryTerms, choiceId, questionId, existingVector) {
+    const container = document.getElementById(`scoreAxisList-${choiceId}`);
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    if (!glossaryTerms || Object.keys(glossaryTerms).length === 0) {
+        container.innerHTML = '<div style="padding: 10px; background: #fff3cd; border-radius: 8px;">評価軸が見つかりません。</div>';
+        return;
+    }
+    
+    Object.values(glossaryTerms).forEach(function(term) {
+        if (!term || !term.id) return;
+        
+        // term.idから評価軸キーを取得（例: "concept.logic" → "logic"）
+        const key = term.id.split('.').pop();
+        const currentValue = existingVector[key] !== undefined ? existingVector[key] : 0;
+        
+        const card = document.createElement('div');
+        card.className = 'score-axis-card';
+        card.setAttribute('data-axis', key);
+        
+        const termName = escapeHtml(term.name || key);
+        const definition = escapeHtml(term.definition || '（説明なし）');
+        
+        card.innerHTML = `
+            <div class="axis-title">${termName} (${escapeHtml(key)})</div>
+            <div class="axis-desc">${definition}</div>
+            <div class="score-radio-group">
+                <label style="cursor: pointer;">
+                    <input type="radio" name="${escapeHtml(choiceId)}-${escapeHtml(key)}" value="-1" ${currentValue === -1 ? 'checked' : ''} 
+                           onchange="updateAxisScore('${escapeHtml(questionId)}', '${escapeHtml(choiceId)}', '${escapeHtml(key)}', -1)">
+                    <span>-1 弱まる</span>
+                </label>
+                <label style="cursor: pointer;">
+                    <input type="radio" name="${escapeHtml(choiceId)}-${escapeHtml(key)}" value="0" ${currentValue === 0 ? 'checked' : ''} 
+                           onchange="updateAxisScore('${escapeHtml(questionId)}', '${escapeHtml(choiceId)}', '${escapeHtml(key)}', 0)">
+                    <span>0 影響なし</span>
+                </label>
+                <label style="cursor: pointer;">
+                    <input type="radio" name="${escapeHtml(choiceId)}-${escapeHtml(key)}" value="1" ${currentValue === 1 ? 'checked' : ''} 
+                           onchange="updateAxisScore('${escapeHtml(questionId)}', '${escapeHtml(choiceId)}', '${escapeHtml(key)}', 1)">
+                    <span>+1 強まる</span>
+                </label>
+            </div>
+        `;
+        
+        container.appendChild(card);
+    });
+}
+
+// 評価軸のスコアを更新
+function updateAxisScore(questionId, choiceId, axis, value) {
+    const question = gameData.questions.find(function(q) { return q.id === questionId && q.type === 'diagnostic_question'; });
+    if (!question) return;
+    
+    question.scoring = Array.isArray(question.scoring) ? question.scoring : [];
+    
+    let rule = question.scoring.find(function(r) { return r.choice_id === choiceId; });
+    if (!rule) {
+        rule = { choice_id: choiceId, vector: {} };
+        question.scoring.push(rule);
+    }
+    
+    if (!rule.vector) {
+        rule.vector = {};
+    }
+    
+    if (value === 0) {
+        // 0の場合は削除（影響なし）
+        delete rule.vector[axis];
+    } else {
+        rule.vector[axis] = value;
+    }
+    
+    // 空のvectorの場合は削除
+    if (Object.keys(rule.vector).length === 0) {
+        const index = question.scoring.indexOf(rule);
+        if (index >= 0) {
+            question.scoring.splice(index, 1);
+        }
+    }
+    
+    updateScoringJson(question);
+    updateUI();
+    showPreview();
+}
+
+// スコアリングJSONを更新（詳細表示用）
+function updateScoringJson(question) {
+    const jsonContainer = document.getElementById('diagnosticScoringJson');
+    if (!jsonContainer) return;
+    
+    const scoring = Array.isArray(question.scoring) ? question.scoring : [];
+    jsonContainer.textContent = JSON.stringify(scoring, null, 2);
+}
+
+// スコアベクトルを収集（既存の関数を置き換え）
+function collectScoreVector(choiceId) {
+    const container = document.getElementById(`scoreAxisList-${choiceId}`);
+    if (!container) return {};
+    
+    const cards = container.querySelectorAll('.score-axis-card');
+    const result = {};
+    
+    cards.forEach(function(card) {
+        const axis = card.getAttribute('data-axis');
+        const selected = card.querySelector(`input[name="${choiceId}-${axis}"]:checked`);
+        if (selected) {
+            const value = Number(selected.value);
+            if (value !== 0) {
+                result[axis] = value;
+            }
+        }
+    });
+    
+    return result;
+}
+
+// 通常クイズ用のベクトル設定UIを表示
+async function renderVectorSettingsForQuestion(question) {
+    const area = document.getElementById('vectorSettingArea');
+    if (!area) return;
+    
+    // 選択肢がない場合はメッセージを表示
+    if (!Array.isArray(question.choices) || question.choices.length === 0) {
+        area.innerHTML = '<div style="padding: 10px; background: #edf2f7; border-radius: 8px;">まず選択肢を追加してください。</div>';
+        updateVectorJson(question);
+        return;
+    }
+    
+    area.innerHTML = '<div style="padding: 10px; background: #e6f3ff; border-radius: 8px; margin-bottom: 15px;">Glossaryから評価軸を読み込み中...</div>';
+    
+    // Glossaryを読み込んで評価軸UIを表示
+    try {
+        const glossaryTerms = await loadGlossaryForScoring();
+        
+        if (!glossaryTerms || Object.keys(glossaryTerms).length === 0) {
+            area.innerHTML = `<div style="padding: 10px; background: #fff3cd; border-radius: 8px; margin-bottom: 15px;">
+                <strong>⚠️ 評価軸が見つかりません</strong><br>
+                Glossaryに用語が登録されていないか、読み込みに失敗しました。
+            </div>`;
+            updateVectorJson(question);
+            return;
+        }
+        
+        // 既存のベクトル設定を取得
+        const existingVectors = question.vector_scores || {};
+        
+        // 各選択肢ごとに評価軸UIを表示
+        const vectorHtml = question.choices.map(function(choice, index) {
+            // 選択肢IDを生成（既存のid、value、またはインデックスベース）
+            let choiceId = choice.id || choice.value;
+            if (!choiceId) {
+                choiceId = `choice_${index}`;
+                choice.id = choiceId;
+            }
+            
+            const existingVector = existingVectors[choiceId] || {};
+            
+            return `
+                <div style="margin-bottom: 25px; padding: 15px; background: #fafafa; border: 1px solid #ddd; border-radius: 8px;">
+                    <h3 style="margin-top: 0; margin-bottom: 15px; color: #333; font-size: 1.1rem;">選択肢「${escapeHtml(choice.text || choiceId)}」（ID: ${escapeHtml(choiceId)}）</h3>
+                    <div id="vectorAxisList-${escapeHtml(choiceId)}" data-choice-id="${escapeHtml(choiceId)}"></div>
                 </div>
+            `;
+        }).join('');
+        
+        area.innerHTML = vectorHtml;
+        
+        // 各選択肢の評価軸UIを描画
+        question.choices.forEach(function(choice, index) {
+            // 選択肢IDを生成（既存のid、value、またはインデックスベース）
+            let choiceId = choice.id || choice.value;
+            if (!choiceId) {
+                choiceId = `choice_${index}`;
+                choice.id = choiceId;
+            }
+            
+            const existingVector = (question.vector_scores || {})[choiceId] || {};
+            renderVectorAxisUI(glossaryTerms, choiceId, question.id, existingVector);
+        });
+        
+        updateVectorJson(question);
+    } catch (error) {
+        console.warn('Glossary読み込みエラー:', error);
+        area.innerHTML = `<div style="padding: 10px; background: #fff3cd; border-radius: 8px; margin-bottom: 15px;">
+            <strong>⚠️ 評価軸の読み込みに失敗しました</strong><br>
+            ${escapeHtml(error.message || '不明なエラー')}
+        </div>`;
+        updateVectorJson(question);
+    }
+}
+
+// 通常クイズ用の評価軸UIを描画
+function renderVectorAxisUI(glossaryTerms, choiceId, questionId, existingVector) {
+    const container = document.getElementById(`vectorAxisList-${choiceId}`);
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    if (!glossaryTerms || Object.keys(glossaryTerms).length === 0) {
+        container.innerHTML = '<div style="padding: 10px; background: #fff3cd; border-radius: 8px;">評価軸が見つかりません。</div>';
+        return;
+    }
+    
+    Object.values(glossaryTerms).forEach(function(term) {
+        if (!term || !term.id) return;
+        
+        // term.idから評価軸キーを取得（例: "concept.logic" → "logic"）
+        const key = term.id.split('.').pop();
+        const currentValue = existingVector[key] !== undefined ? existingVector[key] : 0;
+        
+        const card = document.createElement('div');
+        card.className = 'score-axis-card';
+        card.setAttribute('data-axis', key);
+        card.setAttribute('data-choice', choiceId);
+        
+        const termName = escapeHtml(term.name || key);
+        const definition = escapeHtml(term.definition || '（説明なし）');
+        
+        card.innerHTML = `
+            <div class="axis-title">${termName} (${escapeHtml(key)})</div>
+            <div class="axis-desc">${definition}</div>
+            <div class="score-radio-group">
+                <label style="cursor: pointer;">
+                    <input type="radio" name="${escapeHtml(choiceId)}-${escapeHtml(key)}" value="-1" ${currentValue === -1 ? 'checked' : ''} 
+                           onchange="updateVectorAxisScore('${escapeHtml(questionId)}', '${escapeHtml(choiceId)}', '${escapeHtml(key)}', -1)">
+                    <span>-1 弱まる</span>
+                </label>
+                <label style="cursor: pointer;">
+                    <input type="radio" name="${escapeHtml(choiceId)}-${escapeHtml(key)}" value="0" ${currentValue === 0 ? 'checked' : ''} 
+                           onchange="updateVectorAxisScore('${escapeHtml(questionId)}', '${escapeHtml(choiceId)}', '${escapeHtml(key)}', 0)">
+                    <span>0 影響なし</span>
+                </label>
+                <label style="cursor: pointer;">
+                    <input type="radio" name="${escapeHtml(choiceId)}-${escapeHtml(key)}" value="1" ${currentValue === 1 ? 'checked' : ''} 
+                           onchange="updateVectorAxisScore('${escapeHtml(questionId)}', '${escapeHtml(choiceId)}', '${escapeHtml(key)}', 1)">
+                    <span>+1 強まる</span>
+                </label>
             </div>
-            <div style="text-align: right;">
-                <button type="button" onclick="removeDiagnosticScoring('${question.id}', ${index})">削除</button>
-            </div>
-        </div>
-    `).join('');
+        `;
+        
+        container.appendChild(card);
+    });
+}
+
+// 通常クイズ用の評価軸スコアを更新
+function updateVectorAxisScore(questionId, choiceId, axis, value) {
+    const question = gameData.questions.find(function(q) { return q.id === questionId; });
+    if (!question) return;
+    
+    if (!question.vector_scores) {
+        question.vector_scores = {};
+    }
+    
+    if (!question.vector_scores[choiceId]) {
+        question.vector_scores[choiceId] = {};
+    }
+    
+    if (value === 0) {
+        // 0の場合は削除（影響なし）
+        delete question.vector_scores[choiceId][axis];
+    } else {
+        question.vector_scores[choiceId][axis] = value;
+    }
+    
+    // 空のvectorの場合は削除
+    if (Object.keys(question.vector_scores[choiceId]).length === 0) {
+        delete question.vector_scores[choiceId];
+    }
+    
+    // 空のvector_scoresの場合は削除
+    if (Object.keys(question.vector_scores).length === 0) {
+        delete question.vector_scores;
+    }
+    
+    updateVectorJson(question);
+    updateUI();
+    showPreview();
+}
+
+// 通常クイズ用のベクトルJSONを更新（詳細表示用）
+function updateVectorJson(question) {
+    const jsonContainer = document.getElementById('vectorSettingJson');
+    if (!jsonContainer) return;
+    
+    const vectorScores = question.vector_scores || {};
+    jsonContainer.textContent = JSON.stringify(vectorScores, null, 2);
+}
+
+// 通常クイズ用のベクトルスコアを収集
+function collectVectorScores(choices) {
+    const result = {};
+    
+    choices.forEach(function(choice) {
+        const choiceId = choice.id || choice.value || '';
+        if (!choiceId) return;
+        
+        const container = document.getElementById(`vectorAxisList-${choiceId}`);
+        if (!container) return;
+        
+        const cards = container.querySelectorAll('.score-axis-card');
+        const vector = {};
+        
+        cards.forEach(function(card) {
+            const axis = card.getAttribute('data-axis');
+            const selected = card.querySelector(`input[name="${choiceId}-${axis}"]:checked`);
+            if (selected) {
+                const value = Number(selected.value);
+                if (value !== 0) {
+                    vector[axis] = value;
+                }
+            }
+        });
+        
+        if (Object.keys(vector).length > 0) {
+            result[choiceId] = vector;
+        }
+    });
+    
+    return result;
 }
 
 function renderDiagnosticNextList(question) {
@@ -1177,6 +1626,13 @@ function updateChoicesList(question) {
     question.choices.forEach((choice, index) => {
         const choiceDiv = document.createElement('div');
         choiceDiv.className = 'choice-item';
+        
+        // 選択肢IDを生成（既存のid、value、またはインデックスベース）
+        const choiceId = choice.id || choice.value || `choice_${index}`;
+        if (!choice.id && !choice.value) {
+            choice.id = choiceId;
+        }
+        
         choiceDiv.innerHTML = `
             <input type="text" value="${escapeHtml(choice.text)}" 
                    placeholder="選択肢 ${index + 1}"
@@ -1194,6 +1650,13 @@ function updateChoicesList(question) {
         `;
         choicesList.appendChild(choiceDiv);
     });
+    
+    // ベクトル設定UIを再描画（通常クイズの場合のみ）
+    if (question.type !== 'diagnostic_question') {
+        setTimeout(function() {
+            renderVectorSettingsForQuestion(question);
+        }, 100);
+    }
 }
 
 // 次のノードオプションを取得
@@ -1304,6 +1767,12 @@ function addDiagnosticChoice(questionId) {
     question.choices = Array.isArray(question.choices) ? question.choices : [];
     const nextLabel = String.fromCharCode(97 + question.choices.length);
     question.choices.push({ id: nextLabel, text: `選択肢 ${question.choices.length + 1}` });
+    
+    // スコアリングUIを再描画
+    setTimeout(function() {
+        renderDiagnosticScoringList(question);
+    }, 100);
+    
     updateUI();
     showPreview();
 }
@@ -1312,6 +1781,14 @@ function updateDiagnosticChoice(questionId, index, field, value) {
     const question = gameData.questions.find(q => q.id === questionId && q.type === 'diagnostic_question');
     if (!question || !Array.isArray(question.choices) || !question.choices[index]) return;
     question.choices[index][field] = value;
+    
+    // choice_idが変更された場合はスコアリングUIを再描画
+    if (field === 'id') {
+        setTimeout(function() {
+            renderDiagnosticScoringList(question);
+        }, 100);
+    }
+    
     updateUI();
     showPreview();
 }
@@ -1319,7 +1796,19 @@ function updateDiagnosticChoice(questionId, index, field, value) {
 function removeDiagnosticChoice(questionId, index) {
     const question = gameData.questions.find(q => q.id === questionId && q.type === 'diagnostic_question');
     if (!question || !Array.isArray(question.choices) || !question.choices[index]) return;
+    const choiceId = question.choices[index].id;
     question.choices.splice(index, 1);
+    
+    // 関連するスコアリングルールも削除
+    if (Array.isArray(question.scoring)) {
+        question.scoring = question.scoring.filter(r => r.choice_id !== choiceId);
+    }
+    
+    // スコアリングUIを再描画
+    setTimeout(function() {
+        renderDiagnosticScoringList(question);
+    }, 100);
+    
     updateUI();
     showPreview();
 }
@@ -1591,6 +2080,18 @@ function updateChoiceNext(questionId, choiceIndex, nextId) {
 function removeChoice(questionId, choiceIndex) {
     const question = gameData.questions.find(q => q.id === questionId);
     if (question && question.choices[choiceIndex]) {
+        const removedChoice = question.choices[choiceIndex];
+        const choiceId = removedChoice.id || removedChoice.value;
+        
+        // 関連するベクトル設定も削除
+        if (choiceId && question.vector_scores && question.vector_scores[choiceId]) {
+            delete question.vector_scores[choiceId];
+            // 空のvector_scoresの場合は削除
+            if (Object.keys(question.vector_scores).length === 0) {
+                delete question.vector_scores;
+            }
+        }
+        
         question.choices.splice(choiceIndex, 1);
         // 値を再割り当て
         question.choices.forEach((choice, index) => {

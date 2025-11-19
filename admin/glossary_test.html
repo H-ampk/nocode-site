@@ -10,31 +10,425 @@
   <script src="../src/auth/pin.js" defer></script>
   <script>window.addEventListener('DOMContentLoaded',function(){ if(window.AdminAuth) AdminAuth.init({admin:true}); });</script>
   <style>
+    body {
+      background: #f5f5f5;
+      color: #222;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 20px;
+    }
     .test-section {
-      margin: 1rem 0;
-      padding: 1rem;
+      background: #fff;
+      padding: 20px;
+      margin-top: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .test-section h2 {
+      margin-top: 0;
+      color: #333;
+      font-size: 1.3rem;
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+    .controls label {
+      font-weight: 500;
+      color: #555;
+    }
+    .controls input[type="text"] {
+      padding: 8px 12px;
       border: 1px solid #ddd;
-      border-radius: 8px;
-      background: #f9f9f9;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    button {
+      padding: 10px 20px;
+      cursor: pointer;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #357abd;
     }
     .result {
-      margin-top: 1rem;
-      padding: 1rem;
-      background: white;
-      border: 1px solid #ccc;
+      margin-top: 15px;
+    }
+    #resultArea {
+      margin-top: 15px;
+    }
+    .glossary-card {
+      background: #ffffff;
+      border: 1px solid #ddd;
+      border-left: 4px solid #4a90e2;
+      padding: 15px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .glossary-term {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 8px;
+    }
+    .glossary-term-id {
+      font-size: 0.9rem;
+      font-weight: normal;
+      color: #888;
+      margin-left: 8px;
+    }
+    .glossary-definition {
+      margin-top: 8px;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #555;
+    }
+    .glossary-tags {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .tag {
+      display: inline-block;
+      background: #e9f2ff;
+      border: 1px solid #bcd7ff;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      color: #2c5aa0;
+    }
+    .glossary-empty {
+      text-align: center;
+      padding: 30px;
+      color: #888;
+      font-style: italic;
+    }
+    .domain-summary-card {
+      background: #ffffff;
+      border: 2px solid #4a90e2;
+      padding: 18px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .domain-summary-card h2 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: #333;
+      font-size: 1.2rem;
+    }
+    .keyword-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .keyword {
+      background: #eef7ff;
+      border: 1px solid #bcd7ff;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: #2c5aa0;
+    }
+    .term-card {
+      background: #ffffff;
+      border: 1px solid #ddd;
+      border-left: 4px solid #4a90e2;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .term-name {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .term-section {
+      margin-top: 10px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #555;
+    }
+    .term-section-title {
+      font-weight: bold;
+      color: #555;
+      margin-right: 5px;
+    }
+    .section {
+      margin-bottom: 20px;
+    }
+    .section h2 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: #333;
+      font-size: 1.2rem;
+    }
+    .controls select {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    .global-term-card {
+      background: #ffffff;
+      border: 1px solid #ddd;
+      border-left: 4px solid #4a90e2;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .global-term-name {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .fields-list, .links-list {
+      margin-top: 8px;
+    }
+    .field-tag {
+      background: #eef7ff;
+      border: 1px solid #bcd7ff;
+      padding: 3px 8px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-right: 6px;
+      display: inline-block;
+      color: #2c5aa0;
+    }
+    .link-item {
+      margin-top: 4px;
+      font-size: 0.9rem;
+    }
+    .link-item a {
+      color: #4a90e2;
+      text-decoration: none;
+    }
+    .link-item a:hover {
+      text-decoration: underline;
+    }
+    .example-box {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: #fafafa;
+      border-left: 3px solid #888;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      color: #555;
+      line-height: 1.6;
+    }
+    .merge-section-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin: 20px 0 10px;
+      color: #333;
+    }
+    .keyword-tag {
+      background: #eef7ff;
+      border: 1px solid #bcd7ff;
+      padding: 4px 10px;
+      border-radius: 10px;
+      margin-right: 6px;
+      margin-bottom: 6px;
+      display: inline-block;
+      color: #2c5aa0;
+      font-size: 0.9rem;
+    }
+    .other-entry-card {
+      background: #ffffff;
+      border: 1px solid #bbb;
+      border-left: 4px solid #999;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .other-entry-title {
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 6px;
+      color: #333;
+    }
+    .other-entry-card pre {
+      background: #f5f5f5;
+      padding: 10px;
       border-radius: 4px;
-      max-height: 400px;
-      overflow-y: auto;
+      overflow-x: auto;
+      font-size: 0.85rem;
+      margin: 0;
+    }
+    .policy-card {
+      background: #ffffff;
+      border: 1px solid #ccc;
+      border-left: 4px solid #6a5acd;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .policy-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #333;
+    }
+    .policy-card pre {
+      background: #f5f5f5;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
+    /* Glossaryテンプレート選択UI */
+    .glossary-template-box {
+      background: #fafafa;
+      border: 1px solid #ddd;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .glossary-template-box h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: #333;
+      font-size: 1.2rem;
+    }
+    #glossaryTemplateSelect {
+      padding: 8px 12px;
+      margin-right: 8px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1rem;
+      min-width: 300px;
+    }
+    #loadGlossaryTemplateBtn {
+      padding: 8px 16px;
+      background: #6a5be2;
+      color: white;
+      border-radius: 6px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #loadGlossaryTemplateBtn:hover {
+      background: #5548c4;
+    }
+    /* アコーディオン機能 */
+    .accordion-card {
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+    .accordion-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      font-size: 1.1rem;
+      padding: 10px 0;
+    }
+    .accordion-body {
+      display: none;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #eee;
+    }
+    .accordion-card.active .accordion-body {
+      display: block;
+    }
+    .accordion-icon {
+      transition: transform 0.3s;
+      font-size: 0.9rem;
+      color: #666;
+      margin-left: 10px;
+    }
+    .accordion-card.active .accordion-icon {
+      transform: rotate(180deg);
+    }
+    /* テーマ切り替え */
+    body.theme-blue .glossary-card,
+    body.theme-blue .global-term-card,
+    body.theme-blue .term-card {
+      border-left-color: #4a90e2;
+    }
+    body.theme-green .glossary-card,
+    body.theme-green .global-term-card,
+    body.theme-green .term-card {
+      border-left-color: #3cb371;
+    }
+    body.theme-purple .glossary-card,
+    body.theme-purple .global-term-card,
+    body.theme-purple .term-card {
+      border-left-color: #9370db;
+    }
+    body.theme-light .glossary-card,
+    body.theme-light .global-term-card,
+    body.theme-light .term-card {
+      border-left-color: #444;
+    }
+    body.theme-blue .domain-summary-card {
+      border-color: #4a90e2;
+    }
+    body.theme-green .domain-summary-card {
+      border-color: #3cb371;
+    }
+    body.theme-purple .domain-summary-card {
+      border-color: #9370db;
+    }
+    body.theme-light .domain-summary-card {
+      border-color: #444;
+    }
+    body.theme-blue .policy-card {
+      border-left-color: #4a90e2;
+    }
+    body.theme-green .policy-card {
+      border-left-color: #3cb371;
+    }
+    body.theme-purple .policy-card {
+      border-left-color: #9370db;
+    }
+    body.theme-light .policy-card {
+      border-left-color: #444;
+    }
+    /* ドメイン図式化 */
+    #domainMapArea {
+      margin-top: 20px;
+      padding: 15px;
+      background: #fafafa;
+      border-radius: 8px;
+    }
+    #domainMapArea h3 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: #333;
+    }
+    #domainMapArea canvas {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #fff;
+      max-width: 100%;
     }
     pre {
       margin: 0;
       white-space: pre-wrap;
       word-wrap: break-word;
-    }
-    button {
-      margin: 0.5rem 0.5rem 0.5rem 0;
-      padding: 0.5rem 1rem;
-      cursor: pointer;
     }
   </style>
 </head>
@@ -44,122 +438,996 @@
     <a href="admin.html">← 管理ダッシュボードに戻る</a>
   </div>
 
+  <div class="glossary-template-box">
+    <h3>📚 Glossary テンプレートを選択</h3>
+    <div class="controls">
+      <label>テンプレート:</label>
+      <select id="glossaryTemplateSelect">
+        <option value="">選択してください</option>
+        <option value="thinking_skills">① 思考スキル（論理・分析・統合）</option>
+        <option value="psychology">② 教育心理（認知・記憶・注意）</option>
+        <option value="future_skills">③ AI時代の学力（問題解決・メタ認知・自己調整）</option>
+      </select>
+      <button id="loadGlossaryTemplateBtn">テンプレートを読み込む</button>
+    </div>
+    <div id="templatePreviewArea" style="margin-top: 15px;"></div>
+  </div>
+
+  <div class="test-section" style="margin-top: 0;">
+    <h2>⚙️ UI設定</h2>
+    <div class="controls">
+      <label>テーマ:</label>
+      <select id="themeSelector">
+        <option value="light">Light</option>
+        <option value="blue" selected>Blue</option>
+        <option value="green">Green</option>
+        <option value="purple">Purple</option>
+      </select>
+      <label>タグ検索:</label>
+      <input type="text" id="tagSearchInput" placeholder="タグ検索（analysis, memory…）" style="flex: 1; max-width: 300px;" />
+    </div>
+  </div>
+
   <div class="test-section">
     <h2>1. プロジェクトGlossary読み込みテスト</h2>
-    <label>プロジェクトID: <input type="text" id="projectId" value="default" /></label>
-    <button onclick="testProjectGlossary()">読み込む</button>
-    <div id="projectResult" class="result" style="display:none;"></div>
+    <div class="controls">
+      <label>プロジェクトID：</label>
+      <input type="text" id="projectIdInput" value="default" />
+      <button id="loadProjectBtn">読み込む</button>
+    </div>
+    <div id="resultArea"></div>
   </div>
 
   <div class="test-section">
     <h2>2. ドメインGlossary読み込みテスト</h2>
-    <label>ドメイン名: 
-      <select id="domainName">
+    <div class="controls">
+      <label>ドメイン名：</label>
+      <select id="domainSelect">
         <option value="psychology">psychology</option>
         <option value="AI">AI</option>
       </select>
-    </label>
-    <button onclick="testDomainGlossary()">読み込む</button>
-    <div id="domainResult" class="result" style="display:none;"></div>
+      <button id="loadDomainBtn">読み込む</button>
+    </div>
+    <div id="domainResultArea"></div>
+    <div id="domainMapArea"></div>
   </div>
 
   <div class="test-section">
     <h2>3. グローバルGlossary読み込みテスト</h2>
-    <button onclick="testGlobalGlossary()">読み込む</button>
-    <div id="globalResult" class="result" style="display:none;"></div>
+    <div class="controls">
+      <button id="loadGlobalBtn">読み込む</button>
+    </div>
+    <div id="globalResultArea"></div>
   </div>
 
   <div class="test-section">
     <h2>4. マージテスト</h2>
-    <button onclick="testMerge()">マージ実行</button>
-    <div id="mergeResult" class="result" style="display:none;"></div>
+    <div class="controls">
+      <button id="runMergeBtn">マージを実行</button>
+    </div>
+    <div id="mergeResultArea"></div>
   </div>
 
   <div class="test-section">
     <h2>5. Policy ベース読み込みテスト</h2>
-    <fieldset>
-      <legend>glossary_policy 設定</legend>
-      <label>Mode: 
-        <select id="policyMode">
-          <option value="project">project</option>
-          <option value="domain">domain</option>
-          <option value="global">global</option>
-        </select>
-      </label>
-      <br/>
-      <label>Domains (カンマ区切り): 
-        <input type="text" id="policyDomains" value="psychology,AI" />
-      </label>
-    </fieldset>
-    <button onclick="testPolicyLoad()">読み込む</button>
-    <div id="policyResult" class="result" style="display:none;"></div>
+    <div class="controls">
+      <label>Mode:</label>
+      <select id="policyMode">
+        <option value="project">project</option>
+        <option value="domain">domain</option>
+        <option value="global">global</option>
+      </select>
+      <label>Domains:</label>
+      <input type="text" id="policyDomains" placeholder="psychology,AI" value="psychology,AI" />
+      <button id="runPolicyBtn">読み込む</button>
+    </div>
+    <div id="policyInfo"></div>
+    <div id="policyResultArea"></div>
   </div>
 
   <script>
-    function testProjectGlossary() {
-      var projectId = document.getElementById('projectId').value || 'default';
-      var resultDiv = document.getElementById('projectResult');
-      resultDiv.style.display = 'block';
-      resultDiv.innerHTML = '<p>読み込み中...</p>';
+    // Glossaryテンプレート定義
+    const GLOSSARY_TEMPLATES = {
+      thinking_skills: {
+        terms: {
+          "skill.logic": {
+            id: "skill.logic",
+            name: "論理",
+            definition: "筋道立てて考える力。",
+            example: "原因と結果を整理する。",
+            tags: ["thinking"]
+          },
+          "skill.analysis": {
+            id: "skill.analysis",
+            name: "分析",
+            definition: "構成要素や関係性を明らかにする力。",
+            example: "複雑な問題を分解して理解する。",
+            tags: ["thinking"]
+          },
+          "skill.synthesis": {
+            id: "skill.synthesis",
+            name: "統合",
+            definition: "複数の要素を組み合わせ新しい理解を作る力。",
+            example: "複数の資料をまとめてレポートを書く。",
+            tags: ["thinking"]
+          }
+        }
+      },
+      psychology: {
+        terms: {
+          "psy.cognition": {
+            id: "psy.cognition",
+            name: "認知",
+            definition: "情報を処理し理解する心的機能。",
+            example: "問題解決のプロセスを検討する。",
+            tags: ["psychology"]
+          },
+          "psy.memory": {
+            id: "psy.memory",
+            name: "記憶",
+            definition: "情報を保持し想起する能力。",
+            example: "重要な概念を記憶して説明する。",
+            tags: ["psychology"]
+          },
+          "psy.attention": {
+            id: "psy.attention",
+            name: "注意",
+            definition: "刺激や情報に意識を向ける能力。",
+            example: "複数の選択肢から1つを選ぶときの集中。",
+            tags: ["psychology"]
+          }
+        }
+      },
+      future_skills: {
+        terms: {
+          "future.problem_solving": {
+            id: "future.problem_solving",
+            name: "問題解決",
+            definition: "課題に対して解決方法を構築する能力。",
+            example: "情報を整理して最適解を導く。",
+            tags: ["21st"]
+          },
+          "future.metacognition": {
+            id: "future.metacognition",
+            name: "メタ認知",
+            definition: "自分の思考の過程を理解し調整する力。",
+            example: "自分の考え方を振り返る。",
+            tags: ["21st"]
+          },
+          "future.self_regulation": {
+            id: "future.self_regulation",
+            name: "自己調整",
+            definition: "自分の行動や学習を管理する能力。",
+            example: "計画を立て、実行し、改善する。",
+            tags: ["21st"]
+          }
+        }
+      }
+    };
+
+    // グローバル変数：現在のGlossary（エディタからもアクセス可能）
+    window.currentGlossary = null;
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      var div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function renderGlossaryCards(glossaryObj) {
+      const container = document.getElementById("resultArea");
+      container.innerHTML = "";
+
+      if (!glossaryObj || Object.keys(glossaryObj).length === 0) {
+        container.innerHTML = '<div class="glossary-empty">Glossaryが見つかりませんでした。</div>';
+        return;
+      }
+
+      Object.values(glossaryObj).forEach(function(entry) {
+        if (!entry) return;
+        
+        const div = document.createElement("div");
+        div.className = "glossary-card accordion-card";
+
+        const termName = escapeHtml(entry.name || '（名称なし）');
+        const termId = escapeHtml(entry.id || '');
+        const definition = escapeHtml(entry.definition || '（定義なし）');
+        const tags = entry.tags || entry.fields || [];
+        const tagsStr = tags.join(',');
+
+        div.setAttribute("data-tags", tagsStr);
+
+        div.innerHTML = 
+          '<div class="accordion-header">' +
+          '<span class="glossary-term">' + termName + 
+          (termId ? '<span class="glossary-term-id">（' + termId + '）</span>' : '') + 
+          '</span>' +
+          '<span class="accordion-icon">▼</span>' +
+          '</div>' +
+          '<div class="accordion-body">' +
+          '<div class="glossary-definition">' + definition + '</div>' +
+          (tags.length > 0 ? 
+            '<div class="glossary-tags">' + 
+            tags.map(function(t) { 
+              return '<span class="tag">' + escapeHtml(t) + '</span>'; 
+            }).join('') + 
+            '</div>' : '') +
+          '</div>';
+
+        container.appendChild(div);
+      });
+
+      // アコーディオン機能を有効化
+      initAccordion(container);
+    }
+
+    document.getElementById("loadProjectBtn").addEventListener("click", function() {
+      const projectId = document.getElementById("projectIdInput").value || 'default';
+      const container = document.getElementById("resultArea");
+      container.innerHTML = '<div class="glossary-empty">読み込み中...</div>';
       
       GlossaryLoader.loadProjectGlossary(projectId, { admin: true })
         .then(function(glossary) {
-          resultDiv.innerHTML = '<h3>結果:</h3><pre>' + JSON.stringify(glossary, null, 2) + '</pre>';
+          renderGlossaryCards(glossary);
         })
         .catch(function(error) {
-          resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
+          container.innerHTML = '<div class="glossary-empty" style="color: #d32f2f;">エラー: ' + escapeHtml(error.message) + '</div>';
         });
+    });
+
+    function renderDomainGlossary(domainGlossary) {
+      const area = document.getElementById("domainResultArea");
+      area.innerHTML = "";
+
+      if (!domainGlossary || (Object.keys(domainGlossary).length === 0 && !domainGlossary.domain_definition && !domainGlossary.keywords && !domainGlossary.terms)) {
+        area.innerHTML = '<div class="glossary-empty">Glossaryが見つかりませんでした。</div>';
+        return;
+      }
+
+      // --- ドメイン概要 ---
+      if (domainGlossary.domain_definition) {
+        const summary = document.createElement("div");
+        summary.className = "domain-summary-card";
+        summary.innerHTML = 
+          '<h2>📘 ドメイン概要</h2>' +
+          '<div>' + escapeHtml(domainGlossary.domain_definition) + '</div>';
+        area.appendChild(summary);
+      }
+
+      // --- キーワード ---
+      if (domainGlossary.keywords && domainGlossary.keywords.length > 0) {
+        const kwBox = document.createElement("div");
+        kwBox.className = "section";
+        kwBox.innerHTML = '<h2>🔑 キーワード</h2>';
+        
+        const kwList = document.createElement("div");
+        kwList.className = "keyword-list";
+
+        domainGlossary.keywords.forEach(function(k) {
+          const tag = document.createElement("span");
+          tag.className = "keyword";
+          tag.textContent = k;
+          kwList.appendChild(tag);
+        });
+
+        kwBox.appendChild(kwList);
+        area.appendChild(kwBox);
+      }
+
+      // --- 用語一覧 ---
+      if (domainGlossary.terms && Object.keys(domainGlossary.terms).length > 0) {
+        const termsBox = document.createElement("div");
+        termsBox.className = "section";
+        termsBox.innerHTML = '<h2>📙 用語一覧</h2>';
+
+        Object.values(domainGlossary.terms).forEach(function(t) {
+          if (!t) return;
+          
+          const card = document.createElement("div");
+          card.className = "term-card accordion-card";
+
+          const termName = escapeHtml(t.name || '（名称なし）');
+          const termId = escapeHtml(t.id || '');
+          const definition = escapeHtml(t.definition || '―');
+          const domainDef = t.domain_definition ? escapeHtml(t.domain_definition) : '';
+          const example = t.example ? escapeHtml(t.example) : '';
+          const note = t.note ? escapeHtml(t.note) : '';
+          const tags = t.tags || t.fields || [];
+          const tagsStr = tags.join(',');
+
+          card.setAttribute("data-tags", tagsStr);
+
+          var cardHtml = 
+            '<div class="accordion-header">' +
+            '<span class="term-name">' + termName + 
+            (termId ? '（' + termId + '）' : '') + 
+            '</span>' +
+            '<span class="accordion-icon">▼</span>' +
+            '</div>' +
+            '<div class="accordion-body">' +
+            '<div class="term-section">' +
+            '<span class="term-section-title">定義：</span>' +
+            definition +
+            '</div>';
+
+          if (domainDef) {
+            cardHtml += 
+              '<div class="term-section">' +
+              '<span class="term-section-title">ドメイン定義：</span>' +
+              domainDef +
+              '</div>';
+          }
+
+          if (example) {
+            cardHtml += 
+              '<div class="term-section">' +
+              '<span class="term-section-title">例：</span>' +
+              example +
+              '</div>';
+          }
+
+          if (note) {
+            cardHtml += 
+              '<div class="term-section">' +
+              '<span class="term-section-title">補足：</span>' +
+              note +
+              '</div>';
+          }
+
+          cardHtml += '</div>';
+
+          card.innerHTML = cardHtml;
+          termsBox.appendChild(card);
+        });
+
+        area.appendChild(termsBox);
+      }
+
+      if (area.innerHTML === "") {
+        area.innerHTML = '<div class="glossary-empty">Glossaryが見つかりませんでした。</div>';
+      }
+
+      // アコーディオン機能を有効化
+      initAccordion(area);
+
+      // ドメイン図式化
+      if (domainGlossary.keywords && domainGlossary.keywords.length > 0) {
+        renderDomainMap(domainGlossary);
+      }
     }
 
-    function testDomainGlossary() {
-      var domainName = document.getElementById('domainName').value;
-      var resultDiv = document.getElementById('domainResult');
-      resultDiv.style.display = 'block';
-      resultDiv.innerHTML = '<p>読み込み中...</p>';
+    document.getElementById("loadDomainBtn").addEventListener("click", function() {
+      const domain = document.getElementById("domainSelect").value;
+      const area = document.getElementById("domainResultArea");
+      area.innerHTML = '<div class="glossary-empty">読み込み中...</div>';
       
-      GlossaryLoader.loadDomainGlossary(domainName, { admin: true })
+      GlossaryLoader.loadDomainGlossary(domain, { admin: true })
         .then(function(glossary) {
-          resultDiv.innerHTML = '<h3>結果:</h3><pre>' + JSON.stringify(glossary, null, 2) + '</pre>';
+          renderDomainGlossary(glossary);
         })
         .catch(function(error) {
-          resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
+          area.innerHTML = '<div class="glossary-empty" style="color: #d32f2f;">エラー: ' + escapeHtml(error.message) + '</div>';
         });
+    });
+
+    function renderGlobalGlossary(globalGlossary) {
+      const area = document.getElementById("globalResultArea");
+      area.innerHTML = "";
+
+      if (!globalGlossary || !globalGlossary.terms || Object.keys(globalGlossary.terms).length === 0) {
+        area.innerHTML = '<div class="glossary-empty">Glossaryが見つかりませんでした。</div>';
+        return;
+      }
+
+      Object.values(globalGlossary.terms).forEach(function(term) {
+        if (!term) return;
+        
+        const card = document.createElement("div");
+        card.className = "global-term-card accordion-card";
+
+        const termName = escapeHtml(term.name || '（名称なし）');
+        const termId = escapeHtml(term.id || '');
+        const definition = escapeHtml(term.definition || '―');
+        const fields = term.fields || [];
+        const links = term.links || [];
+        const example = term.example ? escapeHtml(term.example) : '';
+        const tagsStr = fields.join(',');
+
+        card.setAttribute("data-tags", tagsStr);
+
+        const fieldsHtml = fields.length > 0 ? 
+          fields.map(function(f) { 
+            return '<span class="field-tag">' + escapeHtml(f) + '</span>'; 
+          }).join('') : '';
+
+        const linksHtml = links.length > 0 ? 
+          links.map(function(l) { 
+            return '<div class="link-item"><a href="' + escapeHtml(l) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(l) + '</a></div>'; 
+          }).join('') : '';
+
+        var cardHtml = 
+          '<div class="accordion-header">' +
+          '<span class="global-term-name">' + termName + 
+          (termId ? '（' + termId + '）' : '') + 
+          '</span>' +
+          '<span class="accordion-icon">▼</span>' +
+          '</div>' +
+          '<div class="accordion-body">' +
+          '<div class="term-section">' +
+          '<span class="term-section-title">定義：</span>' +
+          definition +
+          '</div>';
+
+        if (fieldsHtml) {
+          cardHtml += 
+            '<div class="fields-list">' +
+            '<span class="term-section-title">分野：</span>' +
+            fieldsHtml +
+            '</div>';
+        }
+
+        if (linksHtml) {
+          cardHtml += 
+            '<div class="links-list">' +
+            '<span class="term-section-title">関連リンク：</span>' +
+            linksHtml +
+            '</div>';
+        }
+
+        if (example) {
+          cardHtml += 
+            '<div class="example-box">' +
+            '【例】' + example +
+            '</div>';
+        }
+
+        cardHtml += '</div>';
+
+        card.innerHTML = cardHtml;
+        area.appendChild(card);
+      });
+
+      // アコーディオン機能を有効化
+      initAccordion(area);
     }
 
-    function testGlobalGlossary() {
-      var resultDiv = document.getElementById('globalResult');
-      resultDiv.style.display = 'block';
-      resultDiv.innerHTML = '<p>読み込み中...</p>';
+    document.getElementById("loadGlobalBtn").addEventListener("click", function() {
+      const area = document.getElementById("globalResultArea");
+      area.innerHTML = '<div class="glossary-empty">読み込み中...</div>';
       
       GlossaryLoader.loadGlobalGlossary({ admin: true })
         .then(function(glossary) {
-          resultDiv.innerHTML = '<h3>結果:</h3><pre>' + JSON.stringify(glossary, null, 2) + '</pre>';
+          renderGlobalGlossary(glossary);
         })
         .catch(function(error) {
-          resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
+          area.innerHTML = '<div class="glossary-empty" style="color: #d32f2f;">エラー: ' + escapeHtml(error.message) + '</div>';
         });
+    });
+
+    function renderMergeResult(merged) {
+      const area = document.getElementById("mergeResultArea");
+      area.innerHTML = "";
+
+      if (!merged || Object.keys(merged).length === 0) {
+        area.innerHTML = '<div class="glossary-empty">マージ結果がありません。</div>';
+        return;
+      }
+
+      // ===== 1) terms セクション =====
+      if (merged.terms && Object.keys(merged.terms).length > 0) {
+        const title = document.createElement("div");
+        title.className = "merge-section-title";
+        title.textContent = "📙 統合済み用語一覧";
+        area.appendChild(title);
+
+        Object.values(merged.terms).forEach(function(term) {
+          if (!term) return;
+          
+          const card = document.createElement("div");
+          card.className = "global-term-card accordion-card";
+
+          const termName = escapeHtml(term.name || '（名称なし）');
+          const termId = escapeHtml(term.id || '');
+          const definition = escapeHtml(term.definition || '―');
+          const domainDef = term.domain_definition ? escapeHtml(term.domain_definition) : '';
+          const note = term.note ? escapeHtml(term.note) : '';
+          const fields = term.fields || [];
+          const links = term.links || [];
+          const example = term.example ? escapeHtml(term.example) : '';
+          const tags = term.tags || fields || [];
+          const tagsStr = tags.join(',');
+
+          card.setAttribute("data-tags", tagsStr);
+
+          const fieldsHtml = fields.length > 0 ? 
+            fields.map(function(f) { 
+              return '<span class="field-tag">' + escapeHtml(f) + '</span>'; 
+            }).join('') : '';
+
+          const linksHtml = links.length > 0 ? 
+            links.map(function(l) { 
+              return '<div class="link-item"><a href="' + escapeHtml(l) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(l) + '</a></div>'; 
+            }).join('') : '';
+
+          var cardHtml = 
+            '<div class="accordion-header">' +
+            '<span class="global-term-name">' + termName + 
+            (termId ? '（' + termId + '）' : '') + 
+            '</span>' +
+            '<span class="accordion-icon">▼</span>' +
+            '</div>' +
+            '<div class="accordion-body">' +
+            '<div class="term-section">' +
+            '<span class="term-section-title">定義：</span>' +
+            definition +
+            '</div>';
+
+          if (domainDef) {
+            cardHtml += 
+              '<div class="term-section">' +
+              '<span class="term-section-title">ドメイン定義：</span>' +
+              domainDef +
+              '</div>';
+          }
+
+          if (note) {
+            cardHtml += 
+              '<div class="term-section">' +
+              '<span class="term-section-title">補足：</span>' +
+              note +
+              '</div>';
+          }
+
+          if (fieldsHtml) {
+            cardHtml += 
+              '<div class="fields-list">' +
+              '<span class="term-section-title">分野：</span>' +
+              fieldsHtml +
+              '</div>';
+          }
+
+          if (linksHtml) {
+            cardHtml += 
+              '<div class="links-list">' +
+              '<span class="term-section-title">関連リンク：</span>' +
+              linksHtml +
+              '</div>';
+          }
+
+          if (example) {
+            cardHtml += 
+              '<div class="example-box">' +
+              '【例】' + example +
+              '</div>';
+          }
+
+          cardHtml += '</div>';
+
+          card.innerHTML = cardHtml;
+          area.appendChild(card);
+        });
+      }
+
+      // ===== 2) keywords セクション =====
+      if (merged.keywords) {
+        const title = document.createElement("div");
+        title.className = "merge-section-title";
+        title.textContent = "🔑 統合キーワード";
+        area.appendChild(title);
+
+        const kwBox = document.createElement("div");
+        kwBox.style.marginBottom = "20px";
+        
+        var keywordsArray = [];
+        if (Array.isArray(merged.keywords)) {
+          keywordsArray = merged.keywords;
+        } else if (typeof merged.keywords === 'object') {
+          keywordsArray = Object.values(merged.keywords);
+        }
+        
+        keywordsArray.forEach(function(k) {
+          if (!k) return;
+          const span = document.createElement("span");
+          span.className = "keyword-tag";
+          span.textContent = k;
+          kwBox.appendChild(span);
+        });
+
+        area.appendChild(kwBox);
+      }
+
+      // ===== 3) その他の単独項目 =====
+      Object.keys(merged).forEach(function(key) {
+        if (key === "terms" || key === "keywords") return; // skip main sections
+
+        const item = merged[key];
+        if (item === null || item === undefined) return;
+
+        const card = document.createElement("div");
+        card.className = "other-entry-card";
+
+        const itemStr = typeof item === 'object' ? JSON.stringify(item, null, 2) : String(item);
+
+        card.innerHTML = 
+          '<div class="other-entry-title">' + escapeHtml(key) + '</div>' +
+          '<pre>' + escapeHtml(itemStr) + '</pre>';
+
+        area.appendChild(card);
+      });
+
+      if (area.innerHTML === "") {
+        area.innerHTML = '<div class="glossary-empty">マージ結果がありません。</div>';
+      }
+
+      // アコーディオン機能を有効化
+      initAccordion(area);
     }
 
-    function testMerge() {
-      var resultDiv = document.getElementById('mergeResult');
-      resultDiv.style.display = 'block';
-      resultDiv.innerHTML = '<p>読み込み中...</p>';
+    document.getElementById("runMergeBtn").addEventListener("click", function() {
+      const area = document.getElementById("mergeResultArea");
+      area.innerHTML = '<div class="glossary-empty">読み込み中...</div>';
       
       Promise.all([
         GlossaryLoader.loadGlobalGlossary({ admin: true }),
         GlossaryLoader.loadDomainGlossary('psychology', { admin: true }),
         GlossaryLoader.loadProjectGlossary('default', { admin: true })
       ]).then(function(glossaries) {
-        var merged = GlossaryLoader.mergeGlossaries(glossaries);
-        resultDiv.innerHTML = '<h3>マージ結果:</h3><pre>' + JSON.stringify(merged, null, 2) + '</pre>';
+        const merged = GlossaryLoader.mergeGlossaries(glossaries);
+        renderMergeResult(merged);
       })
       .catch(function(error) {
-        resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
+        area.innerHTML = '<div class="glossary-empty" style="color: #d32f2f;">エラー: ' + escapeHtml(error.message) + '</div>';
+      });
+    });
+
+    function renderPolicyInfo(policy) {
+      const box = document.getElementById("policyInfo");
+      const mode = escapeHtml(policy.mode || '');
+      const domainsStr = (policy.domains || []).map(function(d) { return escapeHtml(d); }).join(", ");
+      const policyJson = JSON.stringify(policy, null, 2);
+      
+      box.innerHTML = 
+        '<div class="policy-card">' +
+        '<div class="policy-title">📘 現在の Policy 設定</div>' +
+        '<div style="margin-bottom: 6px;"><strong>Mode：</strong> ' + mode + '</div>' +
+        '<div style="margin-bottom: 6px;"><strong>Domains：</strong> ' + (domainsStr || '（なし）') + '</div>' +
+        '<div style="margin-top: 10px;">' +
+        '<strong>Policy JSON:</strong>' +
+        '<pre>' + escapeHtml(policyJson) + '</pre>' +
+        '</div>' +
+        '</div>';
+    }
+
+    function renderPolicyResult(result) {
+      const area = document.getElementById("policyResultArea");
+      area.innerHTML = "";
+
+      if (!result || Object.keys(result).length === 0) {
+        area.innerHTML = '<div class="glossary-empty">Glossaryが見つかりませんでした。</div>';
+        return;
+      }
+
+      const title = document.createElement("div");
+      title.className = "merge-section-title";
+      title.textContent = "📙 Policy 適用後の Glossary";
+      area.appendChild(title);
+
+      // resultがtermsオブジェクトか、直接termsオブジェクトか確認
+      var termsObj = result.terms || result;
+      
+      if (!termsObj || Object.keys(termsObj).length === 0) {
+        area.innerHTML = '<div class="glossary-empty">用語が見つかりませんでした。</div>';
+        return;
+      }
+
+        Object.values(termsObj).forEach(function(term) {
+        if (!term) return;
+        
+        const card = document.createElement("div");
+        card.className = "global-term-card accordion-card";
+
+        const termName = escapeHtml(term.name || '（名称なし）');
+        const termId = escapeHtml(term.id || '');
+        const definition = escapeHtml(term.definition || '―');
+        const tags = term.tags || term.fields || [];
+        const domainDef = term.domain_definition ? escapeHtml(term.domain_definition) : '';
+        const note = term.note ? escapeHtml(term.note) : '';
+        const links = term.links || [];
+        const example = term.example ? escapeHtml(term.example) : '';
+        const tagsStr = tags.join(',');
+
+        card.setAttribute("data-tags", tagsStr);
+
+        const tagsHtml = tags.length > 0 ? 
+          tags.map(function(t) { 
+            return '<span class="tag">' + escapeHtml(t) + '</span>'; 
+          }).join('') : '';
+
+        const linksHtml = links.length > 0 ? 
+          links.map(function(l) { 
+            return '<div class="link-item"><a href="' + escapeHtml(l) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(l) + '</a></div>'; 
+          }).join('') : '';
+
+        var cardHtml = 
+          '<div class="accordion-header">' +
+          '<span class="global-term-name">' + termName + 
+          (termId ? '（' + termId + '）' : '') + 
+          '</span>' +
+          '<span class="accordion-icon">▼</span>' +
+          '</div>' +
+          '<div class="accordion-body">' +
+          '<div class="term-section">' +
+          '<span class="term-section-title">定義：</span>' +
+          definition +
+          '</div>';
+
+        if (domainDef) {
+          cardHtml += 
+            '<div class="term-section">' +
+            '<span class="term-section-title">ドメイン定義：</span>' +
+            domainDef +
+            '</div>';
+        }
+
+        if (note) {
+          cardHtml += 
+            '<div class="term-section">' +
+            '<span class="term-section-title">補足：</span>' +
+            note +
+            '</div>';
+        }
+
+        if (tagsHtml) {
+          cardHtml += 
+            '<div class="fields-list">' +
+            '<span class="term-section-title">タグ：</span>' +
+            tagsHtml +
+            '</div>';
+        }
+
+        if (linksHtml) {
+          cardHtml += 
+            '<div class="links-list">' +
+            '<span class="term-section-title">関連リンク：</span>' +
+            linksHtml +
+            '</div>';
+        }
+
+        if (example) {
+          cardHtml += 
+            '<div class="example-box">' +
+            '【例】' + example +
+            '</div>';
+        }
+
+        cardHtml += '</div>';
+
+        card.innerHTML = cardHtml;
+        area.appendChild(card);
+      });
+
+      // アコーディオン機能を有効化
+      initAccordion(area);
+    }
+
+    document.getElementById("runPolicyBtn").addEventListener("click", function() {
+      const projectId = document.getElementById("projectIdInput") ? document.getElementById("projectIdInput").value : 'default';
+      const mode = document.getElementById("policyMode").value;
+      const domainsStr = document.getElementById("policyDomains").value;
+      const domains = domainsStr ? domainsStr.split(',').map(function(s) { return s.trim(); }).filter(function(s) { return s; }) : [];
+      
+      const policy = {
+        mode: mode,
+        domains: domains
+      };
+
+      // Policy 設定表示
+      renderPolicyInfo(policy);
+
+      // Policy 適用済み Glossary取得
+      const area = document.getElementById("policyResultArea");
+      area.innerHTML = '<div class="glossary-empty">読み込み中...</div>';
+
+      GlossaryLoader.loadGlossaryByPolicy(projectId, policy, { admin: true })
+        .then(function(merged) {
+          renderPolicyResult(merged);
+        })
+        .catch(function(error) {
+          area.innerHTML = '<div class="glossary-empty" style="color: #d32f2f;">エラー: ' + escapeHtml(error.message) + '</div>';
+        });
+    });
+
+    // アコーディオン機能の初期化
+    function initAccordion(container) {
+      const cards = container.querySelectorAll(".accordion-card");
+      cards.forEach(function(card) {
+        card.addEventListener("click", function() {
+          card.classList.toggle("active");
+        });
       });
     }
 
+    // タグ検索機能
+    document.getElementById("tagSearchInput").addEventListener("input", function(e) {
+      const q = e.target.value.toLowerCase().trim();
+      const cards = document.querySelectorAll(".accordion-card, .glossary-card, .global-term-card, .term-card");
+      
+      cards.forEach(function(card) {
+        const tags = card.getAttribute("data-tags") || "";
+        if (q === "" || tags.toLowerCase().includes(q)) {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    });
+
+    // テーマ切り替え機能
+    document.getElementById("themeSelector").addEventListener("change", function(e) {
+      document.body.className = "theme-" + e.target.value;
+    });
+
+    // 初期テーマを設定
+    document.body.className = "theme-blue";
+
+    // ドメイン図式化機能
+    function renderDomainMap(domainGlossary) {
+      const area = document.getElementById("domainMapArea");
+      if (!area) return;
+      
+      area.innerHTML = "<h3>📊 ドメイン構造図</h3>";
+
+      const canvas = document.createElement("canvas");
+      canvas.width = 600;
+      canvas.height = 300;
+      area.appendChild(canvas);
+
+      const ctx = canvas.getContext("2d");
+
+      // キーワードをノードとして可視化
+      const keywords = domainGlossary.keywords || [];
+      
+      if (keywords.length === 0) {
+        area.innerHTML = "";
+        return;
+      }
+
+      // 背景をクリア
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // キーワードを円で可視化
+      const centerY = canvas.height / 2;
+      const spacing = Math.min(120, (canvas.width - 200) / keywords.length);
+      const startX = 100;
+
+      keywords.forEach(function(k, i) {
+        const x = startX + (i * spacing);
+        const y = centerY;
+
+        // 円を描画
+        ctx.beginPath();
+        ctx.arc(x, y, 35, 0, Math.PI * 2);
+        ctx.fillStyle = "#eef7ff";
+        ctx.fill();
+        ctx.strokeStyle = "#4a90e2";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // テキストを描画
+        ctx.fillStyle = "#333";
+        ctx.font = "14px sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        
+        // テキストが長い場合は短縮
+        const displayText = k.length > 8 ? k.substring(0, 8) + "..." : k;
+        ctx.fillText(displayText, x, y);
+      });
+
+      // 用語間の関連線を描画（簡易版）
+      if (domainGlossary.terms && Object.keys(domainGlossary.terms).length > 0) {
+        const terms = Object.values(domainGlossary.terms);
+        terms.forEach(function(term) {
+          if (term.fields && term.fields.length > 0) {
+            term.fields.forEach(function(field) {
+              const keywordIndex = keywords.indexOf(field);
+              if (keywordIndex >= 0) {
+                const x = startX + (keywordIndex * spacing);
+                const y = centerY;
+                
+                // 関連線を描画（点線）
+                ctx.beginPath();
+                ctx.setLineDash([5, 5]);
+                ctx.strokeStyle = "#ccc";
+                ctx.lineWidth = 1;
+                ctx.moveTo(x, y + 35);
+                ctx.lineTo(x, canvas.height - 20);
+                ctx.stroke();
+                ctx.setLineDash([]);
+              }
+            });
+          }
+        });
+      }
+    }
+
+    function testProjectGlossary() {
+      var projectId = document.getElementById('projectId') ? document.getElementById('projectId').value : 
+                      (document.getElementById('projectIdInput') ? document.getElementById('projectIdInput').value : 'default');
+      var resultDiv = document.getElementById('projectResult');
+      if (resultDiv) {
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = '<p>読み込み中...</p>';
+        
+        GlossaryLoader.loadProjectGlossary(projectId, { admin: true })
+          .then(function(glossary) {
+            resultDiv.innerHTML = '<h3>結果:</h3><pre>' + JSON.stringify(glossary, null, 2) + '</pre>';
+          })
+          .catch(function(error) {
+            resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
+          });
+      }
+    }
+
+    function testDomainGlossary() {
+      var domainName = document.getElementById('domainSelect') ? document.getElementById('domainSelect').value : 
+                      (document.getElementById('domainName') ? document.getElementById('domainName').value : 'psychology');
+      var resultDiv = document.getElementById('domainResult');
+      if (resultDiv) {
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = '<p>読み込み中...</p>';
+        
+        GlossaryLoader.loadDomainGlossary(domainName, { admin: true })
+          .then(function(glossary) {
+            resultDiv.innerHTML = '<h3>結果:</h3><pre>' + JSON.stringify(glossary, null, 2) + '</pre>';
+          })
+          .catch(function(error) {
+            resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
+          });
+      }
+    }
+
+    function testGlobalGlossary() {
+      var resultDiv = document.getElementById('globalResult');
+      if (resultDiv) {
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = '<p>読み込み中...</p>';
+        
+        GlossaryLoader.loadGlobalGlossary({ admin: true })
+          .then(function(glossary) {
+            resultDiv.innerHTML = '<h3>結果:</h3><pre>' + JSON.stringify(glossary, null, 2) + '</pre>';
+          })
+          .catch(function(error) {
+            resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
+          });
+      }
+    }
+
+    function testMerge() {
+      var resultDiv = document.getElementById('mergeResult');
+      if (resultDiv) {
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = '<p>読み込み中...</p>';
+        
+        Promise.all([
+          GlossaryLoader.loadGlobalGlossary({ admin: true }),
+          GlossaryLoader.loadDomainGlossary('psychology', { admin: true }),
+          GlossaryLoader.loadProjectGlossary('default', { admin: true })
+        ]).then(function(glossaries) {
+          var merged = GlossaryLoader.mergeGlossaries(glossaries);
+          resultDiv.innerHTML = '<h3>マージ結果:</h3><pre>' + JSON.stringify(merged, null, 2) + '</pre>';
+        })
+        .catch(function(error) {
+          resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
+        });
+      }
+    }
+
     function testPolicyLoad() {
-      var projectId = document.getElementById('projectId').value || 'default';
+      var projectId = (document.getElementById('projectId') ? document.getElementById('projectId').value : 
+                      (document.getElementById('projectIdInput') ? document.getElementById('projectIdInput').value : 'default')) || 'default';
       var mode = document.getElementById('policyMode').value;
       var domainsStr = document.getElementById('policyDomains').value;
       var domains = domainsStr ? domainsStr.split(',').map(function(s) { return s.trim(); }).filter(function(s) { return s; }) : [];
@@ -170,18 +1438,113 @@
       };
       
       var resultDiv = document.getElementById('policyResult');
-      resultDiv.style.display = 'block';
-      resultDiv.innerHTML = '<p>読み込み中...</p>';
-      
-      GlossaryLoader.loadGlossaryByPolicy(projectId, policy, { admin: true })
-        .then(function(glossary) {
-          resultDiv.innerHTML = '<h3>Policy: ' + JSON.stringify(policy, null, 2) + '</h3>' +
-            '<h3>統合結果:</h3><pre>' + JSON.stringify(glossary, null, 2) + '</pre>';
-        })
-        .catch(function(error) {
-          resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
-        });
+      if (resultDiv) {
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = '<p>読み込み中...</p>';
+        
+        GlossaryLoader.loadGlossaryByPolicy(projectId, policy, { admin: true })
+          .then(function(glossary) {
+            resultDiv.innerHTML = '<h3>Policy: ' + JSON.stringify(policy, null, 2) + '</h3>' +
+              '<h3>統合結果:</h3><pre>' + JSON.stringify(glossary, null, 2) + '</pre>';
+          })
+          .catch(function(error) {
+            resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
+          });
+      }
     }
+
+    // =========================
+    // Glossary テンプレート読み込み処理
+    // =========================
+    window.addEventListener('DOMContentLoaded', function() {
+      const loadTemplateBtn = document.getElementById('loadGlossaryTemplateBtn');
+      if (!loadTemplateBtn) {
+        console.warn('loadGlossaryTemplateBtn not found');
+        return;
+      }
+
+      loadTemplateBtn.addEventListener('click', function() {
+        const selected = document.getElementById('glossaryTemplateSelect').value;
+
+        if (!selected) {
+          alert('テンプレートを選択してください。');
+          return;
+        }
+
+        const glossary = GLOSSARY_TEMPLATES[selected];
+
+        if (!glossary) {
+          alert('テンプレートが見つかりません。');
+          return;
+        }
+
+        // ===========================
+        // ① グローバル変数に設定（エディタからもアクセス可能）
+        // terms オブジェクトのみを保持
+        // ===========================
+        window.currentGlossary = glossary.terms;
+
+        // ===========================
+        // ② Glossary Loader のカードに表示（resultArea）
+        // ===========================
+        // Glossaryカードを必ず表示
+        if (typeof renderGlossaryCards === 'function') {
+          renderGlossaryCards(glossary.terms);
+        } else {
+          console.warn('renderGlossaryCards function not found');
+          // フォールバック: 直接resultAreaに表示
+          const resultArea = document.getElementById('resultArea');
+          if (resultArea) {
+            resultArea.innerHTML = '';
+            Object.values(glossary.terms).forEach(function(term) {
+              const div = document.createElement('div');
+              div.className = 'glossary-card';
+              div.innerHTML = 
+                '<div class="glossary-term">' + escapeHtml(term.name) + 
+                '<span class="glossary-term-id">(' + escapeHtml(term.id) + ')</span></div>' +
+                '<div class="glossary-definition">' + escapeHtml(term.definition) + '</div>' +
+                (term.example ? '<div class="example-box">【例】' + escapeHtml(term.example) + '</div>' : '');
+              resultArea.appendChild(div);
+            });
+          }
+        }
+
+        // ===========================
+        // ③ プレビューエリアにも表示（templatePreviewArea）
+        // ===========================
+        const previewArea = document.getElementById('templatePreviewArea');
+        if (previewArea) {
+          const templateName = selected === 'thinking_skills' ? '思考スキル' : 
+                               selected === 'psychology' ? '教育心理' : 
+                               'AI時代の学力';
+          
+          previewArea.innerHTML = '<div style="padding: 10px; background: #e6f3ff; border-radius: 8px; margin-bottom: 10px;"><strong>✓ テンプレート「' + 
+            escapeHtml(templateName) + '」を読み込みました</strong></div>';
+          
+          // テンプレートの用語をカード表示
+          if (glossary.terms && Object.keys(glossary.terms).length > 0) {
+            const termsHtml = Object.values(glossary.terms).map(function(term) {
+              return '<div class="glossary-card" style="margin-bottom: 10px;">' +
+                '<div class="glossary-term">' + escapeHtml(term.name) + 
+                '<span class="glossary-term-id">(' + escapeHtml(term.id) + ')</span></div>' +
+                '<div class="glossary-definition">' + escapeHtml(term.definition) + '</div>' +
+                (term.example ? '<div class="example-box">【例】' + escapeHtml(term.example) + '</div>' : '') +
+                '</div>';
+            }).join('');
+            previewArea.innerHTML += termsHtml;
+          }
+        }
+
+        // ===========================
+        // ④ ベクトル設定UIを更新（エディタが開いている場合）
+        // ===========================
+        if (typeof window.refreshVectorAxis === 'function') {
+          window.refreshVectorAxis(glossary.terms);
+        }
+
+        alert('テンプレートを読み込みました！\nエディタのベクトル設定UIで使用できます。');
+      });
+    });
   </script>
 </body>
 </html>

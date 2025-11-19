@@ -298,6 +298,92 @@
         .import-export {
             margin-top: 15px;
         }
+
+        /* スコアリングUI */
+        .score-setting {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .score-setting h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .score-axis-card {
+            border: 1px solid #ddd;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background: #ffffff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .axis-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .axis-desc {
+            color: #555;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .score-radio-group {
+            display: flex;
+            gap: 20px;
+            font-size: 1rem;
+            align-items: center;
+        }
+
+        .score-radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .score-radio-group label:hover {
+            background: #f0f0f0;
+        }
+
+        .score-radio-group input[type="radio"] {
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .score-radio-group span {
+            user-select: none;
+        }
+
+        /* 通常クイズ用のベクトル設定UI */
+        #vectorSettingArea {
+            margin-top: 15px;
+        }
+
+        #vectorSettingArea h3 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        #vectorSettingArea > div {
+            margin-bottom: 20px;
+        }
     </style>
     <script>
         // 互換: ルート`data/`を当面利用。今後は`public/`に移行予定。
@@ -359,6 +445,8 @@
         </div>
     </div>
 
+    <script src="../../src/core/config.js"></script>
+    <script src="../../src/core/GlossaryLoader.js"></script>
     <script src="./editor.js"></script>
 </body>
 </html>
