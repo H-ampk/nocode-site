@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ノーコードゲームエディタ - 質問作成ツール</title>
+    <link rel="stylesheet" href="../../public/css/main.css" />
+    <script src="../auth/pin.js" defer></script>
+    <script>
+        // 認証初期化
+        window.addEventListener('DOMContentLoaded', function() {
+            if (window.AdminAuth) {
+                AdminAuth.init({ admin: true });
+            }
+        });
+    </script>
     <style>
         * {
             margin: 0;
@@ -388,6 +398,111 @@
     <script>
         // 互換: ルート`data/`を当面利用。今後は`public/`に移行予定。
         window.__ASSET_BASE__ = '../../data/';
+        
+        // window.currentGlossary を初期化（iframe に依存しない直接読み込み方式）
+        window.currentGlossary = null;
+        
+        // Glossary更新処理（共通関数）
+        function updateGlossaryFromData(glossaryData) {
+            console.log('[Editor] Glossaryを更新します:', glossaryData);
+            
+            // window.currentGlossary に設定（常に { terms: {...} } の形式）
+            window.currentGlossary = glossaryData;
+            
+            // ベクトル設定UIを即座に更新（diagnostic / normal 両方）
+            if (typeof window.refreshVectorAxis === 'function') {
+                window.refreshVectorAxis();
+            } else {
+                // editor.js がまだ読み込まれていない場合は、読み込み後に実行
+                var checkRefresh = function() {
+                    if (typeof window.refreshVectorAxis === 'function') {
+                        window.refreshVectorAxis();
+                    } else {
+                        setTimeout(checkRefresh, 100);
+                    }
+                };
+                setTimeout(checkRefresh, 100);
+            }
+        }
+        
+        // GlossaryLoader を使って直接 Glossary を読み込む（iframe 不要）
+        // この関数は script タグで GlossaryLoader が読み込まれた後に実行される
+        function loadGlossaryDirectly() {
+            if (typeof GlossaryLoader === 'undefined') {
+                console.warn('[Editor] GlossaryLoader がまだ読み込まれていません。再試行します...');
+                setTimeout(loadGlossaryDirectly, 100);
+                return;
+            }
+            
+            var projectId = localStorage.getItem('projectId') || 'default';
+            console.log('[Editor] Glossaryを読み込みます (projectId: ' + projectId + ')');
+            
+            // 3層構造のGlossaryを読み込んで統合
+            Promise.all([
+                GlossaryLoader.loadProjectGlossary(projectId, { admin: true }),
+                GlossaryLoader.loadGlobalGlossary({ admin: true })
+            ]).then(function(results) {
+                var projectGlossary = results[0];
+                var globalGlossary = results[1];
+                
+                // GlossaryLoader.mergeGlossaries を使って統合
+                var merged = GlossaryLoader.mergeGlossaries([globalGlossary, projectGlossary]);
+                
+                // terms をオブジェクト形式に変換（配列の場合は変換）
+                var terms = {};
+                if (merged.terms) {
+                    if (Array.isArray(merged.terms)) {
+                        merged.terms.forEach(function(term) {
+                            if (term && term.id) {
+                                terms[term.id] = term;
+                            }
+                        });
+                    } else if (typeof merged.terms === 'object') {
+                        terms = merged.terms;
+                    }
+                }
+                
+                // window.currentGlossary に設定
+                const glossaryData = { terms: terms };
+                updateGlossaryFromData(glossaryData);
+                
+                // localStorage に保存（永続化）
+                try {
+                    localStorage.setItem('currentGlossary', JSON.stringify(glossaryData));
+                    console.log('[Editor] localStorage に保存しました');
+                } catch (e) {
+                    console.warn('[Editor] localStorage への保存に失敗しました:', e);
+                }
+                
+                console.log('[Editor] Glossaryの読み込みが完了しました:', Object.keys(terms).length + ' 個の用語');
+            }).catch(function(error) {
+                console.error('[Editor] Glossaryの読み込みに失敗しました:', error);
+                // エラーが発生しても空のGlossaryを設定して続行
+                window.currentGlossary = { terms: {} };
+            });
+        }
+        
+        // loadGlossaryDirectly は body の最後で実行される（GlossaryLoader.js 読み込み後）
+        
+        // localStorage から Glossary を初期ロード（ページ読み込み時）
+        window.addEventListener('load', function() {
+            try {
+                const saved = localStorage.getItem('currentGlossary');
+                if (saved) {
+                    const glossary = JSON.parse(saved);
+                    window.currentGlossary = glossary;
+                    console.log('[Editor] localStorage から Glossary を復元しました:', glossary);
+                    
+                    // ベクトル設定UIを更新（存在する場合）
+                    if (typeof window.refreshVectorAxis === 'function') {
+                        window.refreshVectorAxis();
+                        console.log('[Editor] ベクトル設定UIを更新しました');
+                    }
+                }
+            } catch (e) {
+                console.warn('[Editor] localStorage からの Glossary 読み込みに失敗しました:', e);
+            }
+        });
     </script>
 </head>
 <body>
@@ -445,9 +560,23 @@
         </div>
     </div>
 
-    <script src="../../src/core/config.js"></script>
-    <script src="../../src/core/GlossaryLoader.js"></script>
-    <script src="./editor.js"></script>
+    <script src="../core/config.js"></script>
+    <script src="../core/GlossaryLoader.js"></script>
+    <script>
+        // GlossaryLoader の読み込み確認
+        console.log('[Editor] editor.html loaded');
+        console.log('[Editor] GlossaryLoader type:', typeof GlossaryLoader);
+        if (typeof GlossaryLoader !== 'undefined') {
+            console.log('[Editor] GlossaryLoader loaded successfully:', GlossaryLoader);
+            // GlossaryLoader が読み込まれたら即座に Glossary を読み込む
+            if (typeof loadGlossaryDirectly === 'function') {
+                loadGlossaryDirectly();
+            }
+        } else {
+            console.error('[Editor] GlossaryLoader is undefined!');
+        }
+    </script>
+    <script src="editor.js"></script>
 </body>
 </html>
 

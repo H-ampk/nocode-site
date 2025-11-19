@@ -4,15 +4,48 @@
     return params.get('project') || (localStorage.getItem('projectId') || 'default');
   }
   function loadConfig(projectId, isAdmin) {
-    var base = isAdmin ? '../' : '';
-    return fetch(base + 'projects/' + projectId + '/project.json', { cache: 'no-store' })
-      .then(function (res) { return res.json(); });
+    // 現在のページのパスに基づいて適切なパスを計算
+    var pathname = window.location.pathname;
+    var base = '';
+    
+    if (isAdmin) {
+      // admin/ または src/editor/ から見たパスを計算
+      if (pathname.indexOf('/admin/') >= 0) {
+        // admin/editor.html から見た場合
+        base = '../';
+      } else if (pathname.indexOf('/src/editor/') >= 0) {
+        // src/editor/editor.html から見た場合
+        base = '../../';
+      } else {
+        // その他の場合（フォールバック）
+        base = '../';
+      }
+    }
+    
+    var path = base + 'projects/' + projectId + '/project.json';
+    return fetch(path, { cache: 'no-store' })
+      .then(function (res) { 
+        if (!res.ok) {
+          throw new Error('Failed to load project.json: ' + res.status);
+        }
+        return res.json(); 
+      });
+  }
+  function getMainHtmlPath() {
+    var pathname = window.location.pathname;
+    if (pathname.indexOf('/admin/') >= 0) {
+      return '../main.html';
+    } else if (pathname.indexOf('/src/editor/') >= 0) {
+      return '../../main.html';
+    } else {
+      return 'main.html';
+    }
   }
   function ensureAuth(config) {
     if (config.access_mode === 'public') return true;
     if (config.access_mode === 'login') {
       alert('このプロジェクトは login モードです（未実装）。管理画面にはアクセスできません。');
-      window.location.href = (location.pathname.indexOf('/admin/') >= 0) ? '../main.html' : 'main.html';
+      window.location.href = getMainHtmlPath();
       return false;
     }
     var key = 'admin_authenticated_' + (config.project_id || 'default');
@@ -23,7 +56,7 @@
       return true;
     }
     alert('PINが間違っています。');
-    window.location.href = (location.pathname.indexOf('/admin/') >= 0) ? '../main.html' : 'main.html';
+    window.location.href = getMainHtmlPath();
     return false;
   }
   function init(options) {
@@ -31,9 +64,10 @@
     var pid = (options && options.projectId) || getProjectIdFromQuery();
     loadConfig(pid, isAdmin).then(function (cfg) {
       ensureAuth(cfg);
-    }).catch(function () {
-      alert('project.json の読み込みに失敗しました');
-      window.location.href = (location.pathname.indexOf('/admin/') >= 0) ? '../main.html' : 'main.html';
+    }).catch(function (err) {
+      console.error('project.json の読み込みエラー:', err);
+      alert('project.json の読み込みに失敗しました: ' + (err.message || '不明なエラー'));
+      window.location.href = getMainHtmlPath();
     });
   }
   global.AdminAuth = { init: init };

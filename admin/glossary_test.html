@@ -445,8 +445,11 @@
       <select id="glossaryTemplateSelect">
         <option value="">選択してください</option>
         <option value="thinking_skills">① 思考スキル（論理・分析・統合）</option>
-        <option value="psychology">② 教育心理（認知・記憶・注意）</option>
+        <option value="psychology_old">② 教育心理（認知・記憶・注意）</option>
         <option value="future_skills">③ AI時代の学力（問題解決・メタ認知・自己調整）</option>
+        <option value="learning_science">④ 教育学（学習科学：理解度・転移・メタ認知・学習方略）</option>
+        <option value="psychology">⑤ 心理学（認知：注意・記憶・推論・処理速度）</option>
+        <option value="ai_literacy">⑥ AIリテラシー（批判的思考・データ思考・AI協働）</option>
       </select>
       <button id="loadGlossaryTemplateBtn">テンプレートを読み込む</button>
     </div>
@@ -512,11 +515,11 @@
     <h2>5. Policy ベース読み込みテスト</h2>
     <div class="controls">
       <label>Mode:</label>
-      <select id="policyMode">
-        <option value="project">project</option>
-        <option value="domain">domain</option>
-        <option value="global">global</option>
-      </select>
+        <select id="policyMode">
+          <option value="project">project</option>
+          <option value="domain">domain</option>
+          <option value="global">global</option>
+        </select>
       <label>Domains:</label>
       <input type="text" id="policyDomains" placeholder="psychology,AI" value="psychology,AI" />
       <button id="runPolicyBtn">読み込む</button>
@@ -553,7 +556,7 @@
           }
         }
       },
-      psychology: {
+      psychology_old: {
         terms: {
           "psy.cognition": {
             id: "psy.cognition",
@@ -602,11 +605,106 @@
             tags: ["21st"]
           }
         }
+      },
+      learning_science: {
+        terms: {
+          "learning.understanding": {
+            id: "learning.understanding",
+            name: "理解度",
+            definition: "概念同士の関係性を理解しているか。",
+            example: "関連する概念の違いや繋がりを説明できる。",
+            tags: ["learning"]
+          },
+          "learning.transfer": {
+            id: "learning.transfer",
+            name: "転移可能性",
+            definition: "学んだ内容を新しい状況に応用できる力。",
+            example: "既習事項を使って別の問題を解ける。",
+            tags: ["learning"]
+          },
+          "learning.metacognition": {
+            id: "learning.metacognition",
+            name: "メタ認知",
+            definition: "自分の理解状態を把握し調整できる力。",
+            example: "どこがわかっていないか言語化できる。",
+            tags: ["learning"]
+          },
+          "learning.strategy": {
+            id: "learning.strategy",
+            name: "学習方略",
+            definition: "有効な学習方法を使えるか。",
+            example: "重要部分を要約して整理する。",
+            tags: ["learning"]
+          }
+        }
+      },
+      psychology: {
+        terms: {
+          "cognition.attention": {
+            id: "cognition.attention",
+            name: "注意",
+            definition: "必要な情報に焦点を合わせる能力。",
+            example: "重要箇所に集中する。",
+            tags: ["cognition"]
+          },
+          "cognition.memory": {
+            id: "cognition.memory",
+            name: "記憶",
+            definition: "学習内容を保持・想起する能力。",
+            example: "キーワードの意味を正確に覚えている。",
+            tags: ["cognition"]
+          },
+          "cognition.reasoning": {
+            id: "cognition.reasoning",
+            name: "推論",
+            definition: "情報を組み合わせて結論を導く能力。",
+            example: "因果関係を説明できる。",
+            tags: ["cognition"]
+          },
+          "cognition.processing": {
+            id: "cognition.processing",
+            name: "処理速度",
+            definition: "情報処理の速さと効率。",
+            example: "短時間で内容を理解する。",
+            tags: ["cognition"]
+          }
+        }
+      },
+      ai_literacy: {
+        terms: {
+          "ai.critical": {
+            id: "ai.critical",
+            name: "批判的思考",
+            definition: "AIの出力を鵜呑みにせず検証する力。",
+            example: "AIの回答の妥当性を判断する。",
+            tags: ["ai"]
+          },
+          "ai.data_reason": {
+            id: "ai.data_reason",
+            name: "データ思考",
+            definition: "データから意味を読み取る力。",
+            example: "グラフを読み取り傾向を説明する。",
+            tags: ["ai"]
+          },
+          "ai.meta": {
+            id: "ai.meta",
+            name: "AI時代のメタ認知",
+            definition: "AIと人間の役割を使い分ける力。",
+            example: "AIに依存せず、自分の理解限界を判断する。",
+            tags: ["ai"]
+          },
+          "ai.collaboration": {
+            id: "ai.collaboration",
+            name: "AI協働",
+            definition: "AIを利用して問題解決を進める能力。",
+            example: "AIの提案を人間の判断で改善する。",
+            tags: ["ai"]
+          }
+        }
       }
     };
 
-    // グローバル変数：現在のGlossary（エディタからもアクセス可能）
-    window.currentGlossary = null;
+    // window.currentGlossary はエディタで直接使用される
 
     function escapeHtml(text) {
       if (!text) return '';
@@ -1358,16 +1456,16 @@
                       (document.getElementById('projectIdInput') ? document.getElementById('projectIdInput').value : 'default');
       var resultDiv = document.getElementById('projectResult');
       if (resultDiv) {
-        resultDiv.style.display = 'block';
-        resultDiv.innerHTML = '<p>読み込み中...</p>';
-        
-        GlossaryLoader.loadProjectGlossary(projectId, { admin: true })
-          .then(function(glossary) {
-            resultDiv.innerHTML = '<h3>結果:</h3><pre>' + JSON.stringify(glossary, null, 2) + '</pre>';
-          })
-          .catch(function(error) {
-            resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
-          });
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = '<p>読み込み中...</p>';
+      
+      GlossaryLoader.loadProjectGlossary(projectId, { admin: true })
+        .then(function(glossary) {
+          resultDiv.innerHTML = '<h3>結果:</h3><pre>' + JSON.stringify(glossary, null, 2) + '</pre>';
+        })
+        .catch(function(error) {
+          resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
+        });
       }
     }
 
@@ -1376,52 +1474,52 @@
                       (document.getElementById('domainName') ? document.getElementById('domainName').value : 'psychology');
       var resultDiv = document.getElementById('domainResult');
       if (resultDiv) {
-        resultDiv.style.display = 'block';
-        resultDiv.innerHTML = '<p>読み込み中...</p>';
-        
-        GlossaryLoader.loadDomainGlossary(domainName, { admin: true })
-          .then(function(glossary) {
-            resultDiv.innerHTML = '<h3>結果:</h3><pre>' + JSON.stringify(glossary, null, 2) + '</pre>';
-          })
-          .catch(function(error) {
-            resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
-          });
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = '<p>読み込み中...</p>';
+      
+      GlossaryLoader.loadDomainGlossary(domainName, { admin: true })
+        .then(function(glossary) {
+          resultDiv.innerHTML = '<h3>結果:</h3><pre>' + JSON.stringify(glossary, null, 2) + '</pre>';
+        })
+        .catch(function(error) {
+          resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
+        });
       }
     }
 
     function testGlobalGlossary() {
       var resultDiv = document.getElementById('globalResult');
       if (resultDiv) {
-        resultDiv.style.display = 'block';
-        resultDiv.innerHTML = '<p>読み込み中...</p>';
-        
-        GlossaryLoader.loadGlobalGlossary({ admin: true })
-          .then(function(glossary) {
-            resultDiv.innerHTML = '<h3>結果:</h3><pre>' + JSON.stringify(glossary, null, 2) + '</pre>';
-          })
-          .catch(function(error) {
-            resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
-          });
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = '<p>読み込み中...</p>';
+      
+      GlossaryLoader.loadGlobalGlossary({ admin: true })
+        .then(function(glossary) {
+          resultDiv.innerHTML = '<h3>結果:</h3><pre>' + JSON.stringify(glossary, null, 2) + '</pre>';
+        })
+        .catch(function(error) {
+          resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
+        });
       }
     }
 
     function testMerge() {
       var resultDiv = document.getElementById('mergeResult');
       if (resultDiv) {
-        resultDiv.style.display = 'block';
-        resultDiv.innerHTML = '<p>読み込み中...</p>';
-        
-        Promise.all([
-          GlossaryLoader.loadGlobalGlossary({ admin: true }),
-          GlossaryLoader.loadDomainGlossary('psychology', { admin: true }),
-          GlossaryLoader.loadProjectGlossary('default', { admin: true })
-        ]).then(function(glossaries) {
-          var merged = GlossaryLoader.mergeGlossaries(glossaries);
-          resultDiv.innerHTML = '<h3>マージ結果:</h3><pre>' + JSON.stringify(merged, null, 2) + '</pre>';
-        })
-        .catch(function(error) {
-          resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
-        });
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = '<p>読み込み中...</p>';
+      
+      Promise.all([
+        GlossaryLoader.loadGlobalGlossary({ admin: true }),
+        GlossaryLoader.loadDomainGlossary('psychology', { admin: true }),
+        GlossaryLoader.loadProjectGlossary('default', { admin: true })
+      ]).then(function(glossaries) {
+        var merged = GlossaryLoader.mergeGlossaries(glossaries);
+        resultDiv.innerHTML = '<h3>マージ結果:</h3><pre>' + JSON.stringify(merged, null, 2) + '</pre>';
+      })
+      .catch(function(error) {
+        resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
+      });
       }
     }
 
@@ -1439,18 +1537,18 @@
       
       var resultDiv = document.getElementById('policyResult');
       if (resultDiv) {
-        resultDiv.style.display = 'block';
-        resultDiv.innerHTML = '<p>読み込み中...</p>';
-        
-        GlossaryLoader.loadGlossaryByPolicy(projectId, policy, { admin: true })
-          .then(function(glossary) {
-            resultDiv.innerHTML = '<h3>Policy: ' + JSON.stringify(policy, null, 2) + '</h3>' +
-              '<h3>統合結果:</h3><pre>' + JSON.stringify(glossary, null, 2) + '</pre>';
-          })
-          .catch(function(error) {
-            resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
-          });
-      }
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = '<p>読み込み中...</p>';
+      
+      GlossaryLoader.loadGlossaryByPolicy(projectId, policy, { admin: true })
+        .then(function(glossary) {
+          resultDiv.innerHTML = '<h3>Policy: ' + JSON.stringify(policy, null, 2) + '</h3>' +
+            '<h3>統合結果:</h3><pre>' + JSON.stringify(glossary, null, 2) + '</pre>';
+        })
+        .catch(function(error) {
+          resultDiv.innerHTML = '<p style="color:red;">エラー: ' + error.message + '</p>';
+        });
+    }
     }
 
     // =========================
@@ -1479,24 +1577,43 @@
         }
 
         // ===========================
-        // ① グローバル変数に設定（エディタからもアクセス可能）
-        // terms オブジェクトのみを保持
+        // ① window.currentGlossary に設定（エディタで直接使用）
+        // 常に { terms: {...} } の形式で保持
         // ===========================
-        window.currentGlossary = glossary.terms;
+        const glossaryData = { terms: glossary.terms || glossary };
+        
+        // window.currentGlossary に設定（エディタで直接使用）
+        window.currentGlossary = glossaryData;
+        console.log('[Glossary] window.currentGlossary を設定しました:', glossaryData);
+        
+        // localStorage に保存（永続化）
+        try {
+          localStorage.setItem('currentGlossary', JSON.stringify(glossaryData));
+          console.log('[Glossary] localStorage に保存しました');
+        } catch (e) {
+          console.warn('[Glossary] localStorage への保存に失敗しました:', e);
+        }
+        
+        // エディタのベクトル設定UIを更新（存在する場合）
+        if (typeof window.refreshVectorAxis === 'function') {
+          window.refreshVectorAxis();
+          console.log('[Glossary] ベクトル設定UIを更新しました');
+        }
 
         // ===========================
         // ② Glossary Loader のカードに表示（resultArea）
         // ===========================
         // Glossaryカードを必ず表示
+        const termsToDisplay = glossary.terms || glossary;
         if (typeof renderGlossaryCards === 'function') {
-          renderGlossaryCards(glossary.terms);
+          renderGlossaryCards(termsToDisplay);
         } else {
           console.warn('renderGlossaryCards function not found');
           // フォールバック: 直接resultAreaに表示
           const resultArea = document.getElementById('resultArea');
           if (resultArea) {
             resultArea.innerHTML = '';
-            Object.values(glossary.terms).forEach(function(term) {
+            Object.values(termsToDisplay).forEach(function(term) {
               const div = document.createElement('div');
               div.className = 'glossary-card';
               div.innerHTML = 
@@ -1522,8 +1639,9 @@
             escapeHtml(templateName) + '」を読み込みました</strong></div>';
           
           // テンプレートの用語をカード表示
-          if (glossary.terms && Object.keys(glossary.terms).length > 0) {
-            const termsHtml = Object.values(glossary.terms).map(function(term) {
+          const termsForPreview = glossary.terms || glossary;
+          if (termsForPreview && Object.keys(termsForPreview).length > 0) {
+            const termsHtml = Object.values(termsForPreview).map(function(term) {
               return '<div class="glossary-card" style="margin-bottom: 10px;">' +
                 '<div class="glossary-term">' + escapeHtml(term.name) + 
                 '<span class="glossary-term-id">(' + escapeHtml(term.id) + ')</span></div>' +
@@ -1536,11 +1654,8 @@
         }
 
         // ===========================
-        // ④ ベクトル設定UIを更新（エディタが開いている場合）
+        // ④ ベクトル設定UIの更新は上記で refreshVectorAxis を呼び出して実行
         // ===========================
-        if (typeof window.refreshVectorAxis === 'function') {
-          window.refreshVectorAxis(glossary.terms);
-        }
 
         alert('テンプレートを読み込みました！\nエディタのベクトル設定UIで使用できます。');
       });

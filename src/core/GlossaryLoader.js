@@ -11,6 +11,23 @@
   'use strict';
 
   /**
+   * 現在のページのパスに基づいて適切なベースパスを取得
+   * @param {boolean} admin - admin モードかどうか
+   * @returns {string} ベースパス（例: '../', '../../', ''）
+   */
+  function getBasePath(admin) {
+    if (!admin) return '';
+    var pathname = window.location.pathname;
+    if (pathname.indexOf('/admin/') >= 0) {
+      return '../';
+    } else if (pathname.indexOf('/src/editor/') >= 0) {
+      return '../../';
+    } else {
+      return '../';
+    }
+  }
+
+  /**
    * プロジェクトGlossaryを読み込む
    * @param {string} projectId - プロジェクトID
    * @param {Object} opts - オプション（admin: true で相対パスを調整）
@@ -18,9 +35,8 @@
    */
   function loadProjectGlossary(projectId, opts) {
     var admin = opts && opts.admin;
-    var path = admin 
-      ? '../projects/' + projectId + '/glossary.json'
-      : 'projects/' + projectId + '/glossary.json';
+    var base = getBasePath(admin);
+    var path = base + 'projects/' + projectId + '/glossary.json';
     
     return fetch(path, { cache: 'no-store' })
       .then(function (response) {
@@ -62,9 +78,8 @@
    */
   function loadDomainGlossary(domainName, opts) {
     var admin = opts && opts.admin;
-    var path = admin
-      ? '../glossary/domains/' + domainName + '.json'
-      : 'glossary/domains/' + domainName + '.json';
+    var base = getBasePath(admin);
+    var path = base + 'glossary/domains/' + domainName + '.json';
     
     return fetch(path, { cache: 'no-store' })
       .then(function (response) {
@@ -99,9 +114,8 @@
    */
   function loadGlobalGlossary(opts) {
     var admin = opts && opts.admin;
-    var path = admin
-      ? '../glossary/global.json'
-      : 'glossary/global.json';
+    var base = getBasePath(admin);
+    var path = base + 'glossary/global.json';
     
     return fetch(path, { cache: 'no-store' })
       .then(function (response) {

@@ -3,12 +3,33 @@
     return 'projects/' + projectId + '/project.json';
   }
   function getAdminConfigPath(projectId) {
-    return '../projects/' + projectId + '/project.json';
+    // 現在のページのパスに基づいて適切なパスを計算
+    var pathname = window.location.pathname;
+    var base = '';
+    
+    if (pathname.indexOf('/admin/') >= 0) {
+      // admin/editor.html から見た場合
+      base = '../';
+    } else if (pathname.indexOf('/src/editor/') >= 0) {
+      // src/editor/editor.html から見た場合
+      base = '../../';
+    } else {
+      // その他の場合（フォールバック）
+      base = '../';
+    }
+    
+    return base + 'projects/' + projectId + '/project.json';
   }
   function load(projectId, opts) {
     var admin = opts && opts.admin;
     var path = admin ? getAdminConfigPath(projectId) : getConfigPath(projectId);
-    return fetch(path, { cache: 'no-store' }).then(function (r) { return r.json(); });
+    return fetch(path, { cache: 'no-store' })
+      .then(function (r) { 
+        if (!r.ok) {
+          throw new Error('Failed to load project.json: ' + r.status + ' from ' + path);
+        }
+        return r.json(); 
+      });
   }
   function normalize(config) {
     var cfg = Object.assign({}, config);

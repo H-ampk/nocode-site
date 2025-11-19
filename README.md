@@ -89,7 +89,7 @@ nocode-site/
 │
 ├── admin/                       # 管理画面
 │   ├── admin.html              # 管理ダッシュボード（メニュー）
-│   ├── editor.html             # エディタ画面（src/editor/editor.html へリダイレクト）
+│   └── (editor.html は削除、src/editor/editor.html を直接使用)
 │   ├── glossary.html           # Glossary 編集画面
 │   ├── project_manager.html    # プロジェクト設定（公開方式・PIN設定）
 │   ├── analysis.html           # データ分析ダッシュボード

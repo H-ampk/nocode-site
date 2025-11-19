@@ -1,3 +1,103 @@
+// Glossaryテンプレート定義（エディタ内で使用）
+const GLOSSARY_TEMPLATES = {
+    learning_science: {
+        terms: {
+            "learning.understanding": {
+                id: "learning.understanding",
+                name: "理解度",
+                definition: "概念同士の関係性を理解しているか。",
+                example: "関連する概念の違いや繋がりを説明できる。",
+                tags: ["learning"]
+            },
+            "learning.transfer": {
+                id: "learning.transfer",
+                name: "転移可能性",
+                definition: "学んだ内容を新しい状況に応用できる力。",
+                example: "既習事項を使って別の問題を解ける。",
+                tags: ["learning"]
+            },
+            "learning.metacognition": {
+                id: "learning.metacognition",
+                name: "メタ認知",
+                definition: "自分の理解状態を把握し調整できる力。",
+                example: "どこがわかっていないか言語化できる。",
+                tags: ["learning"]
+            },
+            "learning.strategy": {
+                id: "learning.strategy",
+                name: "学習方略",
+                definition: "有効な学習方法を使えるか。",
+                example: "重要部分を要約して整理する。",
+                tags: ["learning"]
+            }
+        }
+    },
+    psychology: {
+        terms: {
+            "cognition.attention": {
+                id: "cognition.attention",
+                name: "注意",
+                definition: "必要な情報に焦点を合わせる能力。",
+                example: "重要箇所に集中する。",
+                tags: ["cognition"]
+            },
+            "cognition.memory": {
+                id: "cognition.memory",
+                name: "記憶",
+                definition: "学習内容を保持・想起する能力。",
+                example: "キーワードの意味を正確に覚えている。",
+                tags: ["cognition"]
+            },
+            "cognition.reasoning": {
+                id: "cognition.reasoning",
+                name: "推論",
+                definition: "情報を組み合わせて結論を導く能力。",
+                example: "因果関係を説明できる。",
+                tags: ["cognition"]
+            },
+            "cognition.processing": {
+                id: "cognition.processing",
+                name: "処理速度",
+                definition: "情報処理の速さと効率。",
+                example: "短時間で内容を理解する。",
+                tags: ["cognition"]
+            }
+        }
+    },
+    ai_literacy: {
+        terms: {
+            "ai.critical": {
+                id: "ai.critical",
+                name: "批判的思考",
+                definition: "AIの出力を鵜呑みにせず検証する力。",
+                example: "AIの回答の妥当性を判断する。",
+                tags: ["ai"]
+            },
+            "ai.data_reason": {
+                id: "ai.data_reason",
+                name: "データ思考",
+                definition: "データから意味を読み取る力。",
+                example: "グラフを読み取り傾向を説明する。",
+                tags: ["ai"]
+            },
+            "ai.meta": {
+                id: "ai.meta",
+                name: "AI時代のメタ認知",
+                definition: "AIと人間の役割を使い分ける力。",
+                example: "AIに依存せず、自分の理解限界を判断する。",
+                tags: ["ai"]
+            },
+            "ai.collaboration": {
+                id: "ai.collaboration",
+                name: "AI協働",
+                definition: "AIを利用して問題解決を進める能力。",
+                example: "AIの提案を人間の判断で改善する。",
+                tags: ["ai"]
+            }
+        }
+    }
+};
+
 // ゲームデータ構造
 let gameData = {
     version: 2,
@@ -1092,70 +1192,35 @@ function renderDiagnosticChoicesList(question) {
 // Glossaryから評価軸を取得してスコアリングUIを表示
 let cachedGlossary = null;
 
-async function loadGlossaryForScoring() {
-    // テンプレートが読み込まれている場合は優先
-    // window.currentGlossary は terms オブジェクトそのものを保持
-    if (window.currentGlossary) {
-        return window.currentGlossary;
+function loadGlossaryForScoring() {
+    // window.currentGlossary から直接取得（iframe 前提を完全撤廃）
+    // 同期関数として実装（非同期処理は不要）
+    if (window.currentGlossary?.terms) {
+        return window.currentGlossary.terms;
     }
-    
-    if (cachedGlossary) return cachedGlossary;
-    
-    try {
-        const projectId = localStorage.getItem('projectId') || 'default';
-        const projectGlossary = await GlossaryLoader.loadProjectGlossary(projectId, { admin: false });
-        const globalGlossary = await GlossaryLoader.loadGlobalGlossary({ admin: false });
-        const merged = GlossaryLoader.mergeGlossaries([globalGlossary, projectGlossary]);
-        
-        // termsオブジェクトを取得（配列形式の場合は変換）
-        let terms = {};
-        if (merged.terms) {
-            if (Array.isArray(merged.terms)) {
-                merged.terms.forEach(function(term) {
-                    if (term && term.id) {
-                        terms[term.id] = term;
-                    }
-                });
-            } else {
-                terms = merged.terms;
-            }
-        } else {
-            // termsがない場合はmerged自体がtermsオブジェクトの可能性
-            terms = merged;
-        }
-        
-        cachedGlossary = terms;
-        return terms;
-    } catch (error) {
-        console.warn('Glossary読み込みエラー:', error);
-        return {};
-    }
+    return {};
 }
 
 // ベクトル設定UIを更新（テンプレート読み込み時に呼び出される）
-// 引数は glossaryTerms オブジェクト（glossary.terms を渡す）
-window.refreshVectorAxis = function(glossaryTerms) {
-    // グローバル変数に設定
-    window.currentGlossary = glossaryTerms;
+// 引数なし：window.currentGlossary から直接取得
+window.refreshVectorAxis = function() {
+    const terms = window.currentGlossary?.terms;
+    if (!terms) return;
     
     // キャッシュをクリア
     cachedGlossary = null;
     
     // 現在編集中の質問がある場合は、ベクトル設定UIを再描画
-    if (selectedNodeId) {
-        const question = gameData.questions.find(function(q) { return q.id === selectedNodeId; });
-        if (question) {
-            if (question.type === 'diagnostic_question') {
-                setTimeout(function() {
-                    renderDiagnosticScoringList(question);
-                }, 100);
-            } else {
-                setTimeout(function() {
-                    renderVectorSettingsForQuestion(question);
-                }, 100);
-            }
+    const question = gameData.questions.find(function(q) { return q.id === selectedNodeId; });
+    if (!question) return;
+    
+    setTimeout(function() {
+        if (question.type === 'diagnostic_question') {
+            renderDiagnosticScoringList(question);
+        } else {
+            renderVectorSettingsForQuestion(question);
         }
-    }
+    }, 100);
 };
 
 function renderDiagnosticScoringList(question) {
@@ -1172,50 +1237,80 @@ function renderDiagnosticScoringList(question) {
         return;
     }
     
-    container.innerHTML = '<div style="padding: 10px; background: #e6f3ff; border-radius: 8px; margin-bottom: 15px;">Glossaryから評価軸を読み込み中...</div>';
+    // テンプレート選択UIを表示
+    const templateSelectHtml = `
+        <div style="margin-bottom: 20px; padding: 15px; background: #f0f7ff; border: 2px solid #4a90e2; border-radius: 8px;">
+            <h3 style="margin-top: 0; margin-bottom: 12px; color: #2d3748; font-size: 1.1rem;">📚 評価軸テンプレートを選択</h3>
+            <p style="margin-bottom: 12px; color: #555; font-size: 0.95rem;">診断クイズの評価軸を設定するためのテンプレートを選択してください。</p>
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <select id="glossaryTemplateSelect-diagnostic-${question.id}" 
+                        style="flex: 1; min-width: 250px; padding: 8px 12px; border: 2px solid #4a90e2; border-radius: 6px; font-size: 1rem; background: white;">
+                    <option value="">テンプレートを選択してください</option>
+                    <option value="learning_science">① 教育学（学習科学：理解度・転移・メタ認知・学習方略）</option>
+                    <option value="psychology">② 心理学（認知：注意・記憶・推論・処理速度）</option>
+                    <option value="ai_literacy">③ AIリテラシー（批判的思考・データ思考・AI協働）</option>
+                </select>
+                <button onclick="loadGlossaryTemplateForQuestion('${question.id}')" 
+                        style="padding: 8px 20px; background: #4a90e2; color: white; border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; font-weight: 600; white-space: nowrap;">
+                    テンプレートを読み込む
+                </button>
+            </div>
+            <div id="templateStatus-diagnostic-${question.id}" style="margin-top: 10px; font-size: 0.9rem; color: #666;"></div>
+        </div>
+    `;
+    
+    container.innerHTML = templateSelectHtml;
     
     // Glossaryを読み込んで評価軸UIを表示
-    loadGlossaryForScoring().then(function(glossaryTerms) {
-        if (!glossaryTerms || Object.keys(glossaryTerms).length === 0) {
-            container.innerHTML = `<div style="padding: 10px; background: #fff3cd; border-radius: 8px; margin-bottom: 15px;">
-                <strong>⚠️ 評価軸が見つかりません</strong><br>
-                Glossaryに用語が登録されていないか、読み込みに失敗しました。
-            </div>`;
-            updateScoringJson(question);
-            return;
+    // window.currentGlossary から直接取得（最新の状態を確実に反映）
+    const glossaryTerms = loadGlossaryForScoring();
+    
+    if (!glossaryTerms || Object.keys(glossaryTerms).length === 0) {
+        const statusDiv = document.getElementById(`templateStatus-diagnostic-${question.id}`);
+        if (statusDiv) {
+            statusDiv.innerHTML = '<span style="color: #e53e3e;">⚠️ 評価軸テンプレートが読み込まれていません。上記からテンプレートを選択して読み込んでください。</span>';
         }
-        
-        // 各選択肢ごとに評価軸UIを表示
-        const scoringHtml = question.choices.map(function(choice) {
-            const choiceId = choice.id || '';
-            if (!choiceId) return '';
-            
-            const existingRule = (question.scoring || []).find(function(r) { return r.choice_id === choiceId; });
-            const existingVector = existingRule ? existingRule.vector : {};
-            
-            return `
-                <div class="score-setting" style="margin-bottom: 25px; padding: 15px; background: #fafafa; border: 1px solid #ddd; border-radius: 8px;">
-                    <h3 style="margin-top: 0; margin-bottom: 15px; color: #333; font-size: 1.1rem;">選択肢「${escapeHtml(choice.text || choiceId)}」（ID: ${escapeHtml(choiceId)}）</h3>
-                    <div id="scoreAxisList-${escapeHtml(choiceId)}" data-choice-id="${escapeHtml(choiceId)}"></div>
-                </div>
-            `;
-        }).join('');
-        
-        container.innerHTML = scoringHtml;
-        
-        // 各選択肢の評価軸UIを描画
-        question.choices.forEach(function(choice) {
-            const choiceId = choice.id || '';
-            if (!choiceId) return;
-            
-            const existingRule = (question.scoring || []).find(function(r) { return r.choice_id === choiceId; });
-            const existingVector = existingRule ? existingRule.vector : {};
-            
-            renderAxisUI(glossaryTerms, choiceId, question.id, existingVector);
-        });
-        
         updateScoringJson(question);
+        return;
+    }
+    
+    // 各選択肢ごとに評価軸UIを表示
+    const scoringHtml = question.choices.map(function(choice) {
+        const choiceId = choice.id || '';
+        if (!choiceId) return '';
+        
+        const existingRule = (question.scoring || []).find(function(r) { return r.choice_id === choiceId; });
+        const existingVector = existingRule ? existingRule.vector : {};
+        
+        return `
+            <div class="score-setting" style="margin-bottom: 25px; padding: 15px; background: #fafafa; border: 1px solid #ddd; border-radius: 8px;">
+                <h3 style="margin-top: 0; margin-bottom: 15px; color: #333; font-size: 1.1rem;">選択肢「${escapeHtml(choice.text || choiceId)}」（ID: ${escapeHtml(choiceId)}）</h3>
+                <div id="scoreAxisList-${escapeHtml(choiceId)}" data-choice-id="${escapeHtml(choiceId)}"></div>
+            </div>
+        `;
+    }).join('');
+    
+    // テンプレート選択UIの後に評価軸UIを追加
+    container.innerHTML = templateSelectHtml + scoringHtml;
+    
+    // ステータスを更新
+    const statusDiv = document.getElementById(`templateStatus-diagnostic-${question.id}`);
+    if (statusDiv) {
+        statusDiv.innerHTML = '<span style="color: #48bb78;">✓ 評価軸テンプレートが読み込まれています</span>';
+    }
+    
+    // 各選択肢の評価軸UIを描画
+    question.choices.forEach(function(choice) {
+        const choiceId = choice.id || '';
+        if (!choiceId) return;
+        
+        const existingRule = (question.scoring || []).find(function(r) { return r.choice_id === choiceId; });
+        const existingVector = existingRule ? existingRule.vector : {};
+        
+        renderAxisUI(glossaryTerms, choiceId, question.id, existingVector);
     });
+    
+    updateScoringJson(question);
 }
 
 // 評価軸UIを描画
@@ -1339,7 +1434,7 @@ function collectScoreVector(choiceId) {
 }
 
 // 通常クイズ用のベクトル設定UIを表示
-async function renderVectorSettingsForQuestion(question) {
+function renderVectorSettingsForQuestion(question) {
     const area = document.getElementById('vectorSettingArea');
     if (!area) return;
     
@@ -1350,21 +1445,45 @@ async function renderVectorSettingsForQuestion(question) {
         return;
     }
     
-    area.innerHTML = '<div style="padding: 10px; background: #e6f3ff; border-radius: 8px; margin-bottom: 15px;">Glossaryから評価軸を読み込み中...</div>';
+    // テンプレート選択UIを表示
+    const templateSelectHtml = `
+        <div style="margin-bottom: 20px; padding: 15px; background: #f0f7ff; border: 2px solid #4a90e2; border-radius: 8px;">
+            <h3 style="margin-top: 0; margin-bottom: 12px; color: #2d3748; font-size: 1.1rem;">📚 評価軸テンプレートを選択</h3>
+            <p style="margin-bottom: 12px; color: #555; font-size: 0.95rem;">理解ベクトルを設定するための評価軸テンプレートを選択してください。</p>
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <select id="glossaryTemplateSelect-${question.id}" 
+                        style="flex: 1; min-width: 250px; padding: 8px 12px; border: 2px solid #4a90e2; border-radius: 6px; font-size: 1rem; background: white;">
+                    <option value="">テンプレートを選択してください</option>
+                    <option value="learning_science">① 教育学（学習科学：理解度・転移・メタ認知・学習方略）</option>
+                    <option value="psychology">② 心理学（認知：注意・記憶・推論・処理速度）</option>
+                    <option value="ai_literacy">③ AIリテラシー（批判的思考・データ思考・AI協働）</option>
+                </select>
+                <button onclick="loadGlossaryTemplateForQuestion('${question.id}')" 
+                        style="padding: 8px 20px; background: #4a90e2; color: white; border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; font-weight: 600; white-space: nowrap;">
+                    テンプレートを読み込む
+                </button>
+            </div>
+            <div id="templateStatus-${question.id}" style="margin-top: 10px; font-size: 0.9rem; color: #666;"></div>
+        </div>
+    `;
     
-    // Glossaryを読み込んで評価軸UIを表示
-    try {
-        const glossaryTerms = await loadGlossaryForScoring();
-        
-        if (!glossaryTerms || Object.keys(glossaryTerms).length === 0) {
-            area.innerHTML = `<div style="padding: 10px; background: #fff3cd; border-radius: 8px; margin-bottom: 15px;">
-                <strong>⚠️ 評価軸が見つかりません</strong><br>
-                Glossaryに用語が登録されていないか、読み込みに失敗しました。
-            </div>`;
-            updateVectorJson(question);
-            return;
+    area.innerHTML = templateSelectHtml;
+    
+    // 既にGlossaryが読み込まれている場合は評価軸UIを表示
+    // window.currentGlossary から直接取得（最新の状態を確実に反映）
+    const glossaryTerms = loadGlossaryForScoring();
+    
+    if (!glossaryTerms || Object.keys(glossaryTerms).length === 0) {
+        const statusDiv = document.getElementById(`templateStatus-${question.id}`);
+        if (statusDiv) {
+            statusDiv.innerHTML = '<span style="color: #e53e3e;">⚠️ 評価軸テンプレートが読み込まれていません。上記からテンプレートを選択して読み込んでください。</span>';
         }
-        
+        updateVectorJson(question);
+        return;
+    }
+    
+    // Glossaryが読み込まれている場合は評価軸UIを表示
+    try {
         // 既存のベクトル設定を取得
         const existingVectors = question.vector_scores || {};
         
@@ -1387,7 +1506,14 @@ async function renderVectorSettingsForQuestion(question) {
             `;
         }).join('');
         
-        area.innerHTML = vectorHtml;
+        // テンプレート選択UIの後に評価軸UIを追加
+        area.innerHTML = templateSelectHtml + vectorHtml;
+        
+        // ステータスを更新
+        const statusDiv = document.getElementById(`templateStatus-${question.id}`);
+        if (statusDiv) {
+            statusDiv.innerHTML = '<span style="color: #48bb78;">✓ 評価軸テンプレートが読み込まれています</span>';
+        }
         
         // 各選択肢の評価軸UIを描画
         question.choices.forEach(function(choice, index) {
@@ -1405,11 +1531,76 @@ async function renderVectorSettingsForQuestion(question) {
         updateVectorJson(question);
     } catch (error) {
         console.warn('Glossary読み込みエラー:', error);
-        area.innerHTML = `<div style="padding: 10px; background: #fff3cd; border-radius: 8px; margin-bottom: 15px;">
-            <strong>⚠️ 評価軸の読み込みに失敗しました</strong><br>
-            ${escapeHtml(error.message || '不明なエラー')}
-        </div>`;
+        const statusDiv = document.getElementById(`templateStatus-${question.id}`);
+        if (statusDiv) {
+            statusDiv.innerHTML = `<span style="color: #e53e3e;">⚠️ 評価軸の読み込みに失敗しました: ${escapeHtml(error.message || '不明なエラー')}</span>`;
+        }
         updateVectorJson(question);
+    }
+}
+
+// テンプレートを読み込んで評価軸UIを更新
+function loadGlossaryTemplateForQuestion(questionId) {
+    // 通常クイズと診断クイズの両方のセレクトを確認
+    const select = document.getElementById(`glossaryTemplateSelect-${questionId}`) || 
+                   document.getElementById(`glossaryTemplateSelect-diagnostic-${questionId}`);
+    if (!select) {
+        console.warn('[Editor] テンプレート選択UIが見つかりません:', questionId);
+        return;
+    }
+    
+    const selected = select.value;
+    if (!selected) {
+        alert('テンプレートを選択してください。');
+        return;
+    }
+    
+    const template = GLOSSARY_TEMPLATES[selected];
+    if (!template) {
+        alert('テンプレートが見つかりません。');
+        return;
+    }
+    
+    // window.currentGlossary に設定
+    const glossaryData = { terms: template.terms || template };
+    window.currentGlossary = glossaryData;
+    console.log('[Editor] テンプレートを読み込みました:', selected, glossaryData);
+    
+    // localStorage に保存
+    try {
+        localStorage.setItem('currentGlossary', JSON.stringify(glossaryData));
+        console.log('[Editor] localStorage に保存しました');
+    } catch (e) {
+        console.warn('[Editor] localStorage への保存に失敗しました:', e);
+    }
+    
+    // キャッシュをクリア（重要：新しいテンプレートを確実に反映）
+    cachedGlossary = null;
+    
+    // 評価軸UIを再描画（少し遅延させて確実に更新）
+    const question = gameData.questions.find(function(q) { return q.id === questionId; });
+    if (question) {
+        setTimeout(function() {
+            if (question.type === 'diagnostic_question') {
+                renderDiagnosticScoringList(question);
+            } else {
+                renderVectorSettingsForQuestion(question);
+            }
+        }, 50);
+    }
+    
+    // refreshVectorAxis も呼び出す（他の質問にも反映）
+    if (typeof window.refreshVectorAxis === 'function') {
+        setTimeout(function() {
+            window.refreshVectorAxis();
+        }, 100);
+    }
+    
+    // 成功メッセージ
+    const statusDiv = document.getElementById(`templateStatus-${questionId}`) || 
+                      document.getElementById(`templateStatus-diagnostic-${questionId}`);
+    if (statusDiv) {
+        statusDiv.innerHTML = '<span style="color: #48bb78;">✓ テンプレート「' + selected + '」を読み込みました。評価軸UIを更新しています...</span>';
     }
 }
 
