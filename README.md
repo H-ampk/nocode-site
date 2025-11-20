@@ -1,45 +1,63 @@
-# No-code Quiz Builder
+# 🚀 No-code教材エディタ / 学習データ分析エンジン
 
-教育者・学生向けのノーコードクイズ・診断作成ツールです。コードを書かずに、Web上でインタラクティブなクイズや診断アプリケーションを作成できます。
+![HTML](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)
+![CSS](https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat&logo=node.js&logoColor=white)
+![Vanilla JS](https://img.shields.io/badge/Vanilla%20JS-F7DF1E?style=flat&logo=javascript&logoColor=black)
+![Browser-only](https://img.shields.io/badge/Browser--only-4285F4?style=flat&logo=google-chrome&logoColor=white)
+
+教育者・学生向けのノーコードクイズ・診断作成ツールと学習データ分析エンジンです。コードを書かずに、Web上でインタラクティブなクイズや診断アプリケーションを作成し、学習者の行動データを分析できます。
 
 ## 📋 目次
 
 - [プロジェクト概要](#プロジェクト概要)
-- [システム構成図](#システム構成図)
-- [エディタ機能](#エディタ機能)
-- [プレイヤー機能](#プレイヤー機能)
-- [Glossary（評価軸）システム](#glossary評価軸システム)
-- [診断ロジック・ベクトル設定UI](#診断ロジックベクトル設定ui)
-- [評価軸テンプレート](#評価軸テンプレート)
-- [改善履歴](#改善履歴)
+- [システム構成](#システム構成)
+- [ディレクトリ構造](#ディレクトリ構造)
+- [主要機能](#主要機能)
+  - [エディタ機能](#エディタ機能)
+  - [プレイヤー機能](#プレイヤー機能)
+  - [管理機能](#管理機能)
+  - [Glossary（評価軸）システム](#glossary評価軸システム)
+  - [学習データ分析](#学習データ分析)
+- [データ構造](#データ構造)
+- [使用方法](#使用方法)
+  - [教師向けガイド](#教師向けガイド)
+  - [開発者向けガイド](#開発者向けガイド)
+  - [管理者向けガイド](#管理者向けガイド)
+- [コード構造ガイド](#コード構造ガイド)
 - [今後のロードマップ](#今後のロードマップ)
-- [開発メモ](#開発メモ)
+- [改善履歴](#改善履歴)
 
 ---
 
 ## プロジェクト概要
 
 ### What
-このプロジェクトは、プログラミング知識がなくてもWeb上でクイズ・診断アプリケーションを作成できるノーコードツールです。エディタ画面で質問と選択肢を視覚的に編集し、その場でプレビューして実行できます。
+このプロジェクトは、プログラミング知識がなくてもWeb上でクイズ・診断アプリケーションを作成できるノーコードツールです。エディタ画面で質問と選択肢を視覚的に編集し、その場でプレビューして実行できます。さらに、学習者の行動データを記録・分析し、クラス全体の理解状況を可視化できます。
 
 ### Purpose
 - **教育者向け**: 授業で使えるクイズや理解度チェック診断を簡単に作成
 - **学習支援**: 誤答時に自動的にGlossary（用語解説）を提示し、学習者の理解を促進
 - **データ分析**: 学習者の行動ログを記録し、教師がクラス全体の理解状況を可視化
+- **研究支援**: 学習データのクラスタリング分析、ベクトル分析、反応時間分析などの高度な分析機能
 
 ### 主な特徴
 - **ノーコード**: JSONの直接編集不要、GUIで直感的に操作
 - **3層Glossary**: プロジェクト・ドメイン・グローバルの3層で用語を管理
 - **自動レコメンド**: 誤答パターンと反応時間から最適な用語解説を自動提示
 - **データ可視化**: 学習者の理解状況をグラフで可視化
+- **バージョン管理**: クイズのバージョン管理システム（`quiz_versions/`）
+- **複数セッション対応**: 1人の学習者が複数回クイズを受講しても、すべてのセッションを管理
+- **高度な分析**: k-means クラスタリング、ベクトル分析、反応時間分析、JSON diff
 
 ---
 
-## システム構成図
+## システム構成
 
 ### アーキテクチャ概要
 
-本プロジェクトは **Editor / Player / Engine / Storage** の4層で構成されます。
+本プロジェクトは **Editor / Player / Admin / Core / Storage** の5層で構成されます。
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -49,6 +67,7 @@
 │  - ノーコードUI          │  - 実行画面                 │
 │  - 質問・選択肢編集       │  - Glossary自動提示         │
 │  - ベクトル設定UI         │  - ログ記録                 │
+│  - バージョン管理         │  - 複数セッション対応        │
 └─────────────────────────────────────────────────────────┘
 ┌─────────────────────────────────────────────────────────┐
 │                    Core Logic                           │
@@ -56,6 +75,7 @@
 │  Core (src/core/)        │  Admin (src/admin/)         │
 │  - config.js             │  - analysis.js               │
 │  - GlossaryLoader.js     │  - dataset_loader.js        │
+│                          │  - version_manager.js       │
 │                          │  - pin.js                    │
 └─────────────────────────────────────────────────────────┘
 ┌─────────────────────────────────────────────────────────┐
@@ -65,10 +85,28 @@
 │  - project.json          │  - global.json              │
 │  - quiz.json             │  - domains/*.json           │
 │  - glossary.json         │                              │
+│  - quiz_versions/        │  students/                  │
+│    - latest.json         │  - index.json               │
+│    - {version}.json      │  - {id}.json                │
 └─────────────────────────────────────────────────────────┘
 ```
 
-### フォルダ構成
+### スクリプト読み込み順序（絶対に変更禁止）
+
+分析ダッシュボード（`admin/analysis.html`）では、以下の順序でスクリプトを読み込む必要があります：
+
+1. `config.js` - プロジェクト設定の読み込み
+2. `GlossaryLoader.js` - Glossary の読み込み
+3. `dataset_loader.js` - データセット読み込み機能
+4. `vector_math.js` - ベクトル計算ユーティリティ
+5. `analysis.js` - 分析ロジック（1回のみ）
+6. main script - AnalysisDashboard を使用するスクリプト
+
+この順序を破ると `AnalysisDashboard`, `DatasetLoader`, `VectorMath` が未定義になります。
+
+---
+
+## ディレクトリ構造
 
 ```
 nocode-site/
@@ -98,698 +136,773 @@ nocode-site/
 │   ├── editor/                 # エディタ機能
 │   │   ├── editor.html         # エディタ画面（統合済み、ノーコードUI）
 │   │   ├── editor.js           # エディタロジック（質問・選択肢編集、バージョン管理）
-│   │   └── README.md           # エディタ機能の説明
+│   │   └── README.md           # エディタの説明
 │   │
-│   ├── player/                 # プレイヤー機能（学習者向け実行画面）
-│   │   ├── index.html          # プレイヤー（クイズ実行画面）
-│   │   ├── demo.html           # デモ画面（生徒ID入力UI付き）
-│   │   ├── player.js           # クイズ実行ロジック（分岐処理・Glossary表示）
-│   │   ├── logging.js          # ログ記録（StudentLogManager、複数セッション対応）
-│   │   ├── recommendation.js   # Glossary 自動レコメンド（誤答時の自動提示）
-│   │   └── README.md           # プレイヤー機能の説明
+│   ├── player/                  # プレイヤー機能
+│   │   ├── index.html          # プレイヤー画面（エントリーポイント）
+│   │   ├── demo.html           # デモ画面（テスト用）
+│   │   ├── player.js           # クイズ実行ロジック（分岐処理、Glossary表示）
+│   │   ├── logging.js          # 学習ログ記録（StudentLogManager、複数セッション対応）
+│   │   ├── recommendation.js   # Glossary自動レコメンド（誤答時の反応時間・path分析）
+│   │   └── README.md           # プレイヤーの説明
 │   │
-│   ├── admin/                  # 管理機能（教師向け分析・管理ツール）
-│   │   ├── pin.js              # PIN認証（管理画面アクセス制御）
-│   │   ├── auth.js             # 認証ロジック（将来実装）
-│   │   ├── analysis.js         # データ分析ロジック（統計計算・可視化・クラスタリング）
-│   │   ├── dataset_loader.js  # データセット読み込み（標準形に統一、multi-session対応）
-│   │   └── version_manager.js # バージョン管理ロジック（diff・削除・一覧）
+│   ├── admin/                   # 管理機能
+│   │   ├── analysis.js         # データ分析ロジック（統計計算、可視化、クラスタリング）
+│   │   ├── dataset_loader.js   # データセット読み込み（標準形に統一、multi-session対応）
+│   │   ├── version_manager.js  # クイズバージョン管理（一覧・削除・diff表示）
+│   │   ├── pin.js              # PIN認証（管理画面アクセス時の4桁PIN要求）
+│   │   └── auth.js             # 認証機能（将来実装）
 │   │
-│   ├── glossary/               # Glossary機能（用語集管理）
-│   │   ├── glossary.html       # Glossary 編集画面（用語のCRUD操作）
-│   │   ├── glossary_test.html # Glossary Loader テスト画面（動作確認用）
-│   │   ├── glossary.js         # Glossary 編集ロジック（JSON生成・保存）
-│   │   ├── global.json         # グローバルGlossary（分野横断の基底辞書）
-│   │   ├── domains/            # 学問領域別Glossary
-│   │   │   ├── psychology.json # 心理学領域の用語集
-│   │   │   ├── AI.json         # AI・機械学習領域の用語集
-│   │   │   └── ...             # その他の学問領域
-│   │   └── README.md           # Glossary機能の説明
+│   ├── glossary/                # Glossary（評価軸）システム
+│   │   ├── glossary.html       # Glossary管理画面（CRUD操作）
+│   │   ├── glossary.js        # Glossary管理ロジック
+│   │   ├── glossary_test.html # Glossaryテスト画面
+│   │   ├── global.json        # グローバルGlossary（全プロジェクト共通）
+│   │   ├── domains/           # ドメインGlossary（分野別）
+│   │   │   ├── AI.json        # AI分野のGlossary
+│   │   │   └── psychology.json # 心理学分野のGlossary
+│   │   └── README.md           # Glossaryの説明
 │   │
-│   ├── utils/                  # ユーティリティ関数
-│   │   └── vector_math.js      # ベクトル計算ユーティリティ（コサイン類似度、IIFE形式）
+│   ├── utils/                   # ユーティリティ
+│   │   └── vector_math.js     # ベクトル計算ユーティリティ（コサイン類似度、IIFE + window形式）
 │   │
-│   └── README.md               # src配下の全体説明
+│   └── README.md               # src/ 配下の説明
 │
-├── projects/                    # プロジェクトデータ（クイズ・設定ファイル）
+├── projects/                    # プロジェクトデータ
 │   ├── default/                # デフォルトプロジェクト
-│   │   ├── project.json        # プロジェクト設定（公開方式・PIN設定・理想ベクトル）
-│   │   ├── quiz.json           # クイズデータ（質問・選択肢・分岐）
-│   │   ├── glossary.json       # プロジェクト用語集
-│   │   ├── editor.json         # エディタ設定
-│   │   ├── concept_graph.json  # 概念グラフ（将来実装）
-│   │   └── quiz_versions/      # クイズバージョン管理フォルダ
-│   │       ├── latest.json     # 最新バージョンへの参照
-│   │       └── *.json          # バージョンファイル（YYYYMMDDHHmm-{author}-quiz.json）
-│   │
+│   │   ├── project.json       # プロジェクト設定（project_id, access_mode, pin_code）
+│   │   ├── quiz.json          # クイズデータ（質問・選択肢・分岐）
+│   │   ├── glossary.json     # プロジェクトGlossary（プロジェクト固有の用語）
+│   │   ├── concept_graph.json # 概念グラフ（将来実装）
+│   │   └── quiz_versions/     # クイズバージョン管理
+│   │       ├── latest.json    # 最新バージョンへの参照
+│   │       └── {YYYYMMDDHHmm}-{author}-quiz.json  # バージョンファイル
 │   ├── vector_test/            # ベクトル分析テスト用プロジェクト
-│   │   ├── project.json        # ベクトル分析テスト設定
-│   │   ├── quiz.json           # ベクトル分析テスト用クイズ（5問）
-│   │   └── glossary.json       # 空のGlossary
-│   │
-│   ├── dummy_project/          # ダミープロジェクト（テスト用）
-│   │   └── quiz.json           # ダミークイズデータ
-│   │
+│   │   ├── project.json       # プロジェクト設定
+│   │   ├── quiz.json          # ベクトル分析テスト用クイズ（5問、各選択肢にvector設定）
+│   │   └── glossary.json     # 空のGlossary
 │   └── sample_project/         # サンプルプロジェクト
 │
-├── students/                    # 学習データ（生徒ログ・データセット）
-│   ├── index.json              # データセット一覧（マスターファイル、自動生成）
-│   ├── generate_index.js       # index.json 自動生成スクリプト（Node.js）
-│   ├── quiz_log_dummy.json     # ダミーログデータ（50セッション、ベクトル分析用）
-│   ├── cluster_dummy.json      # クラスタリング分析用ダミーデータ（25セッション）
-│   └── *.json                  # データセットファイル（クラスデータ・個人データ）
+├── students/                    # 学習データ
+│   ├── index.json              # データセット一覧（マスターファイル）
+│   ├── quiz_log_dummy.json     # ダミーログ（50セッション、vector_test_sessions形式）
+│   ├── cluster_dummy.json      # クラスタリング用ダミーデータ（25セッション、cluster_features付き）
+│   └── generate_index.js      # index.json 自動生成スクリプト（Node.js）
 │
-├── legacy/                      # バックアップ（フォルダ整理前のコード）
-│   ├── admin/                  # 旧管理機能
-│   ├── editor.js               # 旧エディタロジック
-│   ├── public/                 # 旧静的ファイル
-│   ├── scripts/                # 旧スクリプト
-│   ├── src/                    # 旧ロジック本体
-│   ├── students/               # 旧学習データ
-│   └── legacy/                 # さらに古いバックアップ（122ファイル）
-│
-├── public/                      # 静的ファイル（CSS・JS・画像）
-│   ├── css/
-│   │   ├── main.css            # 共通スタイル（全ページ共通）
-│   │   └── ...                 # その他のCSSファイル
-│   ├── js/                     # JavaScript ファイル（レガシー）
-│   ├── dashboard.html          # ダッシュボード（レガシー）
-│   └── README.md               # 静的ファイルの説明
-│
-├── data/                        # データファイル（レガシー・サンプルデータ）
-│   ├── *.csv                   # CSVデータ（学習ログ・問題データ）
-│   ├── *.png                   # 画像ファイル（ゲーム素材・診断結果画像）
-│   ├── *.mp3                   # 音声ファイル（ゲーム効果音）
-│   ├── *.pkl                   # Python シリアライズデータ
-│   ├── *.html                  # HTML サンプルファイル
-│   └── index_sample/           # サンプルHTMLファイル群
-│
-├── analysis/                    # 分析スクリプト（Julia・JavaScript）
+├── analysis/                    # 分析スクリプト（Julia）
+│   ├── clustering.jl          # k-means クラスタリング分析
+│   ├── cluster_main.jl        # クラスタリング分析メイン
+│   ├── cluster_utils.jl       # クラスタリング分析ユーティリティ
+│   ├── cluster_visualize.jl   # クラスタリング可視化
 │   ├── reaction_time.jl       # 反応時間分析（指数分布・正規分布フィッティング）
-│   ├── run_analysis.jl        # 分析実行スクリプト（メインエントリーポイント）
-│   ├── clustering.jl          # k-means クラスタリング分析（cluster_features使用）
-│   ├── cluster_main.jl        # クラスタリング分析メインスクリプト
-│   ├── cluster_utils.jl       # クラスタリング分析ユーティリティ関数
-│   ├── cluster_visualize.jl   # クラスタリング結果可視化
+│   ├── run_analysis.jl        # 分析実行スクリプト
 │   └── metrics/
-│       └── vector.js           # ベクトル計算メトリクス（レガシー、vector_math.jsに統合済み）
-│
-├── docs/                        # ドキュメント（仕様書・設計書）
-│   ├── README.md               # プロジェクト説明
-│   ├── architecture.md         # アーキテクチャ設計書
-│   ├── roadmap.md              # 開発計画・ロードマップ
-│   ├── glossary_spec.md        # Glossary仕様書（3層構造の詳細）
-│   ├── concept_graph_spec.md   # 概念グラフ仕様書（将来実装）
-│   ├── diagnostic_logic.md     # 診断ロジック仕様書（ベクトル計算・分岐）
-│   └── README_legacy.html      # レガシードキュメント（旧README）
-│
-├── change_log/                  # 変更履歴（日付別の変更ログ）
-│   ├── 20251031.md             # 2025-10-31の変更履歴
-│   ├── 20251114.md             # 2025-11-14の変更履歴
-│   ├── 20251117.md             # 2025-11-17の変更履歴
-│   ├── 20251118.md             # 2025-11-18の変更履歴
-│   ├── 20251119.md             # 2025-11-19の変更履歴
-│   └── 20251120.md             # 2025-11-20の変更履歴（Student Logging System統合）
+│       └── vector.js           # ベクトルメトリクス（将来実装）
 │
 ├── scripts/                     # スクリプト（データ生成・検証・移行）
 │   ├── generate_dummy_logs.js  # ダミーログ生成（JavaScript版）
 │   ├── generate_dummy_logs.py  # ダミーログ生成（Python版）
 │   ├── generate_vector_sessions.js  # ベクトルセッション生成（JavaScript版、50セッション）
 │   ├── generate_vector_sessions.py  # ベクトルセッション生成（Python版、50セッション）
-│   ├── generate_cluster_dummy.js    # クラスタリング用ダミーデータ生成（25セッション）
+│   ├── generate_cluster_dummy.js   # クラスタリング用ダミーデータ生成（25セッション）
 │   ├── merge_student_logs.js        # 生徒ログマージスクリプト（複数ファイル統合）
 │   ├── verify_dummy_logs.py    # ダミーログ検証（データ整合性チェック）
 │   ├── migrate_to_flat_structure.py  # データ移行（フラット構造への移行）
 │   └── README.md               # スクリプトの使用方法
 │
-├── tests/                       # テスト（将来実装）
-│   └── README.md               # テストの説明
+├── docs/                       # ドキュメント
+│   ├── README.md              # ドキュメントの説明
+│   ├── architecture.md        # アーキテクチャ仕様書
+│   ├── roadmap.md             # 開発計画・ロードマップ
+│   ├── glossary_spec.md       # Glossary仕様書（3層構造の詳細）
+│   ├── concept_graph_spec.md  # 概念グラフ仕様書（将来実装）
+│   ├── diagnostic_logic.md    # 診断ロジック仕様書（ベクトル計算・分岐）
+│   └── README_legacy.html     # レガシードキュメント（旧README）
 │
-└── archive/                     # 一時退避（未使用ファイル）
-    └── README.md               # アーカイブの説明
+├── change_log/                  # 変更履歴（日付別の変更ログ）
+│   ├── 20251031.md            # 2025-10-31の変更履歴
+│   ├── 20251114.md            # 2025-11-14の変更履歴
+│   ├── 20251117.md            # 2025-11-17の変更履歴
+│   ├── 20251118.md            # 2025-11-18の変更履歴
+│   ├── 20251119.md            # 2025-11-19の変更履歴
+│   └── 20251120.md            # 2025-11-20の変更履歴（Student Logging System統合）
+│
+├── public/                     # 公開リソース
+│   ├── css/                   # スタイルシート
+│   ├── js/                    # 公開用JavaScript
+│   ├── dashboard.html         # 公開ダッシュボード
+│   └── README.md              # 公開リソースの説明
+│
+├── data/                       # データファイル（画像・音声・CSV等）
+│   └── [各種リソースファイル]
+│
+├── legacy/                     # レガシーコード（旧実装）
+│   └── [旧実装ファイル]
+│
+├── archive/                    # 一時退避（未使用ファイル）
+│   └── README.md              # アーカイブの説明
+│
+└── tests/                      # テスト（将来実装）
+    └── README.md              # テストの説明
 ```
-
-### 主要ファイルの役割
-
-#### エントリーポイント
-- **`main.html`**: プロジェクトのトップページ。Editor/Player/Adminへのリンクを提供
-- **`admin/admin.html`**: 管理ダッシュボードのメニュー画面
-
-#### コア機能（src/core/）
-- **`config.js`**: プロジェクト設定（`project.json`）の読み込み・保存。動的パス解決で複数のディレクトリ構造に対応
-- **`GlossaryLoader.js`**: 3層構造のGlossary（Project/Domain/Global）を読み込み・統合。`loadGlossaryByPolicy()`でポリシーに基づいて自動読み込み
-
-#### エディタ機能（src/editor/）
-- **`editor.html`**: ノーコードエディタ画面。質問・選択肢の編集、分岐設定、ベクトル設定UI
-- **`editor.js`**: エディタロジック。JSON生成、バージョン管理（`quiz_versions/`への保存）、Glossaryテンプレート読み込み
-
-#### プレイヤー機能（src/player/）
-- **`player.js`**: クイズ実行ロジック。分岐処理、Glossary表示、ログ記録のトリガー
-- **`logging.js`**: 学習ログ記録（`StudentLogManager`）。複数セッション対応、localStorage保存、JSONダウンロード
-- **`recommendation.js`**: Glossary自動レコメンド。誤答時の反応時間・path・conceptTagから最適な用語解説を判定
-
-#### 管理機能（src/admin/）
-- **`analysis.js`**: データ分析ロジック。統計計算（正答率・反応時間・概念混同）、可視化（Chart.js）、クラスタリング分析、JSON diff
-- **`dataset_loader.js`**: データセット読み込み。標準形（`{user_id, session_id, quiz_version, logs, raw}`）に統一、multi-session対応
-- **`pin.js`**: PIN認証。管理画面アクセス時の4桁PIN要求
-- **`version_manager.js`**: クイズバージョン管理。バージョン一覧・削除・diff表示
-
-#### ユーティリティ（src/utils/）
-- **`vector_math.js`**: ベクトル計算ユーティリティ。コサイン類似度計算（IIFE + window形式、ES module禁止）
-
-#### 分析スクリプト（analysis/）
-- **`clustering.jl`**: k-means クラスタリング分析。`cluster_features`からクラスタを割り当て、結果をJSON出力
-- **`reaction_time.jl`**: 反応時間分析。指数分布・正規分布へのフィッティング、グラフ生成
-
-#### スクリプト（scripts/）
-- **`generate_cluster_dummy.js`**: クラスタリング分析用ダミーデータ生成（25セッション、`cluster_features`・`cluster_ground_truth`付き）
-- **`generate_vector_sessions.js`**: ベクトル分析用ダミーデータ生成（50セッション、`vector_test_sessions`形式）
-- **`merge_student_logs.js`**: 複数の生徒ログファイルを1つに統合（multi-session構造対応）
 
 ---
 
-## エディタ機能
+## 主要機能
 
-### 概要
+### エディタ機能
+
+#### 概要
 `src/editor/editor.html` で提供されるノーコードエディタです。質問と選択肢を視覚的に編集し、分岐設定やデザイン設定をGUIで行えます。
 
-### 主な機能
+#### 主な機能
 
-#### 1. 質問ノードの作成・編集
-- **質問文の入力**: テキストエリアで質問文を編集
-- **選択肢の追加・削除**: ボタン操作で選択肢を動的に追加・削除
-- **選択肢IDの自動生成**: `id`、`value`、またはインデックスベースで自動生成
-- **正誤判定**: 各選択肢に正解フラグを設定
+1. **質問ノードの作成・編集**
+   - 質問文の入力
+   - 選択肢の追加・削除
+   - 選択肢IDの自動生成
+   - 正誤判定の設定
 
-#### 2. 分岐設定
-- **次のノード選択**: 各選択肢から次の質問や結果への分岐をドロップダウンで設定
-- **ループ防止**: 現在編集中のノードを除外してループを防止
-- **分岐の可視化**: プレビューパネルで各選択肢の接続先を視覚的に表示
+2. **分岐設定**
+   - 各選択肢から次の質問や結果への分岐をドロップダウンで設定
+   - ループ防止（現在編集中のノードを除外）
+   - 分岐の可視化（プレビューパネルで接続先を表示）
 
-#### 3. デザイン設定
-- **背景設定**: 背景色・背景画像・グラデーションをGUIで設定
-- **フォント設定**: 質問文・選択肢のフォントサイズ・色を設定
-- **ボタンスタイル**: 選択肢ボタンの色・テキスト色を設定
+3. **デザイン設定**
+   - 背景設定（背景色・背景画像・グラデーション）
+   - フォント設定（質問文・選択肢のフォントサイズ・色）
+   - ボタンスタイル（選択肢ボタンの色・テキスト色）
 
-#### 4. プレビュー機能
-- **実行可能プレビュー**: 「👁️ プレビュー」ボタンで実際にゲームを実行できる新しいウィンドウを開く
-- **分岐処理**: 選択肢をクリックすると、設定した `nextId` に従って次のノードに遷移
-- **戻る機能**: 前の質問に戻れる
-- **最初からやり直し**: 最初からやり直せる
+4. **プレビュー機能**
+   - 実行可能プレビュー（「👁️ プレビュー」ボタンで新しいウィンドウを開く）
+   - 分岐処理（選択肢をクリックすると設定した `nextId` に従って遷移）
+   - 戻る機能（前の質問に戻れる）
+   - 最初からやり直し
 
-#### 5. 診断クイズ対応
-- **診断質問の追加**: 診断クイズ専用の質問タイプを追加
-- **スコアリング設定**: 各選択肢で影響する評価軸を設定（後述のベクトル設定UIを使用）
+5. **バージョン管理**
+   - バージョンファイルの生成（`{YYYYMMDDHHmm}-{author}-quiz.json`）
+   - `latest.json` の自動更新
+   - バックアップファイルの自動生成
+   - バージョン履歴の管理（localStorage）
 
-### データ構造
+6. **Glossary統合**
+   - 現在のGlossaryを自動的に `glossary_vector` として統合
+   - 選択肢に `vector` を設定（ベクトル分析用）
 
-#### 通常クイズ
-```json
-{
-  "id": "q_0",
-  "type": "question",
-  "title": "質問 1",
-  "text": "質問文",
-  "choices": [
-    {
-      "id": "c1",
-      "text": "選択肢1",
-      "value": 0,
-      "nextId": "q_1",
-      "correct": true,
-      "tags": ["短期記憶"]
-    }
-  ],
-  "vector_scores": {
-    "c1": { "logic": 1, "memory": -1 }
-  }
-}
-```
+### プレイヤー機能
 
-#### 診断クイズ
-```json
-{
-  "id": "dq_0",
-  "type": "diagnostic_question",
-  "question_text": "診断質問 1",
-  "question_type": "single_choice",
-  "choices": [
-    { "id": "a", "text": "選択肢A" },
-    { "id": "b", "text": "選択肢B" }
-  ],
-  "scoring": [
-    { "choice_id": "a", "vector": { "logic": 1 } },
-    { "choice_id": "b", "vector": { "logic": -1 } }
-  ]
-}
-```
+#### 概要
+`src/player/index.html` または `src/player/demo.html` で提供されるクイズ実行画面です。学習者がクイズに回答し、Glossaryが自動的に提示されます。
 
----
+#### 主な機能
 
-## プレイヤー機能
+1. **クイズ実行**
+   - 質問の表示
+   - 選択肢の表示とクリック処理
+   - 分岐処理（選択肢に設定された `nextId` に従って遷移）
+   - 結果画面の表示
 
-### 概要
-`src/player/index.html` と `src/player/demo.html` で提供されるクイズ実行画面です。学習者が質問に回答し、分岐に従って進行します。
+2. **Glossary自動レコメンド**
+   - 誤答時の自動Glossary提示
+   - 反応時間・path・conceptTagから最適な用語解説を判定
+   - 3層構造のGlossaryから自動的に用語を検索
 
-### 主な機能
+3. **学習ログ記録**
+   - 複数セッション対応（1人の学習者が複数回クイズを受講可能）
+   - ログ記録項目：
+     - `questionId`: 問題ID
+     - `final_answer`: 最終的に確定した選択肢
+     - `correct`: 正誤
+     - `response_time`: 反応時間（秒）
+     - `path`: 選択肢遷移パターン（迷いの流れ）
+     - `vector`: ベクトル（選択肢から自動コピー）
+     - `glossaryShown`: 表示されたGlossary用語
+     - `conceptTags`: 概念タグ
+     - `quiz_version`: クイズバージョン（`latest.json` から取得）
+   - localStorage保存（キー: `student_{userId}`）
+   - JSONファイルダウンロード（ファイル名: `{userId}_sessions.json`）
 
-#### 1. クイズデータの読み込み
-- **プロジェクト設定の読み込み**: `project.json` から `glossary_policy` と `timing_profile` を取得
-- **Glossaryの統合**: `GlossaryLoader.loadGlossaryByPolicy()` で3層構造のGlossaryを統合
-- **クイズデータの読み込み**: `quiz.json` を読み込み、質問と選択肢を表示
+4. **セッション管理**
+   - セッション開始（`startSession()`）
+   - セッション保存（`pushSession()`）
+   - 複数セッションの統合（`export()`）
 
-#### 2. インタラクティブなクイズ実行
-- **質問表示**: 質問文と選択肢ボタンを表示
-- **分岐処理**: 選択肢をクリックすると、設定した `nextId` に従って次のノードに遷移
-- **結果表示**: 結果ノードの場合は診断結果・画像・URLボタンを表示
+### 管理機能
 
-#### 3. Glossary自動提示
-- **誤答時の自動提示**: 誤答時に `GlossaryRecommendation` が最適な用語解説を自動提示
-- **判定アルゴリズム**: 反応時間・path（迷いの軌跡）・conceptTag と glossary.tags の一致度から判定
+#### 概要
+`admin/analysis.html` で提供されるデータ分析ダッシュボードです。学習者の行動データを可視化し、クラス全体の理解状況を分析できます。
 
-#### 4. ログ記録
-- **回答ログの記録**: `QuizLogging` が回答時間・選択肢遷移・正誤などの行動データを自動記録
-- **ログ形式**: `quiz_log.json` としてダウンロード可能
+#### 主な機能
 
-### 動作フロー
+1. **データセット読み込み**
+   - `students/index.json` からデータセット一覧を取得
+   - 標準形に統一（`{user_id, session_id, quiz_version, logs, raw}`）
+   - multi-session対応（`sessions` 配列から自動的に `logs` を抽出）
 
-1. **プロジェクト読み込み**: `project.json` と `quiz.json` を読み込む
-2. **Glossary読み込み**: `glossary_policy` に基づいてGlossaryを統合
-3. **問題表示**: 質問と選択肢を表示、ログ記録を開始
-4. **選択肢クリック**: クリック時刻と選択肢IDを記録
-5. **回答確定**: 正誤を判定し、Glossary解説を表示（誤答時）
-6. **ログ完成**: 回答ログを `quizLogs` 配列に追加
-7. **次の問題へ**: 分岐設定に従って遷移
-8. **ログダウンロード**: すべての問題が終了したら `quiz_log.json` をダウンロード
+2. **統計分析**
+   - **全体統計**: 総回答数、正答率、平均反応時間、思考タイプ分布
+   - **問題別統計**: 各問題の正答率、平均反応時間、選択肢分布
+   - **概念混同分析**: 誤答パターン、conceptTagの頻度、選択肢ペアの混同
+   - **反応時間分析**: 反応時間の分布、ヒストグラム、パーセンタイル
+   - **パス分析**: 選択肢遷移パターン、迷いの流れ
+   - **Glossary使用統計**: 提示された用語の頻度、思考タイプ別の用語提示頻度
 
----
+3. **ベクトル分析**
+   - 学習者の平均ベクトル計算（`computeVectorStats()`）
+   - 理想ベクトルとの一致度（コサイン類似度、`vector_math.js` を使用）
+   - 軸ごとの値の表示
 
-## Glossary（評価軸）システム
+4. **クラスタリング分析**
+   - **Julia出力優先**: `analysis/cluster_output.json` と `analysis/cluster_scatter.png` を読み込み
+   - **JS fallback**: Julia出力が存在しない場合は自動的にJS fallbackを実行
+   - 簡易 k-means クラスタリング（k=3）
+   - Chart.js で散布図を描画
+   - クラスタテーブルを表示
 
-### 3層構造
+5. **クイズバージョン差分表示**
+   - バージョン一覧の表示（`listQuizVersions()`）
+   - JSON diff アルゴリズム（追加・削除・変更を色分け表示）
+   - バージョン間の比較
 
-Glossary（用語集）は3層構造で管理されます。優先順位は **Project > Domain > Global** です。
+6. **改善度分析**
+   - バージョンごとの学習データを比較
+   - 正答率の変化、反応時間の変化を可視化
 
-1. **Project Glossary** (`projects/{project_id}/glossary.json`)
-   - プロジェクト固有の用語集
-   - 特定のクイズや教材で使用する専門用語を定義
+### Glossary（評価軸）システム
 
-2. **Domain Glossary** (`src/glossary/domains/{domain}.json`)
-   - 学問領域別の用語集
-   - 例: 心理学 (`psychology.json`)、AI (`AI.json`)、数学 (`mathematics.json`)
-   - 複数のドメインを同時に読み込み可能
+#### 概要
+3層構造のGlossaryシステムです。プロジェクト・ドメイン・グローバルの3層で用語を管理し、自動的に統合します。
+
+#### 3層構造
+
+1. **Project Glossary** (`projects/{projectId}/glossary.json`)
+   - プロジェクト固有の用語
+   - 優先度: 最高
+
+2. **Domain Glossary** (`src/glossary/domains/{domainName}.json`)
+   - 分野別の用語（例: AI、心理学）
+   - 優先度: 中
 
 3. **Global Glossary** (`src/glossary/global.json`)
-   - 分野横断の基底辞書
-   - すべてのプロジェクトで共有する基本的な用語
+   - 全プロジェクト共通の用語
+   - 優先度: 最低
 
-### Glossary接続設定
+#### 主な機能
 
-`admin/project_manager.html` で、プロジェクトが使用するGlossaryを選択できます。
+1. **Glossary読み込み**
+   - `GlossaryLoader.loadGlossaryByPolicy()` でポリシーに基づいて自動読み込み
+   - 3層を自動的に統合（Project > Domain > Global の優先順位）
 
-- **プロジェクトのみ**: Project Glossaryのみを使用
-- **学問別で共有**: Project + Domain Glossary（複数選択可能）
-- **グローバル辞書と接続**: Project + Domain + Global Glossary
+2. **Glossary管理**
+   - `src/glossary/glossary.html` でCRUD操作
+   - 用語の追加・編集・削除
+   - 用語の検索
 
-### GlossaryLoader
+3. **自動レコメンド**
+   - 誤答時の反応時間・path・conceptTagから最適な用語解説を判定
+   - `recommendation.js` で実装
 
-`src/core/GlossaryLoader.js` が3層構造のGlossaryを読み込み・統合します。
+### 学習データ分析
 
-- **動的パス解決**: 現在のページのパスに基づいて適切なパスを自動計算
-- **マージ機能**: `mergeGlossaries()` で複数のGlossaryを統合
-- **Policy対応**: `loadGlossaryByPolicy()` で `glossary_policy` に基づいて読み込み
+#### 概要
+学習者の行動データを記録・分析し、クラス全体の理解状況を可視化します。
 
-### 自動レコメンド機能
+#### 分析機能
 
-Player（実行画面）で誤答した際、以下のアルゴリズムで最適な用語解説を自動提示します。
+1. **統計計算関数** (`window.AnalysisDashboard`)
+   - `computeOverallStats(logs)`: 全体統計
+   - `computePerQuestionStats(logs)`: 問題別統計
+   - `computeConceptConfusions(logs)`: 概念混同分析
+   - `computeResponseTimeProfile(logs)`: 反応時間分析
+   - `computePathPatterns(logs)`: パス分析
+   - `computeGlossaryUsage(logs)`: Glossary使用統計
+   - `computeVectorStats(logs)`: ベクトル統計
 
-#### 判定項目
+2. **可視化関数** (`window.AnalysisDashboard`)
+   - `renderOverallStats(stats)`: 全体統計の可視化
+   - `renderQuestionStats(stats)`: 問題別統計の可視化
+   - `renderConfusionStats(stats)`: 概念混同分析の可視化
+   - `renderResponseTimeStats(stats)`: 反応時間分析の可視化
+   - `renderPathStats(stats)`: パス分析の可視化
+   - `renderGlossaryStats(stats)`: Glossary使用統計の可視化
+   - `renderVectorStats(projectData, logs)`: ベクトル分析の可視化
 
-1. **反応時間による分類**
-   - 短い（0-3秒）→ `basic` レベルの用語を優先
-   - 中間（3-15秒）→ `intermediate` レベルの用語を優先
-   - 長い（15秒以上）→ `deep` レベルの用語を優先
+3. **クラスタリング分析** (`window.AnalysisDashboard`)
+   - `renderClusterAnalysis(datasetData, projectId)`: クラスタリング分析（Julia優先、JS fallback）
+   - `simpleKMeans(features, k)`: 簡易 k-means クラスタリング
+   - `renderClusterScatter(features, labels, sessionInfo)`: 散布図描画
 
-2. **path（迷いの軌跡）解析**
-   - ユニーク要素数が1 → 即答型 → 基本定義のみ
-   - 2-3選択肢間を往復 → 概念混同 → 対概念の比較解説を提示
-   - 4以上遷移 → 深い混乱 → 関連用語まとめを提示（最大3つ）
+4. **バージョン管理** (`window.AnalysisDashboard`)
+   - `getQuizVersionsFromLogs(logs)`: ログからバージョン一覧を取得
+   - `filterLogsByVersion(logs, version)`: ログをバージョンでフィルタリング
 
-3. **conceptTag と glossary.tags の一致度計算**
-   - 一致度スコア（0-1）でソートし、最も高い用語を優先表示
-
-4. **同じ誤答パターンが複数回続く場合**
-   - `links` を持つ用語を優先的に提示
-
-### 用語データ構造
-
-```json
-{
-  "id": "concept.logic",
-  "name": "論理",
-  "definition": "物事を筋道立てて考えること。推論や判断の基礎となる思考の方法。",
-  "example": "三段論法は論理的な推論の一例である。",
-  "fields": ["reasoning", "analysis"],
-  "tags": ["短期記憶", "注意制御"],
-  "links": ["https://example.com/logic"],
-  "depth": "basic | intermediate | deep"
-}
-```
-
-### Glossary Editor
-
-`src/glossary/glossary.html` で用語をフォームベースで編集できます。
-
-- 用語名・説明文・分野チェックボックスを入力
-- カスタム分野を追加可能（カンマ区切りで複数追加）
-- glossary.json をダウンロードして保存
+5. **JSON diff** (`window.AnalysisDashboard`)
+   - `computeJSONDiff(oldObj, newObj, path)`: JSON diff アルゴリズム
+   - `renderJSONDiff(diff, containerId)`: diff の可視化
 
 ---
 
-## 診断ロジック・ベクトル設定UI
+## データ構造
 
-### 概要
-エディタでクイズを作成する際、各選択肢がどの評価軸にどの程度影響するかを設定するUIです。JSONの直接編集を排除し、Glossaryから評価軸を自動取得して、ラジオボタンで直感的に設定できます。
+### クイズデータ (`quiz.json`)
 
-### 通常クイズのベクトル設定
-
-#### データ構造
 ```json
 {
-  "vector_scores": {
-    "choice_0": { "logic": 1, "memory": -1 },
-    "choice_1": { "logic": -1, "memory": 1 }
-  }
-}
-```
-
-#### UI機能
-- **評価軸の自動取得**: Glossaryから評価軸を自動取得し、用語名・ID・定義を表示
-- **ラジオボタン操作**: -1（弱まる）/ 0（影響なし）/ +1（強まる）をラジオボタンで選択
-- **自動JSON生成**: UI操作から内部JSONを自動生成
-- **選択肢ごとの表示**: 各選択肢ごとに評価軸UIを自動生成
-
-### 診断クイズのスコアリング設定
-
-#### データ構造
-```json
-{
-  "scoring": [
-    { "choice_id": "a", "vector": { "logic": 1, "memory": -1 } },
-    { "choice_id": "b", "vector": { "logic": -1, "memory": 1 } }
+  "id": "quiz_001",
+  "title": "クイズタイトル",
+  "questions": [
+    {
+      "id": "q_0",
+      "type": "question",
+      "title": "質問 1",
+      "text": "質問文",
+      "choices": [
+        {
+          "id": "c_0",
+          "text": "選択肢1",
+          "value": 0,
+          "nextId": "q_1",
+          "correct": true,
+          "vector": {
+            "logic": 1,
+            "analysis": -1
+          }
+        }
+      ]
+    }
+  ],
+  "results": [
+    {
+      "id": "r_0",
+      "type": "result",
+      "title": "結果 1",
+      "text": "診断結果",
+      "image": "attention_type.png"
+    }
   ]
 }
 ```
 
-#### UI機能
-- **評価軸の自動取得**: Glossaryから評価軸を自動取得し、用語名・ID・定義を表示
-- **ラジオボタン操作**: -1（弱まる）/ 0（影響なし）/ +1（強まる）をラジオボタンで選択
-- **自動JSON生成**: UI操作から内部JSONを自動生成
-- **選択肢変更時の自動更新**: 選択肢追加・削除・変更時にスコアリングUIを自動再描画
+### プロジェクト設定 (`project.json`)
 
-### テンプレート選択UI
+```json
+{
+  "project_id": "default",
+  "access_mode": "public",
+  "pin_code": null,
+  "values": {
+    "logic": 1,
+    "analysis": 1,
+    "creativity": 1
+  }
+}
+```
 
-通常クイズと診断クイズの両方で、評価軸テンプレートを選択して読み込むことができます。
+### 学習ログ（multi-session構造）
 
-- **テンプレート選択**: セレクトボックスで3つのテンプレートから選択
-- **即座反映**: テンプレートを選択すると、評価軸UIが即座に更新される
-- **永続化**: `localStorage` に保存して永続化
+```json
+{
+  "user_id": "student001",
+  "sessions": [
+    {
+      "session_id": "session_1734681234567",
+      "generated_at": "2025-11-20T10:00:00.000Z",
+      "quiz_version": "20251120-1200-ray-quiz",
+      "logs": [
+        {
+          "questionId": "q_0",
+          "final_answer": "c_0",
+          "correct": true,
+          "response_time": 5.2,
+          "path": ["c_1", "c_2", "c_0"],
+          "vector": {
+            "logic": 1,
+            "analysis": -1
+          },
+          "glossaryShown": ["term1", "term2"],
+          "conceptTags": ["認知負荷", "メタ認知"]
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.8,
+        "analysis": 0.6
+      },
+      "cluster_features": [0.2, 0.5, 0.8, 0.3, 0.6, 0.1, 0.4, 0.7],
+      "cluster_ground_truth": 1
+    }
+  ]
+}
+```
+
+### データセット一覧 (`students/index.json`)
+
+```json
+{
+  "datasets": [
+    {
+      "file": "quiz_log_dummy.json",
+      "dataset_name": "quiz_log_dummy",
+      "type": "class",
+      "folder": ""
+    }
+  ]
+}
+```
+
+### Glossary（3層構造）
+
+```json
+{
+  "terms": {
+    "term1": {
+      "id": "term1",
+      "title": "用語タイトル",
+      "description": "用語の説明",
+      "domain": "AI"
+    }
+  }
+}
+```
 
 ---
 
-## 評価軸テンプレート
+## 使用方法
 
-### 概要
-エディタ内で使用できる3種類のGlossaryテンプレートです。クイズ作成時にテンプレートを選択するだけで、評価軸を設定できます。
+### 教師向けガイド
 
-### テンプレート一覧
+#### 1. クイズの作成
 
-#### 1. 教育学（学習科学）
-- **`learning.understanding`**: 理解度 - 概念同士の関係性を理解しているか
-- **`learning.transfer`**: 転移可能性 - 学んだ内容を新しい状況に応用できる力
-- **`learning.metacognition`**: メタ認知 - 自分の理解状態を把握し調整できる力
-- **`learning.strategy`**: 学習方略 - 有効な学習方法を使えるか
+1. **エディタを開く**
+   - `src/editor/editor.html` を開く
 
-#### 2. 心理学（認知）
-- **`cognition.attention`**: 注意 - 必要な情報に焦点を合わせる能力
-- **`cognition.memory`**: 記憶 - 学習内容を保持し想起する能力
-- **`cognition.reasoning`**: 推論 - 情報を組み合わせて結論を導く能力
-- **`cognition.processing`**: 処理速度 - 情報処理の速さと効率
+2. **質問を追加**
+   - 「+ 質問を追加」ボタンをクリック
+   - 質問文を入力
+   - 選択肢を追加・編集
 
-#### 3. AIリテラシー
-- **`ai.critical`**: 批判的思考 - AIの出力を鵜呑みにせず検証する力
-- **`ai.data_reason`**: データ思考 - データから意味を読み取る力
-- **`ai.meta`**: AI時代のメタ認知 - AIと人間の役割を使い分ける力
-- **`ai.collaboration`**: AI協働 - AIを利用して問題解決を進める能力
+3. **正誤判定を設定**
+   - 各選択肢に「正解」フラグを設定
 
-### 使用方法
+4. **分岐を設定**
+   - 各選択肢から「次のノード」を選択
 
-1. エディタで質問を編集
-2. 「理解分析（ベクトル設定）」または「スコアリング設定」セクションでテンプレートを選択
-3. 「テンプレートを読み込む」ボタンをクリック
-4. 評価軸UIが即座に更新され、各選択肢で評価軸を設定可能
+5. **プレビューで確認**
+   - 「👁️ プレビュー」ボタンをクリック
+   - 実際にクイズを実行して確認
 
-### 技術実装
+6. **保存**
+   - 「💾 バージョン保存」ボタンをクリック
+   - バージョンファイルがダウンロードされる
+   - `projects/{projectId}/quiz_versions/` に配置
 
-- **テンプレート定義**: `editor.js` の先頭に `GLOSSARY_TEMPLATES` オブジェクトとして定義
-- **状態管理**: `window.currentGlossary` に設定し、`localStorage` に保存
-- **UI更新**: `loadGlossaryTemplateForQuestion()` でテンプレートを読み込み、評価軸UIを再描画
+#### 2. 学習データの分析
+
+1. **分析ダッシュボードを開く**
+   - `admin/analysis.html` を開く
+
+2. **データセットを選択**
+   - データセット一覧から選択
+   - 自動的に分析が実行される
+
+3. **分析結果を確認**
+   - 全体統計、問題別統計、概念混同分析などを確認
+   - ベクトル分析で理想ベクトルとの一致度を確認
+   - クラスタリング分析で学習者をグループ化
+
+#### 3. クイズバージョンの管理
+
+1. **バージョン一覧を確認**
+   - `admin/admin.html` でバージョン一覧を確認
+
+2. **バージョン間の差分を確認**
+   - `admin/version_manager.html` でバージョンを選択
+   - 「差分表示」ボタンをクリック
+
+3. **古いバージョンを削除**
+   - `admin/version_manager.html` でバージョンを選択
+   - 「削除」ボタンをクリック
+
+### 開発者向けガイド
+
+#### 1. プロジェクトのセットアップ
+
+```bash
+# リポジトリをクローン
+git clone [repository-url]
+cd nocode-site
+
+# 依存関係をインストール（オプション）
+npm install
+
+# 開発サーバーを起動（オプション）
+npm run dev
+# または
+node server.js
+```
+
+#### 2. コード構造
+
+- **IIFE + window 形式**: すべてのスクリプトは IIFE + `window.*` 形式で export（ES module 禁止）
+- **スクリプト読み込み順序**: `config.js` → `GlossaryLoader.js` → `dataset_loader.js` → `vector_math.js` → `analysis.js` → main script
+- **グローバルAPI**: `window.AnalysisDashboard.*`, `window.DatasetLoader.*`, `window.VectorMath.*`
+
+#### 3. 新しい分析機能の追加
+
+1. **統計計算関数を追加**
+   ```javascript
+   function computeNewStats(logs) {
+     // 統計計算ロジック
+     return stats;
+   }
+   ```
+
+2. **可視化関数を追加**
+   ```javascript
+   function renderNewStats(stats) {
+     var container = document.getElementById('new-stats');
+     // 可視化ロジック
+   }
+   ```
+
+3. **window.AnalysisDashboard に公開**
+   ```javascript
+   Object.assign(global.AnalysisDashboard, {
+     computeNewStats: computeNewStats,
+     renderNewStats: renderNewStats
+   });
+   ```
+
+#### 4. データセット読み込みの拡張
+
+`src/admin/dataset_loader.js` の `loadDataset()` 関数を拡張：
+
+```javascript
+function loadDataset(dataset, config) {
+  // 標準形に統一: { user_id, session_id, quiz_version, logs, raw }
+  return {
+    user_id: userId,
+    session_id: sessionId,
+    quiz_version: quizVersion,
+    logs: logs,
+    raw: data
+  };
+}
+```
+
+### 管理者向けガイド
+
+#### 1. プロジェクトの設定
+
+1. **プロジェクトIDを設定**
+   - `admin/project_manager.html` でプロジェクトIDを設定
+
+2. **設計者名を設定**
+   - `admin/project_manager.html` で設計者名を設定
+   - バージョンファイル名に含まれる
+
+3. **PIN認証を設定**
+   - `admin/project_manager.html` でPINコードを設定
+   - 管理画面アクセス時にPIN要求
+
+#### 2. データセットの管理
+
+1. **データセット一覧の更新**
+   - `students/generate_index.js` を実行
+   - `students/index.json` が自動生成される
+
+2. **ダミーデータの生成**
+   ```bash
+   # ベクトル分析用ダミーデータ（50セッション）
+   node scripts/generate_vector_sessions.js
+
+   # クラスタリング用ダミーデータ（25セッション）
+   node scripts/generate_cluster_dummy.js
+   ```
+
+3. **ログのマージ**
+   ```bash
+   node scripts/merge_student_logs.js file1.json file2.json ...
+   ```
+
+#### 3. Julia分析の実行
+
+1. **クラスタリング分析**
+   ```bash
+   julia analysis/clustering.jl students/cluster_dummy.json analysis/cluster_output.json
+   ```
+
+2. **反応時間分析**
+   ```bash
+   julia analysis/reaction_time.jl students/quiz_log_dummy.json
+   ```
 
 ---
 
-## 改善履歴
+## コード構造ガイド
 
-### 2025-11-19: エディタ内Glossaryテンプレート選択システムの実装
+### スクリプト読み込み順序（絶対に変更禁止）
 
-#### 主な改善点
-- エディタ内に3種類のGlossaryテンプレート（教育学・心理学・AIリテラシー）を統合
-- クイズ作成時にテンプレートから評価軸を選択できるUIシステムを実装
-- テンプレート選択時に評価軸UIが更新されない問題を修正（同期処理への変更）
+分析ダッシュボード（`admin/analysis.html`）では、以下の順序でスクリプトを読み込む必要があります：
 
-#### 技術的変更
-- `loadGlossaryForScoring()` を同期関数に変更
-- `renderVectorSettingsForQuestion()` と `renderDiagnosticScoringList()` を同期化
-- `window.currentGlossary` と `localStorage` による状態管理
+```html
+<!-- 1. config.js -->
+<script src="../src/core/config.js"></script>
 
-### 2025-11-19: エディタ画面の統合とiframe完全削除
+<!-- 2. GlossaryLoader.js -->
+<script src="../src/core/GlossaryLoader.js"></script>
 
-#### 主な改善点
-- `admin/editor.html` と `src/editor/editor.html` を統合
-- iframe に依存しない単一ファイル構成のエディタに改善
-- `project.json` 読み込み問題の修正（動的パス解決）
+<!-- 3. dataset_loader.js -->
+<script src="../src/admin/dataset_loader.js"></script>
 
-#### 技術的変更
-- `postMessage` イベントリスナーを削除
-- `localStorage` の `storage` イベントリスナーを削除
-- `loadGlossaryDirectly()` 関数を追加し、`GlossaryLoader` を使って直接 Glossary を読み込む
+<!-- 4. vector_math.js -->
+<script src="../src/utils/vector_math.js"></script>
 
-### 2025-11-19: admin/editor.html の完全削除
+<!-- 5. analysis.js（1回のみ） -->
+<script src="../src/admin/analysis.js"></script>
 
-#### 主な改善点
-- `admin/editor.html` を完全に削除し、エディタ機能を `src/editor/editor.html` に一本化
-- iframe や postMessage に依存するコードをすべて撤去
+<!-- 6. main script（AnalysisDashboard を使用） -->
+<script>
+  // window.AnalysisDashboard.* を使用
+</script>
+```
 
-### 2025-11-18: 教師向けデータ分析ダッシュボードの実装
+### IIFE + window 形式（ES module 禁止）
 
-#### 主な改善点
-- `quiz_log.json`（学習者の行動ログ）を読み込み、生徒の理解・迷い・反応時間・誤答傾向を可視化
-- 6つの分析セクションを実装：
-  - 全体概要（総回答数・正答率・平均反応時間・思考タイプ分布）
-  - 問題別分析（各問題の正答率・よく選ばれた誤答）
-  - 概念混同分析（誤答タグランキング・混同ペアランキング）
-  - 反応時間プロファイル集計（ヒストグラム・統計値）
-  - 迷いパターン分析（ユニーク遷移パターンのランキング）
-  - Glossary 提示履歴の集計
+すべてのスクリプトは IIFE + `window.*` 形式で export します：
 
-### 2025-11-17: プロジェクト再構成・公開方式・admin分離
+```javascript
+(function (global) {
+  'use strict';
 
-#### 主な改善点
-- ルート直下のHTML/JSを役割別フォルダへ強制移動
-- 公開方式（public/pin/login）を導入
-- 管理画面のPIN認証を実装
-- `src/` 配下にロジック本体を整理
+  function myFunction() {
+    // 実装
+  }
 
-### 2025-11-14: 分岐機能の改善と実行可能プレビュー機能の実装
+  // window に公開
+  if (typeof global.MyModule === 'undefined') {
+    global.MyModule = {};
+  }
+  global.MyModule.myFunction = myFunction;
 
-#### 主な改善点
-- 選択肢ごとの分岐設定の強化（ドロップダウンメニューの改善・ループ防止）
-- 分岐の可視化（プレビューパネルで接続先を表示）
-- 実行可能プレビュー機能（実際にゲームを実行できる新しいウィンドウ）
+})(window);
+```
+
+### グローバルAPI
+
+#### `window.AnalysisDashboard`
+
+- `computeOverallStats(logs)`: 全体統計
+- `computePerQuestionStats(logs)`: 問題別統計
+- `computeConceptConfusions(logs)`: 概念混同分析
+- `computeResponseTimeProfile(logs)`: 反応時間分析
+- `computePathPatterns(logs)`: パス分析
+- `computeGlossaryUsage(logs)`: Glossary使用統計
+- `computeVectorStats(logs)`: ベクトル統計
+- `renderOverallStats(stats)`: 全体統計の可視化
+- `renderQuestionStats(stats)`: 問題別統計の可視化
+- `renderConfusionStats(stats)`: 概念混同分析の可視化
+- `renderResponseTimeStats(stats)`: 反応時間分析の可視化
+- `renderPathStats(stats)`: パス分析の可視化
+- `renderGlossaryStats(stats)`: Glossary使用統計の可視化
+- `renderVectorStats(projectData, logs)`: ベクトル分析の可視化
+- `renderAll(logs, projectData)`: すべての統計を計算してレンダリング
+- `renderAllWithProject(logs, projectData)`: プロジェクトデータ対応版
+- `analyze(logs, projectData)`: 分析実行
+- `getQuizVersionsFromLogs(logs)`: ログからバージョン一覧を取得
+- `filterLogsByVersion(logs, version)`: ログをバージョンでフィルタリング
+- `renderClusterAnalysis(datasetData, projectId)`: クラスタリング分析
+- `computeJSONDiff(oldObj, newObj, path)`: JSON diff アルゴリズム
+- `renderJSONDiff(diff, containerId)`: diff の可視化
+- `escapeHtml(text)`: HTMLエスケープ
+
+#### `window.DatasetLoader`
+
+- `listDatasets()`: データセット一覧を取得
+- `loadDataset(dataset, config)`: データセットを読み込み（標準形に統一）
+- `loadStudentLogForId(studentId)`: localStorageから生徒ログを読み込み
+- `loadProject(projectId)`: プロジェクト設定を読み込み
+- `listQuizVersions(projectId)`: クイズバージョン一覧を取得
+
+#### `window.VectorMath`
+
+- `cosineSimilarity(a, b)`: コサイン類似度を計算
+
+#### `window.GlossaryLoader`
+
+- `loadGlossaryByPolicy(projectId, policy)`: ポリシーに基づいてGlossaryを読み込み
+- `getCurrentGlossaryForQuiz()`: 現在のGlossaryを取得
+- `loadLatestQuizVectors(projectId)`: 最新クイズのベクトルを読み込み
 
 ---
 
 ## 今後のロードマップ
 
-### Phase 1 (MVP) - 完了 ✅
-- Editor/Player の分離
-- JSON保存
-- 手動実行
+### Phase 1: MVP（完了）
+- ✅ Editor/Player の分離
+- ✅ JSON保存
+- ✅ 手動実行
 
-### Phase 2 - 完了 ✅
-- 診断エンジンの土台（スコアベクトル・分岐）
-- ベクトル設定UIの実装
+### Phase 2: 診断エンジンの土台（完了）
+- ✅ スコアベクトル・分岐
+- ✅ ベクトル分析
+- ✅ 反応時間分析
 
-### Phase 3 - 進行中
-- 概念ツリー（Concept Graph）の可視化・編集機能
-- Glossary Editor の機能拡張（例文・リンクの編集UI）
+### Phase 3: 概念ツリー（Concept Graph）（将来実装）
+- Concept Graph の実装
+- 概念間の関係を可視化
+- 概念の階層構造を管理
 
-### Phase 4 - 完了 ✅
-- Glossary（用語集）CRUD
-- 3層構造のGlossaryシステム
-- テンプレート選択UI
+### Phase 4: Glossary（用語集）CRUD（完了）
+- ✅ 3層構造のGlossary
+- ✅ Glossary管理画面
+- ✅ 自動レコメンド
 
-### Phase 5 - 計画中
-- 自動解説生成
-- AI連携（「この問題の典型的な誤答理由は？」など）
+### Phase 5: 自動解説生成（将来実装）
+- AIによる自動解説生成
+- 誤答パターンに基づく解説の最適化
 
-### Phase 6 - 計画中
-- 可視化・レポート（Dashboard の CSV/PDF 出力機能）
-- 複数のログファイルの比較分析機能
-- リアルタイムダッシュボード機能
+### Phase 6: 可視化・レポート（完了）
+- ✅ データ可視化
+- ✅ クラスタリング分析
+- ✅ ベクトル分析
+- ✅ 反応時間分析
+- ✅ JSON diff
 
-### 短期計画
-- [ ] Glossary Editor の機能拡張（例文・リンクの編集UI）
-- [ ] Dashboard の CSV/PDF 出力機能
-- [ ] 複数のログファイルの比較分析機能
-- [ ] `login` 公開方式の実装
-
-### 中期計画
-- [ ] 概念グラフ（concept_graph.json）の可視化・編集機能
-- [ ] AI連携（「この問題の典型的な誤答理由は？」など）
-- [ ] リアルタイムダッシュボード機能
-- [ ] 画像アップロード機能の改善（サーバー側実装）
-
-### 長期計画
-- [ ] サーバー側実装（データ永続化・認証・共有機能）
-- [ ] モバイルアプリ対応
-- [ ] 多言語対応
-- [ ] プラグイン・拡張機能の仕組み
+### Phase 7: WebGL可視化（将来実装）
+- 3D可視化
+- インタラクティブなグラフ
 
 ---
 
-## 開発メモ
+## 改善履歴
 
-### アーキテクチャ
+詳細な変更履歴は `change_log/` フォルダを参照してください。
 
-本プロジェクトは **Editor / Player / Engine / Storage** の4層で構成されます。
-
-- **Editor**: ノーコードUIで JSON を編集（`src/editor/`）
-- **Player**: 学習者向けの実行画面（`src/player/`）
-- **Engine**: 診断・概念・解説の判定ロジック（`src/diagnostic/`, `src/concepts/`, `src/explanation/`）
-- **Storage**: JSON（ローカル／ブラウザ）と静的ファイル（`projects/`, `public/`）
-
-### 責務分担
-
-- `src/core/`: 共通の状態・永続化・ルーティング方針などの基盤
-- `src/utils/`: 小粒の汎用関数
-- `src/types/`: 型定義（TS/型付JS）
-- `src/unknown/`: 一時避難
-
-### 診断ロジック（ドラフト）
-
-- 質問単位でスコアベクトルを付与し、累積ベクトルを計算
-- 分岐は `next.{choice_id}` と `default` を持つ
-- 結果はしきい値/ルールで判定、将来的に学習者プロファイル化
-
-### 概念グラフ（concept_graph.json）仕様（ドラフト）
-
-```json
-{
-  "nodes": [
-    { "id": "concept.analysis", "label": "分析力", "prerequisites": [] },
-    { "id": "concept.logic_tree", "label": "論理ツリー", "prerequisites": ["concept.analysis"] }
-  ],
-  "edges": [
-    { "from": "concept.analysis", "to": "concept.logic_tree", "weight": 0.8 }
-  ],
-  "consistency_rules": [
-    { "id": "rule_01", "description": "論理ツリーの得点が高い場合、分析力も一定以上であるべき" }
-  ]
-}
-```
-
-### Glossary仕様（ドラフト）
-
-```json
-{
-  "terms": [
-    {
-      "id": "concept.logic_tree",
-      "name": "論理ツリー",
-      "definition": "複雑な問題を分解する思考モデル",
-      "parent": "concept.analysis",
-      "tags": ["analysis", "problem-solving"]
-    }
-  ]
-}
-```
-
-### パス解決の動的化
-
-フォルダ整理後、すべての `src/` 配下からのアクセスに対応するため、パス解決を動的に実装しました。
-
-- `src/core/config.js`: `getConfigPath()` と `getAdminConfigPath()` で現在のページパスに基づいて適切なパスを計算
-- `src/core/GlossaryLoader.js`: `getBasePath()` で現在のページパスに基づいて適切なパスを計算
-- `src/admin/pin.js`: `loadConfig()` と `getMainHtmlPath()` で現在のページパスに基づいて適切なパスを計算
-
-### 公開方式（access_mode）
-
-各プロジェクトは `projects/{project_id}/project.json` で公開方式を指定します。
-
-- **public**: 一般公開（管理画面も認証無し）
-- **pin**: 管理画面（`admin/*`）アクセス時のみ4桁PINを要求
-- **login**: 本格的なログイン機能（将来実装）
-
----
-
-## Quick Start
-
-### 1. プロジェクトを開く
-```
-ブラウザで main.html を開く
-```
-
-### 2. クイズを作成する
-1. `main.html` → 「🔐 管理ダッシュボード」をクリック
-2. 「🛠 クイズ編集（Editor）」を選択
-3. 「+ 質問を追加」で質問を作成
-4. 選択肢を追加し、分岐先を設定
-5. 「理解分析（ベクトル設定）」で評価軸テンプレートを選択
-6. 「👁️ プレビュー」で実行画面を確認
-
-### 3. クイズを実行する
-1. `main.html` → 「🎮 クイズを実行する（Player）」をクリック
-2. 作成したクイズに回答
-3. 誤答時には自動的にGlossary（用語解説）が表示される
-4. 回答ログが自動記録される
-
-### 4. 学習データを分析する
-1. `main.html` → 「🔐 管理ダッシュボード」→ 「📊 学習データ分析（Analysis）」
-2. `students/` フォルダからデータセットを選択
-3. 全体概要・問題別分析・概念混同分析などの結果を確認
+- **2025-10-31**: Web対応、ファイル名の英語化、ノーコードエディタの実装
+- **2025-11-14**: 分岐機能の改善、実行可能プレビュー機能の実装
+- **2025-11-17**: Glossaryシステムの実装、3層構造の対応
+- **2025-11-18**: 診断ロジックの実装、ベクトル分析の統合
+- **2025-11-19**: 学習データ分析機能の実装、可視化の追加
+- **2025-11-20**: Student Logging Systemの完全統合、複数セッション対応、バージョン管理システム、クラスタリング分析、旧ベクトル解析コードの削除
 
 ---
 
 ## ライセンス
 
-このプロジェクトのライセンス情報については `LICENSE` ファイルを参照してください。
+このプロジェクトのライセンス情報は `LICENSE` ファイルを参照してください。
 
-## 開発者向け
+---
 
-### 開発サーバーの起動
+## 貢献
 
-```bash
-npm run dev
-```
+このプロジェクトへの貢献を歓迎します。詳細は `CONTRIBUTING.md`（将来実装）を参照してください。
 
-### エントリーポイント
+---
 
-- **トップページ**: `main.html`
-- **管理画面**: `admin/admin.html`（PIN等の保護対象、admin配下はすべてPINロジック読込）
-- **プレイヤー**: `src/player/index.html`（常に誰でもアクセス可）
+## サポート
 
-### 共通ユーティリティ
+問題が発生した場合は、GitHubのIssues（将来実装）で報告してください。
 
-- `src/core/config.js`: `window.ProjectConfig` を提供（load/download/normalize）
-- `src/admin/pin.js`: PIN認証ロジック（`window.AdminAuth.init({admin:true})`）
-- `src/core/GlossaryLoader.js`: Glossary の読み込み・統合（`GlossaryLoader.loadProjectGlossary()`, `GlossaryLoader.loadGlobalGlossary()`, `GlossaryLoader.mergeGlossaries()`）
+---
+
+**最終更新**: 2025-11-20

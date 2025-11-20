@@ -1221,7 +1221,7 @@
         // Julia 出力がある場合は優先使用
         console.log('[ClusterAnalysis] Using Julia output');
         renderClusterAnalysisWithJuliaOutput(juliaOutput, juliaImage, sessionInfo, clusterFeatures);
-      } else {
+    } else {
         // === B: JS fallback で k-means を実行 ===
         console.log('[ClusterAnalysis] Julia output not found, using JS fallback');
         renderClusterAnalysisWithJSFallback(clusterFeatures, sessionInfo);
@@ -1262,7 +1262,7 @@
     } else if (clusterFeatures && clusterFeatures.length > 0) {
       // Chart.js で散布図を描画（clusterFeatures が利用可能な場合）
       renderClusterScatter(clusterFeatures, labels, sessionInfo);
-    } else {
+      } else {
       console.warn('[ClusterAnalysis] clusterFeatures not available, skipping scatter plot');
     }
     

@@ -868,8 +868,8 @@
             throw new Error('有効なログデータが見つかりませんでした。');
           }
           
-          currentDataset = dataset.dataset_name;
-          
+            currentDataset = dataset.dataset_name;
+            
           // student_log がある場合は multi-session 構造
           if (data.student_log && Array.isArray(data.student_log) && data.student_log.length > 0) {
             // student_log が配列形式の場合（sessions 配列）
