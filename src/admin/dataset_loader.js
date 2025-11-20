@@ -119,40 +119,109 @@
         return response.json();
       })
       .then(function (data) {
-        // 新しいフォーマット（dataset_name, type を含む）と旧フォーマットの両方に対応
-        var result;
+        // 標準形に統一: { user_id, session_id, quiz_version, logs, raw }
+        var standardResult = {
+          user_id: null,
+          session_id: null,
+          quiz_version: null,
+          logs: [],
+          raw: data // 元データを保持
+        };
+        
+        // 様々な形式から標準形に変換
+        var logs = [];
+        var user_id = null;
+        var session_id = null;
+        var quiz_version = null;
+        
+        // 1. logs 配列を抽出
         if (data.logs && Array.isArray(data.logs)) {
-          // 新しいフォーマット: { dataset_name, type, logs, ... }
-          result = data;
+          logs = data.logs;
         } else if (Array.isArray(data)) {
-          // 配列形式の場合
-          result = { logs: data };
-        } else if (data.version && data.logs) {
-          // 既存の形式: { version, generated_at, logs }
-          result = data;
-        } else {
-          // それ以外の場合もそのまま返す
-          result = data;
+          logs = data;
+        } else if (data.sessions && Array.isArray(data.sessions)) {
+          // multi-session 形式: すべてのセッションのログを結合
+          data.sessions.forEach(function(session) {
+            if (session.logs && Array.isArray(session.logs)) {
+              logs = logs.concat(session.logs);
+            }
+          });
+          // 最初のセッションの情報を使用
+          if (data.sessions.length > 0) {
+            user_id = data.sessions[0].user_id || data.user_id;
+            session_id = data.sessions[0].session_id;
+            quiz_version = data.sessions[0].quiz_version;
+          }
+        } else if (data.vector_test_sessions && Array.isArray(data.vector_test_sessions)) {
+          // vector_test_sessions 形式
+          data.vector_test_sessions.forEach(function(session) {
+            if (session.answer_logs && Array.isArray(session.answer_logs)) {
+              // answer_logs を logs 形式に変換
+              session.answer_logs.forEach(function(answerLog) {
+                logs.push({
+                  questionId: answerLog.question_id,
+                  final_answer: answerLog.choice_id,
+                  correct: answerLog.correct,
+                  response_time: answerLog.reaction_time,
+                  path: answerLog.path,
+                  timestamp: answerLog.timestamp
+                });
+              });
+            }
+          });
+          if (data.vector_test_sessions.length > 0) {
+            user_id = data.vector_test_sessions[0].user_id;
+            session_id = data.vector_test_sessions[0].session_id;
+            quiz_version = data.vector_test_sessions[0].quiz_version;
+          }
         }
         
-        // vector_test_sessions がある場合は student_log として設定
-        if (result.vector_test_sessions) {
-          result.student_log = result.vector_test_sessions;
+        // 2. user_id, session_id, quiz_version を抽出
+        if (!user_id) {
+          user_id = data.user_id || data.dataset_name || null;
+        }
+        if (!session_id) {
+          session_id = data.session_id || data.generated_at || null;
+        }
+        if (!quiz_version) {
+          quiz_version = data.quiz_version || data.version || null;
         }
         
-        // studentLogsを読み込む（configが提供されている場合）
+        // 3. 標準形を構築
+        standardResult.user_id = user_id;
+        standardResult.session_id = session_id;
+        standardResult.quiz_version = quiz_version;
+        standardResult.logs = logs;
+        
+        // 4. student_log がある場合は保持（multi-session 構造）
+        if (data.sessions || data.vector_test_sessions) {
+          standardResult.student_log = data.sessions || data.vector_test_sessions;
+        }
+        
+        // 5. studentLogsを読み込む（configが提供されている場合）
         if (config && config.student_id) {
           return loadStudentLogForId(config.student_id)
             .then(function (studentLog) {
-              // vector_test_sessions が既に設定されている場合は上書きしない
-              if (!result.student_log) {
-                result.student_log = studentLog;
+              // student_log が既に設定されている場合は上書きしない
+              if (!standardResult.student_log && studentLog && studentLog.sessions) {
+                standardResult.student_log = studentLog.sessions;
+                // student_log から logs を更新
+                var mergedLogs = [];
+                studentLog.sessions.forEach(function(session) {
+                  if (session.logs && Array.isArray(session.logs)) {
+                    mergedLogs = mergedLogs.concat(session.logs);
+                  }
+                });
+                if (mergedLogs.length > 0) {
+                  standardResult.logs = mergedLogs;
+                  standardResult.user_id = studentLog.user_id || standardResult.user_id;
+                }
               }
-              return result;
+              return standardResult;
             });
         }
         
-        return result;
+        return standardResult;
       })
       .catch(function (error) {
         console.error('データセットの読み込みに失敗しました:', error);

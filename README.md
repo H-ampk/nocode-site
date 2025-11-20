@@ -74,113 +74,197 @@
 nocode-site/
 ├── main.html                    # エントリーポイント（トップページ）
 ├── README.md                    # このファイル
-├── package.json                 # プロジェクト設定
+├── package.json                 # プロジェクト設定（npm依存関係）
 ├── LICENSE                      # ライセンス
-├── server.js                    # 開発サーバー（オプション）
+├── server.js                    # 開発サーバー（オプション、Node.js）
 ├── editor.js                    # エディタロジック（レガシー互換、ルート配置）
+├── COMPLETE_README.md           # 完全版README（詳細ドキュメント）
+├── EDITOR_README.md             # エディタ専用README
+├── implemented_summary.txt      # 実装サマリー
 │
 ├── admin/                       # 管理画面（UIエントリーポイント）
-│   ├── admin.html              # 管理ダッシュボード（メニュー）
-│   ├── project_manager.html    # プロジェクト設定（公開方式・PIN設定）
-│   ├── analysis.html           # データ分析ダッシュボード
-│   └── login.html              # ログイン画面（将来実装）
+│   ├── admin.html              # 管理ダッシュボード（メニュー・バージョン一覧）
+│   ├── project_manager.html    # プロジェクト設定（公開方式・PIN設定・設計者名）
+│   ├── analysis.html           # データ分析ダッシュボード（学習データ可視化）
+│   ├── login.html              # ログイン画面（将来実装）
+│   └── version_manager.html    # クイズバージョン管理（一覧・削除・diff表示）
 │
 ├── src/                         # ロジック本体
-│   ├── core/                   # 共通機能
-│   │   ├── config.js           # プロジェクト設定の読み込み・保存
-│   │   ├── GlossaryLoader.js   # Glossary の読み込み・統合
-│   │   └── README.md
+│   ├── core/                   # 共通機能（基盤ライブラリ）
+│   │   ├── config.js           # プロジェクト設定の読み込み・保存（動的パス解決）
+│   │   ├── GlossaryLoader.js   # Glossary の読み込み・統合（3層構造対応）
+│   │   └── README.md           # Core機能の説明
+│   │
 │   ├── editor/                 # エディタ機能
-│   │   ├── editor.html         # エディタ画面（統合済み）
-│   │   ├── editor.js           # エディタロジック（レガシー互換ローダ）
-│   │   └── README.md
-│   ├── player/                 # プレイヤー機能
+│   │   ├── editor.html         # エディタ画面（統合済み、ノーコードUI）
+│   │   ├── editor.js           # エディタロジック（質問・選択肢編集、バージョン管理）
+│   │   └── README.md           # エディタ機能の説明
+│   │
+│   ├── player/                 # プレイヤー機能（学習者向け実行画面）
 │   │   ├── index.html          # プレイヤー（クイズ実行画面）
-│   │   ├── demo.html           # デモ画面
-│   │   ├── player.js           # クイズ実行ロジック
-│   │   ├── logging.js          # ログ記録
-│   │   ├── recommendation.js   # Glossary 自動レコメンド
-│   │   └── README.md
-│   ├── admin/                  # 管理機能
-│   │   ├── pin.js              # PIN認証
-│   │   ├── auth.js             # 認証ロジック
-│   │   ├── analysis.js         # データ分析ロジック
-│   │   └── dataset_loader.js   # データセット読み込み
-│   ├── glossary/               # Glossary機能
-│   │   ├── glossary.html      # Glossary 編集画面
-│   │   ├── glossary_test.html  # Glossary Loader テスト画面
-│   │   ├── glossary.js         # Glossary 編集ロジック
+│   │   ├── demo.html           # デモ画面（生徒ID入力UI付き）
+│   │   ├── player.js           # クイズ実行ロジック（分岐処理・Glossary表示）
+│   │   ├── logging.js          # ログ記録（StudentLogManager、複数セッション対応）
+│   │   ├── recommendation.js   # Glossary 自動レコメンド（誤答時の自動提示）
+│   │   └── README.md           # プレイヤー機能の説明
+│   │
+│   ├── admin/                  # 管理機能（教師向け分析・管理ツール）
+│   │   ├── pin.js              # PIN認証（管理画面アクセス制御）
+│   │   ├── auth.js             # 認証ロジック（将来実装）
+│   │   ├── analysis.js         # データ分析ロジック（統計計算・可視化・クラスタリング）
+│   │   ├── dataset_loader.js  # データセット読み込み（標準形に統一、multi-session対応）
+│   │   └── version_manager.js # バージョン管理ロジック（diff・削除・一覧）
+│   │
+│   ├── glossary/               # Glossary機能（用語集管理）
+│   │   ├── glossary.html       # Glossary 編集画面（用語のCRUD操作）
+│   │   ├── glossary_test.html # Glossary Loader テスト画面（動作確認用）
+│   │   ├── glossary.js         # Glossary 編集ロジック（JSON生成・保存）
 │   │   ├── global.json         # グローバルGlossary（分野横断の基底辞書）
 │   │   ├── domains/            # 学問領域別Glossary
-│   │   │   ├── psychology.json # 心理学
-│   │   │   ├── AI.json         # AI・機械学習
-│   │   │   └── ...
-│   │   └── README.md
-│   └── README.md
+│   │   │   ├── psychology.json # 心理学領域の用語集
+│   │   │   ├── AI.json         # AI・機械学習領域の用語集
+│   │   │   └── ...             # その他の学問領域
+│   │   └── README.md           # Glossary機能の説明
+│   │
+│   ├── utils/                  # ユーティリティ関数
+│   │   └── vector_math.js      # ベクトル計算ユーティリティ（コサイン類似度、IIFE形式）
+│   │
+│   └── README.md               # src配下の全体説明
 │
-├── projects/                    # プロジェクトデータ
-│   └── {project_id}/           # プロジェクトごとのフォルダ
-│       ├── project.json        # プロジェクト設定（公開方式・PIN設定）
-│       ├── quiz.json           # クイズデータ（質問・選択肢・分岐）
-│       ├── glossary.json       # プロジェクト用語集
-│       ├── editor.json         # エディタ設定
-│       └── concept_graph.json  # 概念グラフ（将来実装）
+├── projects/                    # プロジェクトデータ（クイズ・設定ファイル）
+│   ├── default/                # デフォルトプロジェクト
+│   │   ├── project.json        # プロジェクト設定（公開方式・PIN設定・理想ベクトル）
+│   │   ├── quiz.json           # クイズデータ（質問・選択肢・分岐）
+│   │   ├── glossary.json       # プロジェクト用語集
+│   │   ├── editor.json         # エディタ設定
+│   │   ├── concept_graph.json  # 概念グラフ（将来実装）
+│   │   └── quiz_versions/      # クイズバージョン管理フォルダ
+│   │       ├── latest.json     # 最新バージョンへの参照
+│   │       └── *.json          # バージョンファイル（YYYYMMDDHHmm-{author}-quiz.json）
+│   │
+│   ├── vector_test/            # ベクトル分析テスト用プロジェクト
+│   │   ├── project.json        # ベクトル分析テスト設定
+│   │   ├── quiz.json           # ベクトル分析テスト用クイズ（5問）
+│   │   └── glossary.json       # 空のGlossary
+│   │
+│   ├── dummy_project/          # ダミープロジェクト（テスト用）
+│   │   └── quiz.json           # ダミークイズデータ
+│   │
+│   └── sample_project/         # サンプルプロジェクト
 │
-├── students/                    # 学習データ
-│   ├── index.json              # データセット一覧（マスターファイル）
-│   ├── generate_index.js       # index.json 自動生成スクリプト
+├── students/                    # 学習データ（生徒ログ・データセット）
+│   ├── index.json              # データセット一覧（マスターファイル、自動生成）
+│   ├── generate_index.js       # index.json 自動生成スクリプト（Node.js）
+│   ├── quiz_log_dummy.json     # ダミーログデータ（50セッション、ベクトル分析用）
+│   ├── cluster_dummy.json      # クラスタリング分析用ダミーデータ（25セッション）
 │   └── *.json                  # データセットファイル（クラスデータ・個人データ）
 │
 ├── legacy/                      # バックアップ（フォルダ整理前のコード）
-│   └── ...                     # すべての .js ファイルのバックアップ
+│   ├── admin/                  # 旧管理機能
+│   ├── editor.js               # 旧エディタロジック
+│   ├── public/                 # 旧静的ファイル
+│   ├── scripts/                # 旧スクリプト
+│   ├── src/                    # 旧ロジック本体
+│   ├── students/               # 旧学習データ
+│   └── legacy/                 # さらに古いバックアップ（122ファイル）
 │
-├── public/                      # 静的ファイル
+├── public/                      # 静的ファイル（CSS・JS・画像）
 │   ├── css/
-│   │   └── main.css            # 共通スタイル
-│   ├── js/                     # JavaScript ファイル
+│   │   ├── main.css            # 共通スタイル（全ページ共通）
+│   │   └── ...                 # その他のCSSファイル
+│   ├── js/                     # JavaScript ファイル（レガシー）
 │   ├── dashboard.html          # ダッシュボード（レガシー）
-│   └── README.md
+│   └── README.md               # 静的ファイルの説明
 │
-├── data/                        # データファイル（レガシー）
-│   ├── *.csv                   # CSVデータ
-│   ├── *.png                   # 画像ファイル
-│   ├── *.mp3                   # 音声ファイル
+├── data/                        # データファイル（レガシー・サンプルデータ）
+│   ├── *.csv                   # CSVデータ（学習ログ・問題データ）
+│   ├── *.png                   # 画像ファイル（ゲーム素材・診断結果画像）
+│   ├── *.mp3                   # 音声ファイル（ゲーム効果音）
 │   ├── *.pkl                   # Python シリアライズデータ
-│   └── *.html                  # HTML サンプルファイル
+│   ├── *.html                  # HTML サンプルファイル
+│   └── index_sample/           # サンプルHTMLファイル群
 │
-├── analysis/                    # 分析スクリプト（Julia）
-│   ├── reaction_time.jl       # 反応時間分析
-│   └── run_analysis.jl        # 分析実行スクリプト
+├── analysis/                    # 分析スクリプト（Julia・JavaScript）
+│   ├── reaction_time.jl       # 反応時間分析（指数分布・正規分布フィッティング）
+│   ├── run_analysis.jl        # 分析実行スクリプト（メインエントリーポイント）
+│   ├── clustering.jl          # k-means クラスタリング分析（cluster_features使用）
+│   ├── cluster_main.jl        # クラスタリング分析メインスクリプト
+│   ├── cluster_utils.jl       # クラスタリング分析ユーティリティ関数
+│   ├── cluster_visualize.jl   # クラスタリング結果可視化
+│   └── metrics/
+│       └── vector.js           # ベクトル計算メトリクス（レガシー、vector_math.jsに統合済み）
 │
-├── docs/                        # ドキュメント
+├── docs/                        # ドキュメント（仕様書・設計書）
 │   ├── README.md               # プロジェクト説明
-│   ├── architecture.md         # アーキテクチャ
-│   ├── roadmap.md              # 開発計画
-│   ├── glossary_spec.md        # Glossary仕様
-│   ├── concept_graph_spec.md   # 概念グラフ仕様
-│   ├── diagnostic_logic.md     # 診断ロジック仕様
-│   └── README_legacy.html      # レガシードキュメント
+│   ├── architecture.md         # アーキテクチャ設計書
+│   ├── roadmap.md              # 開発計画・ロードマップ
+│   ├── glossary_spec.md        # Glossary仕様書（3層構造の詳細）
+│   ├── concept_graph_spec.md   # 概念グラフ仕様書（将来実装）
+│   ├── diagnostic_logic.md     # 診断ロジック仕様書（ベクトル計算・分岐）
+│   └── README_legacy.html      # レガシードキュメント（旧README）
 │
-├── change_log/                  # 変更履歴
-│   ├── 20251031.md
-│   ├── 20251114.md
-│   ├── 20251117.md
-│   ├── 20251118.md
-│   └── 20251119.md
+├── change_log/                  # 変更履歴（日付別の変更ログ）
+│   ├── 20251031.md             # 2025-10-31の変更履歴
+│   ├── 20251114.md             # 2025-11-14の変更履歴
+│   ├── 20251117.md             # 2025-11-17の変更履歴
+│   ├── 20251118.md             # 2025-11-18の変更履歴
+│   ├── 20251119.md             # 2025-11-19の変更履歴
+│   └── 20251120.md             # 2025-11-20の変更履歴（Student Logging System統合）
 │
-├── scripts/                     # スクリプト
-│   ├── generate_dummy_logs.js  # ダミーログ生成（JavaScript）
-│   ├── generate_dummy_logs.py  # ダミーログ生成（Python）
-│   ├── verify_dummy_logs.py    # ダミーログ検証
-│   ├── migrate_to_flat_structure.py  # データ移行
-│   └── README.md
+├── scripts/                     # スクリプト（データ生成・検証・移行）
+│   ├── generate_dummy_logs.js  # ダミーログ生成（JavaScript版）
+│   ├── generate_dummy_logs.py  # ダミーログ生成（Python版）
+│   ├── generate_vector_sessions.js  # ベクトルセッション生成（JavaScript版、50セッション）
+│   ├── generate_vector_sessions.py  # ベクトルセッション生成（Python版、50セッション）
+│   ├── generate_cluster_dummy.js    # クラスタリング用ダミーデータ生成（25セッション）
+│   ├── merge_student_logs.js        # 生徒ログマージスクリプト（複数ファイル統合）
+│   ├── verify_dummy_logs.py    # ダミーログ検証（データ整合性チェック）
+│   ├── migrate_to_flat_structure.py  # データ移行（フラット構造への移行）
+│   └── README.md               # スクリプトの使用方法
 │
-├── tests/                       # テスト
-│   └── README.md
+├── tests/                       # テスト（将来実装）
+│   └── README.md               # テストの説明
 │
-└── archive/                     # 一時退避
-    └── README.md
+└── archive/                     # 一時退避（未使用ファイル）
+    └── README.md               # アーカイブの説明
 ```
+
+### 主要ファイルの役割
+
+#### エントリーポイント
+- **`main.html`**: プロジェクトのトップページ。Editor/Player/Adminへのリンクを提供
+- **`admin/admin.html`**: 管理ダッシュボードのメニュー画面
+
+#### コア機能（src/core/）
+- **`config.js`**: プロジェクト設定（`project.json`）の読み込み・保存。動的パス解決で複数のディレクトリ構造に対応
+- **`GlossaryLoader.js`**: 3層構造のGlossary（Project/Domain/Global）を読み込み・統合。`loadGlossaryByPolicy()`でポリシーに基づいて自動読み込み
+
+#### エディタ機能（src/editor/）
+- **`editor.html`**: ノーコードエディタ画面。質問・選択肢の編集、分岐設定、ベクトル設定UI
+- **`editor.js`**: エディタロジック。JSON生成、バージョン管理（`quiz_versions/`への保存）、Glossaryテンプレート読み込み
+
+#### プレイヤー機能（src/player/）
+- **`player.js`**: クイズ実行ロジック。分岐処理、Glossary表示、ログ記録のトリガー
+- **`logging.js`**: 学習ログ記録（`StudentLogManager`）。複数セッション対応、localStorage保存、JSONダウンロード
+- **`recommendation.js`**: Glossary自動レコメンド。誤答時の反応時間・path・conceptTagから最適な用語解説を判定
+
+#### 管理機能（src/admin/）
+- **`analysis.js`**: データ分析ロジック。統計計算（正答率・反応時間・概念混同）、可視化（Chart.js）、クラスタリング分析、JSON diff
+- **`dataset_loader.js`**: データセット読み込み。標準形（`{user_id, session_id, quiz_version, logs, raw}`）に統一、multi-session対応
+- **`pin.js`**: PIN認証。管理画面アクセス時の4桁PIN要求
+- **`version_manager.js`**: クイズバージョン管理。バージョン一覧・削除・diff表示
+
+#### ユーティリティ（src/utils/）
+- **`vector_math.js`**: ベクトル計算ユーティリティ。コサイン類似度計算（IIFE + window形式、ES module禁止）
+
+#### 分析スクリプト（analysis/）
+- **`clustering.jl`**: k-means クラスタリング分析。`cluster_features`からクラスタを割り当て、結果をJSON出力
+- **`reaction_time.jl`**: 反応時間分析。指数分布・正規分布へのフィッティング、グラフ生成
+
+#### スクリプト（scripts/）
+- **`generate_cluster_dummy.js`**: クラスタリング分析用ダミーデータ生成（25セッション、`cluster_features`・`cluster_ground_truth`付き）
+- **`generate_vector_sessions.js`**: ベクトル分析用ダミーデータ生成（50セッション、`vector_test_sessions`形式）
+- **`merge_student_logs.js`**: 複数の生徒ログファイルを1つに統合（multi-session構造対応）
 
 ---
 

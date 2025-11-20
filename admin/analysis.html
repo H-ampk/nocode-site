@@ -661,14 +661,41 @@
     <canvas id="rt-fitting-chart"></canvas>
   </section>
 
+  <!-- ============================================
+       スクリプト読み込み順序（絶対に変更禁止）
+       ============================================
+       1. config.js
+       2. GlossaryLoader.js
+       3. dataset_loader.js
+       4. vector_math.js
+       5. analysis.js（1回のみ）
+       6. main script（この中で AnalysisDashboard を使う）
+  -->
+  <script src="../src/core/config.js"></script>
+  <script src="../src/core/GlossaryLoader.js"></script>
   <script src="../src/admin/dataset_loader.js"></script>
-  <script src="../analysis/metrics/vector.js"></script>
-  <script type="module">
-    // vector_math.jsをグローバルに公開
-    import { cosineSimilarity } from '../src/utils/vector_math.js';
-    window.cosineSimilarity = cosineSimilarity;
-  </script>
+  <script src="../src/utils/vector_math.js"></script>
   <script src="../src/admin/analysis.js"></script>
+  <script type="text/javascript">
+    // 読み込み確認（デバッグ用）
+    if (typeof window.AnalysisDashboard === 'undefined') {
+      console.error('❌ AnalysisDashboard の読み込みに失敗しました');
+    } else {
+      console.log('✅ AnalysisDashboard が正常に読み込まれました:', Object.keys(window.AnalysisDashboard));
+    }
+    
+    if (typeof window.DatasetLoader === 'undefined') {
+      console.error('❌ DatasetLoader の読み込みに失敗しました');
+    } else {
+      console.log('✅ DatasetLoader が正常に読み込まれました');
+    }
+    
+    if (typeof window.VectorMath === 'undefined') {
+      console.error('❌ VectorMath の読み込みに失敗しました');
+    } else {
+      console.log('✅ VectorMath が正常に読み込まれました');
+    }
+  </script>
   <script>
     var currentDataset = null;
 
@@ -700,9 +727,19 @@
 
     // データセット一覧を読み込む
     function loadDatasetList() {
-      DatasetLoader.listDatasets()
+      if (typeof window.DatasetLoader === 'undefined') {
+        console.error('DatasetLoader が読み込まれていません');
+        const listContainer = document.getElementById('dataset-list');
+        if (listContainer) {
+          listContainer.innerHTML = '<div class="dataset-error">DatasetLoader が読み込まれていません。ページをリロードしてください。</div>';
+        }
+        return;
+      }
+      
+      window.DatasetLoader.listDatasets()
         .then(function(datasets) {
           const listContainer = document.getElementById('dataset-list');
+          if (!listContainer) return;
           
           if (!datasets || datasets.length === 0) {
             listContainer.innerHTML = '<div class="dataset-error">データセットが見つかりませんでした。students/index.json にデータセットを登録してください。</div>';
@@ -713,6 +750,7 @@
           var classes = datasets.filter(function(ds) { return ds.type === 'class'; });
           var individuals = datasets.filter(function(ds) { return ds.type === 'student'; });
 
+          const escapeHtml = window.AnalysisDashboard && window.AnalysisDashboard.escapeHtml ? window.AnalysisDashboard.escapeHtml : function(s) { return s; };
           let html = '';
           
           // クラスデータ
@@ -741,26 +779,62 @@
           
           listContainer.innerHTML = html;
 
-          // 各ファイル名にクリックイベントを付与
+          // 各ファイル名にクリックイベントを付与（重複登録を防ぐ）
           listContainer.querySelectorAll('.dataset-item').forEach(function(item) {
+            // 既にイベントリスナーが登録されている場合はスキップ
+            if (item.dataset.listenerAdded) return;
+            item.dataset.listenerAdded = 'true';
+            
             item.addEventListener('click', function(e) {
               e.preventDefault();
               const datasetJson = this.getAttribute('data-dataset');
+              try {
               const dataset = JSON.parse(datasetJson);
               loadAndAnalyze(dataset);
+              } catch (error) {
+                console.error('Failed to parse dataset JSON:', error);
+                const errorDiv = document.getElementById('dataset-error');
+                if (errorDiv) {
+                  errorDiv.style.display = 'block';
+                  errorDiv.innerHTML = '<strong>❌ エラー</strong><br>データセット情報の解析に失敗しました。';
+                }
+              }
             });
           });
         })
         .catch(function(error) {
+          console.error('loadDatasetList error:', error);
           const listContainer = document.getElementById('dataset-list');
           if (listContainer) {
-            listContainer.innerHTML = '<div class="dataset-error">データセット一覧の取得に失敗しました: ' + escapeHtml(error.message) + '</div>';
+            const escapeHtml = window.AnalysisDashboard && window.AnalysisDashboard.escapeHtml ? window.AnalysisDashboard.escapeHtml : function(s) { return s; };
+          listContainer.innerHTML = '<div class="dataset-error">データセット一覧の取得に失敗しました: ' + escapeHtml(error.message) + '</div>';
           }
         });
     }
 
     // データセットを読み込んで分析
     function loadAndAnalyze(dataset) {
+      // AnalysisDashboard と DatasetLoader の存在確認
+      if (typeof window.AnalysisDashboard === 'undefined') {
+        console.error('AnalysisDashboard が読み込まれていません');
+        const errorDiv = document.getElementById('dataset-error');
+        if (errorDiv) {
+          errorDiv.style.display = 'block';
+          errorDiv.innerHTML = '<strong>❌ エラー</strong><br>AnalysisDashboard が読み込まれていません。ページをリロードしてください。';
+        }
+        return;
+      }
+      
+      if (typeof window.DatasetLoader === 'undefined') {
+        console.error('DatasetLoader が読み込まれていません');
+        const errorDiv = document.getElementById('dataset-error');
+        if (errorDiv) {
+          errorDiv.style.display = 'block';
+          errorDiv.innerHTML = '<strong>❌ エラー</strong><br>DatasetLoader が読み込まれていません。ページをリロードしてください。';
+        }
+        return;
+      }
+      
       // エラーメッセージを非表示
       const errorDiv = document.getElementById('dataset-error');
       if (errorDiv) {
@@ -771,7 +845,7 @@
       const infoDiv = document.getElementById('dataset-info');
       if (!infoDiv) return;
       infoDiv.style.display = 'block';
-      infoDiv.innerHTML = '<strong>読み込み中...</strong> ' + escapeHtml(dataset.dataset_name);
+      infoDiv.innerHTML = '<strong>読み込み中...</strong> ' + (window.AnalysisDashboard.escapeHtml ? window.AnalysisDashboard.escapeHtml(dataset.dataset_name) : dataset.dataset_name);
       infoDiv.className = 'dataset-info';
 
       // データセットとプロジェクト設定を並行して読み込む
@@ -779,90 +853,94 @@
       const config = { student_id: dataset.dataset_name };
       
       Promise.all([
-        DatasetLoader.loadDataset(dataset, config),
-        DatasetLoader.loadProject ? DatasetLoader.loadProject('default') : Promise.resolve({})
+        window.DatasetLoader.loadDataset(dataset, config),
+        window.DatasetLoader.loadProject ? window.DatasetLoader.loadProject('default') : Promise.resolve({})
       ])
         .then(function(results) {
-          const data = results[0];
+          const data = results[0]; // 標準形: { user_id, session_id, quiz_version, logs, raw, student_log? }
           const projectData = results[1];
           window.currentProjectData = projectData;
           
+          // 標準形の logs を使用（dataset_loader.js が統一形式で返す）
+          const logs = data.logs || [];
+          
+          if (!logs || logs.length === 0) {
+            throw new Error('有効なログデータが見つかりませんでした。');
+          }
+          
+          currentDataset = dataset.dataset_name;
+          
           // student_log がある場合は multi-session 構造
-          if (data.student_log && data.student_log.sessions) {
-            window.currentStudentData = data.student_log;
-            renderSessionSelector(data.student_log);
+          if (data.student_log && Array.isArray(data.student_log) && data.student_log.length > 0) {
+            // student_log が配列形式の場合（sessions 配列）
+            window.currentStudentData = { sessions: data.student_log };
+            renderSessionSelector(window.currentStudentData);
             
             // 全セッションを合算して表示
-            const logsAll = AnalysisDashboard.mergeAllSessions(data.student_log);
+            const logsAll = window.AnalysisDashboard.mergeAllSessions(window.currentStudentData);
             
-            if (logsAll && logsAll.length > 0) {
-              currentDataset = dataset.dataset_name;
-              
-              infoDiv.innerHTML = `
-                <strong>✅ 選択中のデータセット：</strong> ${escapeHtml(dataset.dataset_name)}<br>
-                ファイル名: ${escapeHtml(dataset.file)} | タイプ: ${escapeHtml(data.type || dataset.type || 'student')}<br>
-                セッション数: ${data.student_log.sessions.length}件 | 合計ログ数: ${logsAll.length}件
-              `;
-              infoDiv.className = 'dataset-info';
-              
-              // ダッシュボードを表示
-              const dashboardEl = document.getElementById('dashboard');
-              if (dashboardEl) {
-                dashboardEl.classList.add('active');
-              }
-              
-              // 全セッション合算で分析を実行
-              AnalysisDashboard.analyze(logsAll, projectData);
-              
-              // クラスタリング分析を実行（data に cluster_features がある場合）
-              if (data && (data.sessions || data.student_log)) {
-                AnalysisDashboard.renderClusterAnalysis(data);
-              }
-            } else {
-              throw new Error('有効なログデータが見つかりませんでした。');
+            const escapeHtml = window.AnalysisDashboard.escapeHtml || function(s) { return s; };
+            infoDiv.innerHTML = `
+              <strong>✅ 選択中のデータセット：</strong> ${escapeHtml(dataset.dataset_name)}<br>
+              ファイル名: ${escapeHtml(dataset.file)} | タイプ: ${escapeHtml(data.raw && data.raw.type ? data.raw.type : dataset.type || 'student')}<br>
+              セッション数: ${data.student_log.length}件 | 合計ログ数: ${logsAll.length}件
+            `;
+            infoDiv.className = 'dataset-info';
+            
+            // ダッシュボードを表示
+            const dashboardEl = document.getElementById('dashboard');
+            if (dashboardEl) {
+              dashboardEl.classList.add('active');
+            }
+            
+            // 全セッション合算で分析を実行
+            window.AnalysisDashboard.analyze(logsAll, projectData);
+            
+            // クラスタリング分析を実行（data.raw に cluster_features がある場合）
+            if (data.raw && (data.raw.sessions || data.raw.vector_test_sessions || data.raw.student_log)) {
+              window.AnalysisDashboard.renderClusterAnalysis(data.raw, projectData.project_id || 'default');
             }
           } else {
-            // 通常のログ形式
-            const logs = AnalysisDashboard.loadQuizLog(data);
+            // 通常のログ形式（単一セッション）
+            var datasetName = data.raw && data.raw.dataset_name ? data.raw.dataset_name : dataset.dataset_name;
+            var datasetType = data.raw && data.raw.type ? data.raw.type : dataset.type || 'unknown';
+            var createdAt = data.raw && (data.raw.created_at || data.raw.generated_at) ? (data.raw.created_at || data.raw.generated_at) : '不明';
             
-            if (logs && logs.length > 0) {
-              currentDataset = dataset.dataset_name;
-              
-              var datasetName = data.dataset_name || dataset.dataset_name;
-              var datasetType = data.type || dataset.type || 'unknown';
-              var createdAt = data.created_at || data.generated_at || '不明';
-              
-              infoDiv.innerHTML = `
-                <strong>✅ 選択中のデータセット：</strong> ${escapeHtml(dataset.dataset_name)}<br>
-                ファイル名: ${escapeHtml(dataset.file)} | タイプ: ${escapeHtml(datasetType)}<br>
-                ログ数: ${logs.length}件 | 作成日時: ${escapeHtml(createdAt)}
-              `;
-              infoDiv.className = 'dataset-info';
-              
-              // ダッシュボードを表示
-              const dashboardEl2 = document.getElementById('dashboard');
-              if (dashboardEl2) {
-                dashboardEl2.classList.add('active');
-              }
-              
-              // 分析を実行（projectDataを含める）
-              AnalysisDashboard.analyze(logs, projectData);
-              
-              // クラスタリング分析を実行（data に cluster_features がある場合）
-              if (data && (data.sessions || data.student_log)) {
-                AnalysisDashboard.renderClusterAnalysis(data);
-              }
-            } else {
-              throw new Error('有効なログデータが見つかりませんでした。');
+            const escapeHtml = window.AnalysisDashboard.escapeHtml || function(s) { return s; };
+            infoDiv.innerHTML = `
+              <strong>✅ 選択中のデータセット：</strong> ${escapeHtml(dataset.dataset_name)}<br>
+              ファイル名: ${escapeHtml(dataset.file)} | タイプ: ${escapeHtml(datasetType)}<br>
+              ログ数: ${logs.length}件 | 作成日時: ${escapeHtml(createdAt)}
+            `;
+            infoDiv.className = 'dataset-info';
+            
+            // ダッシュボードを表示
+            const dashboardEl2 = document.getElementById('dashboard');
+            if (dashboardEl2) {
+              dashboardEl2.classList.add('active');
+            }
+            
+            // 分析を実行（projectDataを含める）
+            window.AnalysisDashboard.analyze(logs, projectData);
+            
+            // クラスタリング分析を実行（data.raw に cluster_features がある場合）
+            if (data.raw && (data.raw.sessions || data.raw.vector_test_sessions || data.raw.student_log)) {
+              window.AnalysisDashboard.renderClusterAnalysis(data.raw, projectData.project_id || 'default');
             }
           }
         })
         .catch(function(error) {
+          console.error('loadAndAnalyze error:', error);
           const errorDiv = document.getElementById('dataset-error');
+          if (errorDiv) {
           errorDiv.style.display = 'block';
+            const escapeHtml = window.AnalysisDashboard && window.AnalysisDashboard.escapeHtml ? window.AnalysisDashboard.escapeHtml : function(s) { return s; };
           errorDiv.innerHTML = '<strong>❌ エラー</strong><br>' + escapeHtml(error.message);
+          }
           
+          if (infoDiv) {
           infoDiv.style.display = 'none';
+          }
         });
     }
 
@@ -1015,7 +1093,9 @@
       
       if (session && session.logs) {
         const projectData = window.currentProjectData || {};
-        AnalysisDashboard.analyze(session.logs, projectData);
+        if (window.AnalysisDashboard) {
+          window.AnalysisDashboard.analyze(session.logs, projectData);
+        }
       }
       });
     }
@@ -1025,18 +1105,25 @@
     if (viewAllSessionsBtn) {
       viewAllSessionsBtn.addEventListener('click', function() {
         if (!window.currentStudentData) return;
+        if (!window.AnalysisDashboard) {
+          alert('AnalysisDashboard が読み込まれていません。ページをリロードしてください。');
+          return;
+        }
       
-      const logsAll = AnalysisDashboard.mergeAllSessions(window.currentStudentData);
+      const logsAll = window.AnalysisDashboard.mergeAllSessions(window.currentStudentData);
       const projectData = window.currentProjectData || {};
-      AnalysisDashboard.analyze(logsAll, projectData);
+      window.AnalysisDashboard.analyze(logsAll, projectData);
       });
     }
 
-    // ページ読み込み時にデータセット一覧を取得
+    // ページ読み込み時にデータセット一覧を取得（重複登録を防ぐ）
+    if (!window._analysisPageInitialized) {
+      window._analysisPageInitialized = true;
     window.addEventListener('DOMContentLoaded', function() {
       loadDatasetList();
-      loadQuizVersionList();
-    });
+        loadQuizVersionList();
+      });
+    }
 
     // クイズバージョン一覧を読み込む
     async function loadQuizVersionList() {
@@ -1074,18 +1161,23 @@
       }
     }
 
-    // プロジェクト選択変更時にバージョン一覧を再読み込み
-    const projectSelect = document.getElementById('versionProjectSelect');
-    if (projectSelect) {
-      projectSelect.addEventListener('change', function() {
-        loadQuizVersionList();
-      });
+    // プロジェクト選択変更時にバージョン一覧を再読み込み（重複登録を防ぐ）
+    if (!window._versionProjectSelectListenerAdded) {
+      window._versionProjectSelectListenerAdded = true;
+      const projectSelect = document.getElementById('versionProjectSelect');
+      if (projectSelect) {
+        projectSelect.addEventListener('change', function() {
+          loadQuizVersionList();
+        });
+      }
     }
 
-    // 差分表示ボタン
-    const loadVersionDiffBtn = document.getElementById('loadVersionDiffBtn');
-    if (loadVersionDiffBtn) {
-      loadVersionDiffBtn.addEventListener('click', async function() {
+    // 差分表示ボタン（重複登録を防ぐ）
+    if (!window._loadVersionDiffBtnListenerAdded) {
+      window._loadVersionDiffBtnListenerAdded = true;
+      const loadVersionDiffBtn = document.getElementById('loadVersionDiffBtn');
+      if (loadVersionDiffBtn) {
+        loadVersionDiffBtn.addEventListener('click', async function() {
         const versionList = document.getElementById('quizVersionList');
         const projectSelect = document.getElementById('versionProjectSelect');
         const diffContainer = document.getElementById('diffContainer');
@@ -1127,41 +1219,57 @@
         } catch (error) {
           console.error('Failed to load version diff:', error);
           if (diffContainer) {
+            const escapeHtml = window.AnalysisDashboard && window.AnalysisDashboard.escapeHtml ? window.AnalysisDashboard.escapeHtml : function(s) { return s; };
             diffContainer.innerHTML = '<p style="color: #e53e3e;">差分の取得に失敗しました: ' + escapeHtml(error.message) + '</p>';
           }
         }
-      });
+        });
+      }
     }
-    // クラスタリング分析ボタンのイベント（既存のクラスタリング分析セクション用）
-    const clusterAnalysisBtn = document.getElementById('clusterAnalysisBtn');
-    if (clusterAnalysisBtn) {
-      clusterAnalysisBtn.addEventListener('click', function() {
-        if (window.currentStudentData && window.currentStudentData.sessions) {
-          const logsAll = AnalysisDashboard.mergeAllSessions(window.currentStudentData);
-          AnalysisDashboard.runClusterAnalysis(logsAll);
-        } else if (window.currentLogs && Array.isArray(window.currentLogs)) {
-          AnalysisDashboard.runClusterAnalysis(window.currentLogs);
-        } else {
-          alert('ログデータが読み込まれていません。先にデータセットを選択してください。');
-        }
-      });
+    // クラスタリング分析ボタンのイベント（既存のクラスタリング分析セクション用、重複登録を防ぐ）
+    if (!window._clusterAnalysisBtnListenerAdded) {
+      window._clusterAnalysisBtnListenerAdded = true;
+      const clusterAnalysisBtn = document.getElementById('clusterAnalysisBtn');
+      if (clusterAnalysisBtn) {
+        clusterAnalysisBtn.addEventListener('click', function() {
+          if (!window.AnalysisDashboard) {
+            alert('AnalysisDashboard が読み込まれていません。ページをリロードしてください。');
+            return;
+          }
+          if (window.currentStudentData && window.currentStudentData.sessions) {
+            const logsAll = window.AnalysisDashboard.mergeAllSessions(window.currentStudentData);
+            window.AnalysisDashboard.runClusterAnalysis(logsAll);
+          } else if (window.currentLogs && Array.isArray(window.currentLogs)) {
+            window.AnalysisDashboard.runClusterAnalysis(window.currentLogs);
+          } else {
+            alert('ログデータが読み込まれていません。先にデータセットを選択してください。');
+          }
+        });
+      }
     }
 
     //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    // クラスタリング分析（Julia）
+    // クラスタリング分析（Julia、重複登録を防ぐ）
     //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    const runClusterBtn = document.getElementById('runClusterBtn');
-    if (runClusterBtn) {
-      runClusterBtn.addEventListener('click', function() {
-        if (window.currentStudentData && window.currentStudentData.sessions) {
-          const logsAll = AnalysisDashboard.mergeAllSessions(window.currentStudentData);
-          AnalysisDashboard.runClusterAnalysis(logsAll);
-        } else if (window.currentLogs && Array.isArray(window.currentLogs)) {
-          AnalysisDashboard.runClusterAnalysis(window.currentLogs);
-        } else {
-          alert('ログデータが読み込まれていません。先にデータセットを選択してください。');
-        }
-      });
+    if (!window._runClusterBtnListenerAdded) {
+      window._runClusterBtnListenerAdded = true;
+      const runClusterBtn = document.getElementById('runClusterBtn');
+      if (runClusterBtn) {
+        runClusterBtn.addEventListener('click', function() {
+          if (!window.AnalysisDashboard) {
+            alert('AnalysisDashboard が読み込まれていません。ページをリロードしてください。');
+            return;
+          }
+          if (window.currentStudentData && window.currentStudentData.sessions) {
+            const logsAll = window.AnalysisDashboard.mergeAllSessions(window.currentStudentData);
+            window.AnalysisDashboard.runClusterAnalysis(logsAll);
+          } else if (window.currentLogs && Array.isArray(window.currentLogs)) {
+            window.AnalysisDashboard.runClusterAnalysis(window.currentLogs);
+          } else {
+            alert('ログデータが読み込まれていません。先にデータセットを選択してください。');
+          }
+        });
+      }
     }
 
     const loadClusterResultBtn = document.getElementById('loadClusterResultBtn');

@@ -741,75 +741,51 @@
   }
 
   /**
-   * ベクトル分析をレンダリング
+   * ベクトル統計をレンダリング（computeVectorStats を使用）
    * @param {Object} projectData - プロジェクト設定（valuesを含む）
    * @param {Array} logs - ログの配列
    */
-  function renderVectorAnalysis(projectData, logs) {
-    if (!window.VectorMetrics) {
-      console.warn('VectorMetrics が読み込まれていません');
+  function renderVectorStats(projectData, logs) {
+    // VectorMath を使用（ES module 禁止、IIFE + window 形式）
+    if (!window.VectorMath || !window.VectorMath.cosineSimilarity) {
+      console.warn('VectorMath が読み込まれていません');
       return;
     }
 
     var container = document.getElementById('vector-analysis');
     if (!container) return;
 
-    var results = logs || [];
+    // computeVectorStats を使用してベクトル統計を計算
+    var avg = computeVectorStats(logs);
 
-    // --- 1. ログから vector を集計 ---
-    var sum = {};
-    var count = 0;
-
-    for (var i = 0; i < results.length; i++) {
-      var item = results[i];
-      if (!item.vector || typeof item.vector !== 'object') {
-        continue;
-      }
-      
-      var vectorEntries = Object.entries(item.vector);
-      for (var j = 0; j < vectorEntries.length; j++) {
-        var axis = vectorEntries[j][0];
-        var val = Number(vectorEntries[j][1]) || 0;
-        sum[axis] = (sum[axis] || 0) + val;
-      }
-      count++;
-    }
-
-    var avg = {};
-    for (var axisKey in sum) {
-      avg[axisKey] = sum[axisKey] / count;
-    }
-
-    // --- 2. 理想ベクトルと実績ベクトルを比較 ---
+    // 理想ベクトルと実績ベクトルを比較
     var idealValues = projectData.values || {};
-    var idealVector = window.VectorMetrics.toVector(idealValues);
-    var actualVector = window.VectorMetrics.toVector(avg);
 
     // 軸を統一（理想ベクトルと実績ベクトルの両方に存在する軸のみ）
     var allAxes = {};
-    idealVector.forEach(function(v) {
-      allAxes[v.axis] = true;
+    Object.keys(idealValues).forEach(function(axis) {
+      allAxes[axis] = true;
     });
-    actualVector.forEach(function(v) {
-      allAxes[v.axis] = true;
+    Object.keys(avg).forEach(function(axis) {
+      allAxes[axis] = true;
     });
 
     var axisList = Object.keys(allAxes).sort();
     var idealArr = axisList.map(function(axis) {
-      var found = idealVector.find(function(v) { return v.axis === axis; });
-      return found ? found.value : 0;
+      return idealValues[axis] || 0;
     });
     var actualArr = axisList.map(function(axis) {
-      var found = actualVector.find(function(v) { return v.axis === axis; });
-      return found ? found.value : 0;
+      return avg[axis] || 0;
     });
 
+    // コサイン類似度を計算（vector_math.js を使用）
     var similarity = 0;
     if (idealArr.length > 0 && actualArr.length > 0) {
-      similarity = window.VectorMetrics.cosineSimilarity(idealArr, actualArr) * 100;
+      var cosineSimilarity = window.VectorMath.cosineSimilarity;
+      similarity = cosineSimilarity(idealArr, actualArr) * 100;
     }
 
-    // --- 3. UI 反映 ---
+    // UI 反映
     var similarityEl = document.getElementById('vector-similarity');
     if (similarityEl) {
       similarityEl.textContent = similarity.toFixed(1) + '%';
@@ -818,17 +794,20 @@
     var ul = document.getElementById('vector-axis-list');
     if (ul) {
       ul.innerHTML = '';
-      actualVector.forEach(function(v) {
+      
+      // 軸ごとにリストアイテムを生成
+      axisList.forEach(function(axis) {
+        var value = avg[axis] || 0;
         var li = document.createElement('li');
         li.style.padding = '0.5rem';
         li.style.marginBottom = '0.5rem';
         li.style.background = '#f9f9f9';
         li.style.borderRadius = '4px';
-        li.textContent = v.axis + ': ' + v.value.toFixed(2);
+        li.textContent = axis + ': ' + value.toFixed(2);
         ul.appendChild(li);
       });
 
-      if (actualVector.length === 0) {
+      if (axisList.length === 0) {
         var emptyLi = document.createElement('li');
         emptyLi.style.padding = '0.5rem';
         emptyLi.style.color = '#666';
@@ -852,6 +831,9 @@
     });
     chartInstances = {};
 
+    // window.currentLogs をセット（analysis-run タブなどで使用）
+    window.currentLogs = logs;
+
     // 統計を計算
     var overallStats = computeOverallStats(logs);
     var questionStats = computePerQuestionStats(logs);
@@ -874,22 +856,22 @@
       runRTFitting(responseTimes);
     }
     
-    // ベクトル分析を実行（projectDataがある場合）
+    // ベクトル統計をレンダリング（projectDataがある場合）
     if (projectData) {
-      renderVectorAnalysis(projectData, logs);
+      renderVectorStats(projectData, logs);
     } else {
       // projectDataがない場合はデフォルトプロジェクトを読み込む
       if (window.DatasetLoader && window.DatasetLoader.loadProject) {
         window.DatasetLoader.loadProject('default')
           .then(function(project) {
-            renderVectorAnalysis(project, logs);
+            renderVectorStats(project, logs);
           })
           .catch(function(error) {
             console.warn('プロジェクト設定の読み込みに失敗しました:', error);
-            renderVectorAnalysis({}, logs);
+            renderVectorStats({}, logs);
           });
       } else {
-        renderVectorAnalysis({}, logs);
+        renderVectorStats({}, logs);
       }
     }
   }
@@ -1121,6 +1103,8 @@
       console.warn('ログデータが空です');
       return;
     }
+    // window.currentLogs をセット（analysis-run タブなどで使用）
+    window.currentLogs = logs;
     renderAll(logs, projectData);
   }
 
@@ -1130,26 +1114,10 @@
    * @param {Object} projectData - プロジェクト設定（オプション）
    */
   function renderAllWithProject(logs, projectData) {
-    renderAll(logs);
+    renderAll(logs, projectData);
     
-    // ベクトル分析を実行（projectDataがある場合）
-    if (projectData) {
-      renderVectorAnalysis(projectData, logs);
-    } else {
-      // projectDataがない場合はデフォルトプロジェクトを読み込む
-      if (window.DatasetLoader && window.DatasetLoader.loadProject) {
-        window.DatasetLoader.loadProject('default')
-          .then(function(project) {
-            renderVectorAnalysis(project, logs);
-          })
-          .catch(function(error) {
-            console.warn('プロジェクト設定の読み込みに失敗しました:', error);
-            renderVectorAnalysis({}, logs);
-          });
-      } else {
-        renderVectorAnalysis({}, logs);
-      }
-    }
+    // renderAll 内で既に renderVectorStats が呼ばれるため、ここでは不要
+    // （重複を避ける）
   }
 
   /**
@@ -1175,6 +1143,489 @@
     URL.revokeObjectURL(url);
     
     alert('クラスタリング分析用のCSVファイルをダウンロードしました。\n\n次のコマンドでJulia分析を実行してください:\njulia analysis/cluster_main.jl');
+  }
+
+  /**
+   * A+B統合版クラスタリング分析システム
+   * A: Julia の cluster_output.json / cluster_scatter.png を読み込んで UI 表示
+   * B: 存在しない場合は JS fallback で k-means を自動実行
+   * @param {Object} datasetData - データセットデータ（sessions または student_log を含む）
+   * @param {string} projectId - プロジェクトID（オプション、デフォルト: 'default'）
+   */
+  function renderClusterAnalysis(datasetData, projectId) {
+    projectId = projectId || 'default';
+    console.log('[ClusterAnalysis] Starting cluster analysis...', datasetData);
+    console.log('Cluster analysis executed');
+    
+    // cluster_features を抽出
+    var clusterFeatures = [];
+    var sessionInfo = [];
+    
+    // sessions または student_log.sessions から cluster_features を抽出
+    var sessions = null;
+    if (datasetData && datasetData.sessions && Array.isArray(datasetData.sessions)) {
+      sessions = datasetData.sessions;
+    } else if (datasetData && datasetData.student_log && datasetData.student_log.sessions && Array.isArray(datasetData.student_log.sessions)) {
+      sessions = datasetData.student_log.sessions;
+    } else if (datasetData && datasetData.vector_test_sessions && Array.isArray(datasetData.vector_test_sessions)) {
+      sessions = datasetData.vector_test_sessions;
+    }
+    
+    if (!sessions || sessions.length === 0) {
+      console.warn('[ClusterAnalysis] No sessions found with cluster_features');
+      var debugEl = document.getElementById('clusterDebug');
+      if (debugEl) {
+        debugEl.textContent = 'エラー: cluster_features を含むセッションデータが見つかりませんでした。';
+      }
+      return;
+    }
+    
+    // cluster_features を抽出
+    sessions.forEach(function(session) {
+      if (session.cluster_features && Array.isArray(session.cluster_features)) {
+        clusterFeatures.push(session.cluster_features);
+        sessionInfo.push({
+          session_id: session.session_id || 'unknown',
+          user_id: session.user_id || 'unknown',
+          correct_rate: session.correct_rate || 0,
+          avg_reaction_time: session.avg_reaction_time || 0,
+          avg_path_length: session.avg_path_length || 0,
+          cluster_ground_truth: session.cluster_ground_truth || null
+        });
+      }
+    });
+    
+    if (clusterFeatures.length === 0) {
+      console.warn('[ClusterAnalysis] No cluster_features found in sessions');
+      var debugEl2 = document.getElementById('clusterDebug');
+      if (debugEl2) {
+        debugEl2.textContent = 'エラー: cluster_features が見つかりませんでした。';
+      }
+      return;
+    }
+    
+    console.log('[ClusterAnalysis] Extracted', clusterFeatures.length, 'sessions with cluster_features');
+    
+    // === A: Julia 出力を優先的に読み込む ===
+    var juliaOutputPath = '../../analysis/cluster_output.json';
+    var juliaImagePath = '../../analysis/cluster_scatter.png';
+    
+    Promise.all([
+      fetch(juliaOutputPath).then(function(res) { return res.ok ? res.json() : null; }).catch(function() { return null; }),
+      fetch(juliaImagePath).then(function(res) { return res.ok ? juliaImagePath : null; }).catch(function() { return null; })
+    ]).then(function(results) {
+      var juliaOutput = results[0];
+      var juliaImage = results[1];
+      
+      if (juliaOutput && juliaOutput.results) {
+        // Julia 出力がある場合は優先使用
+        console.log('[ClusterAnalysis] Using Julia output');
+        renderClusterAnalysisWithJuliaOutput(juliaOutput, juliaImage, sessionInfo, clusterFeatures);
+      } else {
+        // === B: JS fallback で k-means を実行 ===
+        console.log('[ClusterAnalysis] Julia output not found, using JS fallback');
+        renderClusterAnalysisWithJSFallback(clusterFeatures, sessionInfo);
+      }
+    }).catch(function(error) {
+      console.error('[ClusterAnalysis] Error loading Julia output:', error);
+      // エラー時も JS fallback を実行
+      renderClusterAnalysisWithJSFallback(clusterFeatures, sessionInfo);
+    });
+  }
+
+  /**
+   * Julia 出力を使用してクラスタリング分析結果を表示
+   * @param {Object} juliaOutput - Julia の cluster_output.json の内容
+   * @param {string} juliaImage - Julia の cluster_scatter.png のパス
+   * @param {Array} sessionInfo - セッション情報の配列
+   * @param {Array} clusterFeatures - クラスタ特徴量の配列（オプション、散布図描画用）
+   */
+  function renderClusterAnalysisWithJuliaOutput(juliaOutput, juliaImage, sessionInfo, clusterFeatures) {
+    var results = juliaOutput.results || [];
+    var clusterStats = juliaOutput.cluster_stats || [];
+    
+    // セッションID から sessionInfo をマッピング
+    var sessionMap = {};
+    sessionInfo.forEach(function(info) {
+      sessionMap[info.session_id] = info;
+    });
+    
+    // クラスタラベルを取得
+    var labels = results.map(function(r) { return r.assigned_cluster || 0; });
+    
+    // 散布図を描画（Julia画像があれば使用、なければChart.jsで描画）
+    if (juliaImage) {
+      var scatterEl = document.getElementById('clusterScatter');
+      if (scatterEl) {
+        scatterEl.innerHTML = '<img src="' + juliaImage + '" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 8px;">';
+      }
+    } else if (clusterFeatures && clusterFeatures.length > 0) {
+      // Chart.js で散布図を描画（clusterFeatures が利用可能な場合）
+      renderClusterScatter(clusterFeatures, labels, sessionInfo);
+    } else {
+      console.warn('[ClusterAnalysis] clusterFeatures not available, skipping scatter plot');
+    }
+    
+    // クラスタテーブルを表示
+    renderClusterTableWithJuliaOutput(results, sessionMap, clusterStats);
+    
+    // デバッグ情報
+    var debugEl = document.getElementById('clusterDebug');
+    if (debugEl) {
+      debugEl.textContent = JSON.stringify({
+        source: 'Julia',
+        total_sessions: juliaOutput.total_sessions || 0,
+        k: juliaOutput.k || 3,
+        feature_dimension: juliaOutput.feature_dimension || 0,
+        cluster_stats: clusterStats
+      }, null, 2);
+    }
+  }
+
+  /**
+   * JS fallback で k-means クラスタリングを実行
+   * @param {Array} clusterFeatures - クラスタ特徴量の配列
+   * @param {Array} sessionInfo - セッション情報の配列
+   */
+  function renderClusterAnalysisWithJSFallback(clusterFeatures, sessionInfo) {
+    console.log('[ClusterAnalysis] Running JS k-means fallback');
+    
+    // 簡易 k-means を実行（k=3）
+    var k = 3;
+    var labels = simpleKMeans(clusterFeatures, k);
+    
+    // 散布図を描画
+    renderClusterScatter(clusterFeatures, labels, sessionInfo);
+    
+    // クラスタテーブルを表示
+    renderClusterTable(labels, sessionInfo);
+    
+    // デバッグ情報
+    var debugEl = document.getElementById('clusterDebug');
+    if (debugEl) {
+      debugEl.textContent = JSON.stringify({
+        source: 'JS Fallback',
+        total_sessions: clusterFeatures.length,
+        k: k,
+        feature_dimension: clusterFeatures.length > 0 ? clusterFeatures[0].length : 0,
+        labels: labels
+      }, null, 2);
+    }
+  }
+
+  /**
+   * 簡易 k-means クラスタリング（フロントエンド実装）
+   * @param {Array} features - 特徴量の配列（各要素は数値配列）
+   * @param {number} k - クラスタ数
+   * @returns {Array} 各データポイントのクラスタラベル
+   */
+  function simpleKMeans(features, k) {
+    if (!features || features.length === 0) {
+      return [];
+    }
+    
+    k = Math.min(k, features.length);
+    var numFeatures = features[0].length;
+    
+    // 初期クラスタ中心をランダムに選択
+    var centers = [];
+    for (var i = 0; i < k; i++) {
+      var randomIndex = Math.floor(Math.random() * features.length);
+      centers.push(features[randomIndex].slice());
+    }
+    
+    var labels = [];
+    var maxIterations = 100;
+    var converged = false;
+    
+    for (var iter = 0; iter < maxIterations && !converged; iter++) {
+      var newLabels = [];
+      
+      // 各データポイントを最も近いクラスタに割り当て
+      for (var i = 0; i < features.length; i++) {
+        var minDist = Infinity;
+        var closestCluster = 0;
+        
+        for (var j = 0; j < centers.length; j++) {
+          var dist = euclideanDistance(features[i], centers[j]);
+          if (dist < minDist) {
+            minDist = dist;
+            closestCluster = j;
+          }
+        }
+        
+        newLabels.push(closestCluster);
+      }
+      
+      // 収束チェック
+      converged = true;
+      for (var i = 0; i < labels.length; i++) {
+        if (labels[i] !== newLabels[i]) {
+          converged = false;
+          break;
+        }
+      }
+      
+      labels = newLabels;
+      
+      // クラスタ中心を更新
+      for (var j = 0; j < centers.length; j++) {
+        var clusterPoints = [];
+        for (var i = 0; i < features.length; i++) {
+          if (labels[i] === j) {
+            clusterPoints.push(features[i]);
+          }
+        }
+        
+        if (clusterPoints.length > 0) {
+          var newCenter = [];
+          for (var dim = 0; dim < numFeatures; dim++) {
+            var sum = 0;
+            for (var p = 0; p < clusterPoints.length; p++) {
+              sum += clusterPoints[p][dim];
+            }
+            newCenter.push(sum / clusterPoints.length);
+          }
+          centers[j] = newCenter;
+        }
+      }
+    }
+    
+    return labels;
+  }
+
+  /**
+   * ユークリッド距離を計算
+   * @param {Array} a - ベクトルA
+   * @param {Array} b - ベクトルB
+   * @returns {number} ユークリッド距離
+   */
+  function euclideanDistance(a, b) {
+    if (!a || !b || a.length !== b.length) {
+      return Infinity;
+    }
+    
+    var sum = 0;
+    for (var i = 0; i < a.length; i++) {
+      var diff = a[i] - b[i];
+      sum += diff * diff;
+    }
+    
+    return Math.sqrt(sum);
+  }
+
+  /**
+   * クラスタ散布図を描画（Chart.js使用）
+   * @param {Array} features - 特徴量の配列
+   * @param {Array} labels - クラスタラベルの配列
+   * @param {Array} sessionInfo - セッション情報の配列
+   */
+  function renderClusterScatter(features, labels, sessionInfo) {
+    var canvas = document.getElementById('clusterScatter');
+    if (!canvas) {
+      console.warn('[ClusterAnalysis] clusterScatter canvas not found');
+      return;
+    }
+    
+    // 既存のチャートを破棄
+    if (chartInstances['clusterScatter']) {
+      chartInstances['clusterScatter'].destroy();
+      chartInstances['clusterScatter'] = null;
+    }
+    
+    if (!features || features.length === 0) {
+      console.warn('[ClusterAnalysis] No features to render');
+      return;
+    }
+    
+    // 2D可視化のため、最初の2次元を使用
+    var data2D = [];
+    var colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
+    
+    for (var i = 0; i < features.length; i++) {
+      var feature = features[i];
+      if (!Array.isArray(feature) || feature.length === 0) {
+        continue;
+      }
+      var x = feature[0] || 0;
+      var y = feature.length > 1 ? feature[1] : 0;
+      
+      data2D.push({
+        x: x,
+        y: y,
+        label: 'Session ' + (i + 1),
+        cluster: labels[i] || 0,
+        index: i
+      });
+    }
+    
+    if (data2D.length === 0) {
+      console.warn('[ClusterAnalysis] No valid 2D data points');
+      return;
+    }
+    
+    // クラスタごとにデータをグループ化
+    var maxCluster = Math.max.apply(null, labels.length > 0 ? labels : [0]);
+    var datasets = [];
+    for (var k = 0; k <= maxCluster; k++) {
+      var clusterData = data2D.filter(function(d) { return d.cluster === k; });
+      if (clusterData.length > 0) {
+        datasets.push({
+          label: 'Cluster ' + (k + 1),
+          data: clusterData.map(function(d) { return { x: d.x, y: d.y }; }),
+          backgroundColor: colors[k % colors.length],
+          borderColor: colors[k % colors.length],
+          pointRadius: 6,
+          pointHoverRadius: 8
+        });
+      }
+    }
+    
+    if (window.Chart && typeof window.Chart === 'function') {
+      try {
+        chartInstances['clusterScatter'] = new Chart(canvas, {
+          type: 'scatter',
+          data: { datasets: datasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { 
+                title: { display: true, text: 'Feature 1' },
+                type: 'linear'
+              },
+              y: { 
+                title: { display: true, text: 'Feature 2' },
+                type: 'linear'
+              }
+            },
+            plugins: {
+              legend: { display: true, position: 'top' },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    var point = context.raw;
+                    var index = data2D.findIndex(function(d) {
+                      return Math.abs(d.x - point.x) < 0.001 && Math.abs(d.y - point.y) < 0.001;
+                    });
+                    if (index >= 0 && sessionInfo && sessionInfo[index]) {
+                      return 'Session: ' + sessionInfo[index].session_id + ', User: ' + sessionInfo[index].user_id;
+                    }
+                    return context.dataset.label + ': (' + point.x.toFixed(2) + ', ' + point.y.toFixed(2) + ')';
+                  }
+                }
+              }
+            }
+          }
+        });
+        console.log('[ClusterAnalysis] Scatter plot rendered successfully');
+      } catch (error) {
+        console.error('[ClusterAnalysis] Error rendering scatter plot:', error);
+        canvas.innerHTML = '<p style="color: #e53e3e;">散布図の描画に失敗しました: ' + escapeHtml(error.message) + '</p>';
+      }
+    } else {
+      console.warn('[ClusterAnalysis] Chart.js not available');
+      canvas.innerHTML = '<p style="color: #e53e3e;">Chart.js が読み込まれていません。</p>';
+    }
+  }
+
+  /**
+   * クラスタテーブルを表示（JS fallback用）
+   * @param {Array} labels - クラスタラベルの配列
+   * @param {Array} sessionInfo - セッション情報の配列
+   */
+  function renderClusterTable(labels, sessionInfo) {
+    var tableEl = document.getElementById('clusterTable');
+    if (!tableEl) return;
+    
+    var html = '<table border="1" style="border-collapse: collapse; width: 100%; font-size: 0.9em;">';
+    html += '<thead><tr style="background: #f9f9f9;">';
+    html += '<th style="padding: 10px; text-align: left;">クラスタID</th>';
+    html += '<th style="padding: 10px; text-align: left;">ユーザーID</th>';
+    html += '<th style="padding: 10px; text-align: left;">セッションID</th>';
+    html += '<th style="padding: 10px; text-align: left;">正答率</th>';
+    html += '<th style="padding: 10px; text-align: left;">平均反応時間</th>';
+    html += '<th style="padding: 10px; text-align: left;">平均パス長</th>';
+    html += '</tr></thead><tbody>';
+    
+    for (var i = 0; i < labels.length && i < sessionInfo.length; i++) {
+      var info = sessionInfo[i];
+      var clusterId = labels[i] + 1; // 0-indexed を 1-indexed に変換
+      
+      html += '<tr>';
+      html += '<td style="padding: 10px;">' + escapeHtml('Cluster ' + clusterId) + '</td>';
+      html += '<td style="padding: 10px;">' + escapeHtml(info.user_id) + '</td>';
+      html += '<td style="padding: 10px; font-family: monospace; font-size: 0.85em;">' + escapeHtml(info.session_id) + '</td>';
+      html += '<td style="padding: 10px;">' + (info.correct_rate * 100).toFixed(1) + '%</td>';
+      html += '<td style="padding: 10px;">' + (info.avg_reaction_time || 0).toFixed(2) + '秒</td>';
+      html += '<td style="padding: 10px;">' + (info.avg_path_length || 0).toFixed(2) + '</td>';
+      html += '</tr>';
+    }
+    
+    html += '</tbody></table>';
+    tableEl.innerHTML = html;
+  }
+
+  /**
+   * クラスタテーブルを表示（Julia出力用）
+   * @param {Array} results - Julia の結果配列
+   * @param {Object} sessionMap - セッションID から sessionInfo へのマッピング
+   * @param {Array} clusterStats - クラスタ統計情報
+   */
+  function renderClusterTableWithJuliaOutput(results, sessionMap, clusterStats) {
+    var tableEl = document.getElementById('clusterTable');
+    if (!tableEl) return;
+    
+    var html = '<h3 style="margin-bottom: 15px; color: #333;">クラスタ統計</h3>';
+    
+    // クラスタ統計を表示
+    if (clusterStats && clusterStats.length > 0) {
+      html += '<table border="1" style="border-collapse: collapse; width: 100%; font-size: 0.9em; margin-bottom: 20px;">';
+      html += '<thead><tr style="background: #f9f9f9;">';
+      html += '<th style="padding: 10px; text-align: left;">クラスタID</th>';
+      html += '<th style="padding: 10px; text-align: left;">セッション数</th>';
+      html += '<th style="padding: 10px; text-align: left;">平均距離</th>';
+      html += '<th style="padding: 10px; text-align: left;">Ground Truth分布</th>';
+      html += '</tr></thead><tbody>';
+      
+      clusterStats.forEach(function(stat) {
+        html += '<tr>';
+        html += '<td style="padding: 10px;">' + escapeHtml('Cluster ' + stat.cluster_id) + '</td>';
+        html += '<td style="padding: 10px;">' + (stat.num_sessions || 0) + '</td>';
+        html += '<td style="padding: 10px;">' + (stat.avg_distance_to_center || 0).toFixed(4) + '</td>';
+        html += '<td style="padding: 10px;">' + escapeHtml(JSON.stringify(stat.ground_truth_distribution || {})) + '</td>';
+        html += '</tr>';
+      });
+      
+      html += '</tbody></table>';
+    }
+    
+    // セッション詳細を表示
+    html += '<h3 style="margin-bottom: 15px; color: #333;">セッション詳細</h3>';
+    html += '<table border="1" style="border-collapse: collapse; width: 100%; font-size: 0.9em;">';
+    html += '<thead><tr style="background: #f9f9f9;">';
+    html += '<th style="padding: 10px; text-align: left;">クラスタID</th>';
+    html += '<th style="padding: 10px; text-align: left;">ユーザーID</th>';
+    html += '<th style="padding: 10px; text-align: left;">セッションID</th>';
+    html += '<th style="padding: 10px; text-align: left;">距離</th>';
+    html += '<th style="padding: 10px; text-align: left;">正答率</th>';
+    html += '</tr></thead><tbody>';
+    
+    results.forEach(function(result) {
+      var info = sessionMap[result.session_id] || {};
+      var clusterId = result.assigned_cluster || 0;
+      
+      html += '<tr>';
+      html += '<td style="padding: 10px;">' + escapeHtml('Cluster ' + (clusterId + 1)) + '</td>';
+      html += '<td style="padding: 10px;">' + escapeHtml(info.user_id || 'unknown') + '</td>';
+      html += '<td style="padding: 10px; font-family: monospace; font-size: 0.85em;">' + escapeHtml(result.session_id) + '</td>';
+      html += '<td style="padding: 10px;">' + (result.distance || 0).toFixed(4) + '</td>';
+      html += '<td style="padding: 10px;">' + ((info.correct_rate || 0) * 100).toFixed(1) + '%</td>';
+      html += '</tr>';
+    });
+    
+    html += '</tbody></table>';
+    tableEl.innerHTML = html;
   }
 
   /**
@@ -1232,36 +1683,6 @@
     
     return csv;
   }
-
-  // グローバルに公開
-  global.AnalysisDashboard = {
-    loadQuizLog: loadQuizLog,
-    mergeAllSessions: mergeAllSessions,
-    computeOverallStats: computeOverallStats,
-    computePerQuestionStats: computePerQuestionStats,
-    computeConceptConfusions: computeConceptConfusions,
-    computeResponseTimeProfile: computeResponseTimeProfile,
-    computePathPatterns: computePathPatterns,
-    computeGlossaryUsage: computeGlossaryUsage,
-    computeVectorStats: computeVectorStats,
-    renderOverallStats: renderOverallStats,
-    renderQuestionStats: renderQuestionStats,
-    renderConfusionStats: renderConfusionStats,
-    renderResponseTimeStats: renderResponseTimeStats,
-    renderPathStats: renderPathStats,
-    renderGlossaryStats: renderGlossaryStats,
-    renderVectorAnalysis: renderVectorAnalysis,
-    renderAll: renderAll,
-    renderAllWithProject: renderAllWithProject,
-    analyze: analyze,
-    getQuizVersionsFromLogs: getQuizVersionsFromLogs,
-    filterLogsByVersion: filterLogsByVersion,
-    runClusterAnalysis: runClusterAnalysis,
-    convertLogsToCSV: convertLogsToCSV,
-    renderClusterAnalysis: renderClusterAnalysis,
-    computeJSONDiff: computeJSONDiff,
-    renderJSONDiff: renderJSONDiff
-  };
 
   /**
    * JSON diff を計算（再帰的）
@@ -1463,11 +1884,57 @@
     container.style.display = 'block';
   }
 
+  // グローバルに公開（1度だけ定義）
+  if (typeof global.AnalysisDashboard === 'undefined') {
+    global.AnalysisDashboard = {};
+  }
+  
+  // 既存のプロパティをマージ（重複を避ける）
+  Object.assign(global.AnalysisDashboard, {
+    loadQuizLog: loadQuizLog,
+    mergeAllSessions: mergeAllSessions,
+    computeOverallStats: computeOverallStats,
+    computePerQuestionStats: computePerQuestionStats,
+    computeConceptConfusions: computeConceptConfusions,
+    computeResponseTimeProfile: computeResponseTimeProfile,
+    computePathPatterns: computePathPatterns,
+    computeGlossaryUsage: computeGlossaryUsage,
+    computeVectorStats: computeVectorStats,
+    renderOverallStats: renderOverallStats,
+    renderQuestionStats: renderQuestionStats,
+    renderConfusionStats: renderConfusionStats,
+    renderResponseTimeStats: renderResponseTimeStats,
+    renderPathStats: renderPathStats,
+    renderGlossaryStats: renderGlossaryStats,
+    renderVectorStats: renderVectorStats,
+    renderAll: renderAll,
+    renderAllWithProject: renderAllWithProject,
+    analyze: analyze,
+    getQuizVersionsFromLogs: getQuizVersionsFromLogs,
+    filterLogsByVersion: filterLogsByVersion,
+    runClusterAnalysis: runClusterAnalysis,
+    convertLogsToCSV: convertLogsToCSV,
+    renderClusterAnalysis: renderClusterAnalysis,
+    computeJSONDiff: computeJSONDiff,
+    renderJSONDiff: renderJSONDiff,
+    escapeHtml: escapeHtml
+  });
+
 })(window);
 
 // ----------------------
-// 📊 分析タブ 初期化
+// 📊 分析タブ 初期化（IIFE外の関数 - analysis-run タブ専用）
 // ----------------------
+// 注意: これらの関数は analysis-run タブ専用で、IIFE外に配置されています
+// 重複読み込みを防ぐため、既に定義されている場合はスキップ
+(function() {
+  'use strict';
+  
+  // 既に定義されている場合はスキップ
+  if (window.AnalysisRunHelper && window.AnalysisRunHelper.loadStudentListForAnalysis) {
+    return;
+  }
+
 function loadStudentListForAnalysis() {
     // DatasetLoader を使用して他のタブと同じ方法でデータセット一覧を取得
     if (typeof DatasetLoader === 'undefined') {
@@ -1507,19 +1974,34 @@ function loadStudentListForAnalysis() {
             }
         });
 }
+  // 初期化（DOMContentLoaded の前に実行される可能性があるため、ガードを追加）
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
 if (document.getElementById('analysis-student-file')) {
     loadStudentListForAnalysis();
-}
+      }
+    });
+  } else {
+    // DOMContentLoaded が既に発火している場合
+    if (document.getElementById('analysis-student-file')) {
+      loadStudentListForAnalysis();
+    }
+  }
 
-// タブ切り替え時に学生ファイル一覧を読み込む
+  // タブ切り替え時に学生ファイル一覧を読み込む（重複登録を防ぐ）
+  if (!window._analysisRunTabListenerAdded) {
+    window._analysisRunTabListenerAdded = true;
 document.addEventListener('DOMContentLoaded', function() {
     const analysisRunTab = document.querySelector('[data-tab="analysis-run"]');
     if (analysisRunTab) {
         analysisRunTab.addEventListener('click', function() {
-            loadStudentListForAnalysis();
+          if (window.AnalysisRunHelper && window.AnalysisRunHelper.loadStudentListForAnalysis) {
+            window.AnalysisRunHelper.loadStudentListForAnalysis();
+          }
         });
     }
 });
+  }
 
 // ----------------------
 // 📊 Julia 分析関数（クライアント側での簡易分析）
@@ -1664,8 +2146,10 @@ function runServerSideJuliaAnalysis(studentData, basicResult) {
 }
 
 // ----------------------
-// 📊 分析実行
+  // 📊 分析実行（重複登録を防ぐ）
 // ----------------------
+  if (!window._runAnalysisBtnListenerAdded) {
+    window._runAnalysisBtnListenerAdded = true;
 document.addEventListener('DOMContentLoaded', function() {
     const runAnalysisBtn = document.getElementById('run-analysis-btn');
     if (runAnalysisBtn) {
@@ -1726,6 +2210,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+  }
 
 // ----------------------
 // 📊 結果表示（学術レポート形式）
@@ -1861,12 +2346,19 @@ function renderAnalysisReport(result) {
     return html;
 }
 
-function escapeHtml(text) {
-    if (text == null) return '';
-    var div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
+  // escapeHtml は既に AnalysisDashboard に定義されているため、重複定義を削除
+  
+  // AnalysisRunHelper として公開（重複読み込みを防ぐ）
+  window.AnalysisRunHelper = {
+    loadStudentListForAnalysis: loadStudentListForAnalysis,
+    runJuliaAnalysis: runJuliaAnalysis,
+    runServerSideJuliaAnalysis: runServerSideJuliaAnalysis,
+    renderAnalysisReport: renderAnalysisReport
+  };
+  
+  // DOMContentLoaded イベントリスナー（重複登録を防ぐ）
+  if (!window._analysisResultOpenListenerAdded) {
+    window._analysisResultOpenListenerAdded = true;
 
 document.addEventListener('DOMContentLoaded', function() {
     const analysisOpen = document.getElementById('analysis-open');
@@ -1876,9 +2368,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!area || !window.latestAnalysisResult) return;
             
             // JSON の生表示ではなく、学術レポート形式で表示
-            area.innerHTML = renderAnalysisReport(window.latestAnalysisResult);
+          if (window.AnalysisRunHelper && window.AnalysisRunHelper.renderAnalysisReport) {
+            area.innerHTML = window.AnalysisRunHelper.renderAnalysisReport(window.latestAnalysisResult);
+          } else {
+            area.innerHTML = '<pre>' + JSON.stringify(window.latestAnalysisResult, null, 2) + '</pre>';
+          }
             area.scrollIntoView({behavior:'smooth'});
         });
     }
 });
-
+  }
+})();
