@@ -17,6 +17,7 @@
   var currentQuestion = null;
   var glossary = null;
   var timingProfile = null;
+  var shownGlossaryTerms = []; // 現在の問題で表示されたGlossary用語を記録
 
   /**
    * プロジェクトIDを取得
@@ -28,6 +29,24 @@
     } catch (e) {
       return 'default';
     }
+  }
+
+  /**
+   * 現在のクイズバージョンを取得
+   * @returns {Promise<string>} クイズバージョン文字列
+   */
+  async function getCurrentQuizVersion() {
+    try {
+      const projectId = getProjectId();
+      const response = await fetch(`../../projects/${projectId}/quiz_versions/latest.json`);
+      if (response.ok) {
+        const data = await response.json();
+        return data.version || data.version_date || "unknown";
+      }
+    } catch (e) {
+      console.warn('Failed to load quiz version:', e);
+    }
+    return "unknown";
   }
 
   /**
@@ -82,6 +101,14 @@
       })
       .then(function (data) {
         quizData = data;
+        
+        // ロギングマネージャー初期化
+        if (typeof StudentLogManager !== 'undefined') {
+          const userId = window.PlayerConfig?.user_id || "student";
+          StudentLogManager.init(userId);
+          StudentLogManager.startSession();
+        }
+        
         return data;
       });
   }
@@ -105,6 +132,9 @@
 
     currentQuestionIndex = questionIndex;
     currentQuestion = quizData.questions[questionIndex];
+    
+    // Glossary表示履歴をリセット
+    shownGlossaryTerms = [];
 
     // ログ記録を開始
     QuizLogging.startQuestion(currentQuestion.id || ('q' + questionIndex));
@@ -171,6 +201,43 @@
         log.path = clickHistory && clickHistory.path ? clickHistory.path : [choiceId];
       }
     }
+    
+    // StudentLogManagerに記録
+    if (typeof StudentLogManager !== 'undefined' && log) {
+      // 選択肢 vector のコピー
+      const selected = currentQuestion.choices.find(function(c) { return c.choiceId === choiceId || c.id === choiceId; });
+      const vector = selected?.vector || choice?.vector || {};
+      
+      // クイズバージョンを取得（非同期）
+      getCurrentQuizVersion().then(function(quizVersion) {
+        // ログ記録
+        StudentLogManager.record({
+          questionId: log.questionId,
+          final_answer: choiceId,
+          correct: isCorrect,
+          response_time: log.response_time,
+          path: log.path || [choiceId],
+          vector: vector,
+          glossaryShown: shownGlossaryTerms || [],
+          conceptTags: currentQuestion.tags || currentQuestion.conceptTags || [],
+          quiz_version: quizVersion
+        });
+      }).catch(function(e) {
+        // バージョン取得に失敗してもログは記録
+        console.warn('Failed to get quiz version, recording without it:', e);
+        StudentLogManager.record({
+          questionId: log.questionId,
+          final_answer: choiceId,
+          correct: isCorrect,
+          response_time: log.response_time,
+          path: log.path || [choiceId],
+          vector: vector,
+          glossaryShown: shownGlossaryTerms || [],
+          conceptTags: currentQuestion.tags || currentQuestion.conceptTags || [],
+          quiz_version: "unknown"
+        });
+      });
+    }
 
     // 誤答の場合はGlossary解説を推奨
     var explanation = null;
@@ -189,6 +256,11 @@
         explanation = explanation || {};
         explanation.recommended_terms = recommendation.recommended_terms;
         explanation.reason = recommendation.reason;
+        
+        // Glossary表示履歴を記録
+        shownGlossaryTerms = recommendation.recommended_terms.map(function(term) {
+          return term.termId || term.id || term.word || term.name || term;
+        });
       }
     }
 
@@ -210,6 +282,13 @@
    * @param {Function} renderCallback - レンダリングコールバック関数
    */
   function showResult(renderCallback) {
+    // ローカルに保存（analysis ダッシュボードで参照)
+    if (typeof StudentLogManager !== 'undefined') {
+      StudentLogManager.pushSession();
+      StudentLogManager.saveToLocal();
+      StudentLogManager.download();
+    }
+    
     if (renderCallback) {
       renderCallback('result', {
         logs: QuizLogging.getAllLogs()

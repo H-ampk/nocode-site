@@ -80,7 +80,7 @@ def generate_response_time(category):
         return random_float(0.5, 40.0)
 
 
-def generate_path(response_time):
+def generate_path():
     """path（迷いパターン）を生成"""
     steps = random_int(1, 4)
     path = []
@@ -108,21 +108,30 @@ def generate_path(response_time):
 
 def generate_clicks(path, response_time):
     """clicks を生成（path と整合性を保つ）"""
+    if not path:
+        return []
+    
+    # response_time が0以下の場合は最小値に設定
+    if response_time <= 0:
+        response_time = 0.1
+    
     clicks = []
     cumulative_time = 0
     
     for i, choice_id in enumerate(path):
+        remaining_time = max(0.1, response_time - cumulative_time)
+        remaining_clicks = len(path) - i
+        
         if i == len(path) - 1:
-            # 最後のクリックは response_time に近い値
-            time = max(0.1, response_time - cumulative_time - 0.5)
-            time = min(time, response_time - cumulative_time)
+            # 最後のクリックは response_time に合わせる
+            time = remaining_time
         else:
             # 中間のクリックは均等に分散
-            remaining_time = response_time - cumulative_time
-            remaining_clicks = len(path) - i
-            average_interval = remaining_time / remaining_clicks
-            time = random_float(average_interval * 0.5, average_interval * 1.5)
-            time = min(time, response_time - cumulative_time - 0.5)
+            if remaining_clicks > 1:
+                average_interval = remaining_time / remaining_clicks
+                time = random_float(max(0.1, average_interval * 0.5), min(average_interval * 1.5, remaining_time * 0.9))
+            else:
+                time = remaining_time
         
         cumulative_time += time
         clicks.append({
@@ -137,13 +146,13 @@ def generate_clicks(path, response_time):
     return clicks
 
 
-def generate_log(index):
+def generate_log():
     """1つのログエントリを生成"""
     question_id = random_choice(QUESTIONS)
     is_correct = random.random() < 0.5  # 50%の確率で正解
     category = get_response_time_category()
     response_time = generate_response_time(category)
-    path = generate_path(response_time)
+    path = generate_path()
     clicks = generate_clicks(path, response_time)
     final_answer = path[-1]
     
@@ -180,14 +189,8 @@ def main():
     print('ダミーログ生成を開始...')
     
     logs = []
-    for i in range(TOTAL_LOGS):
-        logs.append(generate_log(i))
-    
-    log_data = {
-        'version': '1.0',
-        'generated_at': datetime.now().isoformat() + 'Z',
-        'logs': logs
-    }
+    for _ in range(TOTAL_LOGS):
+        logs.append(generate_log())
     
     print(f'生成完了: {TOTAL_LOGS}件のログ')
     correct_count = sum(1 for l in logs if l['correct'])
@@ -203,8 +206,37 @@ def main():
     print(f'  searching (3-12秒): {searching_count}件')
     print(f'  deliberate (15-40秒): {deliberate_count}件')
     
-    # ファイルに保存
-    output_path = 'data/quiz_log_dummy.json'
+    # ファイルに保存（既存のデータを保持）
+    output_path = 'students/quiz_log_dummy.json'
+    existing_data = {}
+    try:
+        with open(output_path, 'r', encoding='utf-8') as f:
+            existing_data = json.load(f)
+    except FileNotFoundError:
+        pass
+    except json.JSONDecodeError as e:
+        print(f'警告: {output_path} の読み込みに失敗しました: {e}')
+        print('新規作成します。')
+    
+    # 既存のデータを保持しつつ、logs を更新
+    if 'dataset_name' in existing_data or 'type' in existing_data:
+        # 新しいフォーマット（dataset_name, type を含む）
+        existing_data['logs'] = logs
+        if 'created_at' not in existing_data:
+            existing_data['created_at'] = datetime.now().isoformat() + 'Z'
+        log_data = existing_data
+    else:
+        # 旧フォーマットまたは新規作成
+        log_data = {
+            'dataset_name': 'quiz_log_dummy',
+            'type': 'class',
+            'created_at': datetime.now().isoformat() + 'Z',
+            'logs': logs
+        }
+        # vector_test_sessions が既に存在する場合は保持
+        if 'vector_test_sessions' in existing_data:
+            log_data['vector_test_sessions'] = existing_data['vector_test_sessions']
+    
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(log_data, f, ensure_ascii=False, indent=2)
     

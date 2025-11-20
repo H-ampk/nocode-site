@@ -1347,5 +1347,7148 @@
         "c2"
       ]
     }
-  ]
+  ],
+  "vector_test_sessions": {
+    "user_id": "dummy_student",
+    "generated_at": "2025-11-20T12:00:00Z",
+    "sessions": [
+      {
+        "session_id": "session_001",
+        "generated_at": "2025-11-02T07:39:37.819678Z",
+        "logs": [
+          {
+            "questionId": "q004",
+            "timestamp": "2025-11-02T07:39:37.819678Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 6.1,
+            "path": [
+              "c1"
+            ],
+            "conceptTags": [
+              "fluid",
+              "problem-solving",
+              "logic"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q008",
+            "timestamp": "2025-11-02T07:40:37.819678Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 23.1,
+            "path": [
+              "c2",
+              "c3",
+              "c1",
+              "c4"
+            ],
+            "conceptTags": [
+              "cognition",
+              "gravity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q010",
+            "timestamp": "2025-11-02T07:41:37.819678Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 10.5,
+            "path": [
+              "c4",
+              "c3",
+              "c2",
+              "c1"
+            ],
+            "conceptTags": [
+              "astronomy"
+            ],
+            "glossaryShown": [
+              "concept.creativity.basic"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-11-02T07:42:37.819678Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 10.5,
+            "path": [
+              "c4",
+              "c2",
+              "c1"
+            ],
+            "conceptTags": [
+              "analysis",
+              "cognition",
+              "fluid"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 0
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_002",
+        "generated_at": "2025-11-12T18:04:14.681326Z",
+        "logs": [
+          {
+            "questionId": "q009",
+            "timestamp": "2025-11-12T18:04:14.681326Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 3.4,
+            "path": [
+              "c2",
+              "c3",
+              "c1"
+            ],
+            "conceptTags": [
+              "astronomy",
+              "pressure"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q008",
+            "timestamp": "2025-11-12T18:05:14.681326Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 5.8,
+            "path": [
+              "c2",
+              "c4",
+              "c2"
+            ],
+            "conceptTags": [
+              "cognition",
+              "pressure",
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-11-12T18:06:14.681326Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 1.1,
+            "path": [
+              "c4",
+              "c3",
+              "c4"
+            ],
+            "conceptTags": [
+              "pressure",
+              "logic"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-11-12T18:07:14.681326Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 19.9,
+            "path": [
+              "c4",
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "gravity",
+              "creativity",
+              "problem-solving"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_003",
+        "generated_at": "2025-11-19T09:46:17.011404Z",
+        "logs": [
+          {
+            "questionId": "q006",
+            "timestamp": "2025-11-19T09:46:17.011404Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 4.0,
+            "path": [
+              "c1",
+              "c4",
+              "c1"
+            ],
+            "conceptTags": [
+              "problem-solving"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-11-19T09:47:17.011404Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 34.7,
+            "path": [
+              "c3",
+              "c4"
+            ],
+            "conceptTags": [
+              "memory",
+              "analysis",
+              "fluid"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-11-19T09:48:17.011404Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 31.3,
+            "path": [
+              "c3",
+              "c1"
+            ],
+            "conceptTags": [
+              "memory",
+              "creativity",
+              "cognition"
+            ],
+            "glossaryShown": [
+              "concept.pressure.intro",
+              "concept.gravity.basic"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q009",
+            "timestamp": "2025-11-19T09:49:17.011404Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 4.5,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "astronomy",
+              "logic",
+              "cognition"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-11-19T09:50:17.011404Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 4.9,
+            "path": [
+              "c3",
+              "c4",
+              "c2"
+            ],
+            "conceptTags": [
+              "cognition",
+              "pressure",
+              "analysis"
+            ],
+            "glossaryShown": [
+              "concept.memory.working",
+              "concept.creativity.basic"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": -1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_004",
+        "generated_at": "2025-11-07T09:56:23.106160Z",
+        "logs": [
+          {
+            "questionId": "q001",
+            "timestamp": "2025-11-07T09:56:23.106160Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 34.2,
+            "path": [
+              "c2",
+              "c1",
+              "c4",
+              "c2"
+            ],
+            "conceptTags": [
+              "astronomy",
+              "analysis"
+            ],
+            "glossaryShown": [
+              "concept.memory.working",
+              "concept.logic.intro"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-11-07T09:57:23.106160Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 10.8,
+            "path": [
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "problem-solving"
+            ],
+            "glossaryShown": [
+              "concept.gravity.deep"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q002",
+            "timestamp": "2025-11-07T09:58:23.106160Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 37.5,
+            "path": [
+              "c1",
+              "c4"
+            ],
+            "conceptTags": [
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-11-07T09:59:23.106160Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 11.2,
+            "path": [
+              "c3"
+            ],
+            "conceptTags": [
+              "creativity"
+            ],
+            "glossaryShown": [
+              "concept.gravity.deep",
+              "concept.pressure.intro"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q007",
+            "timestamp": "2025-11-07T10:00:23.106160Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 1.8,
+            "path": [
+              "c2",
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "pressure"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q003",
+            "timestamp": "2025-11-07T10:01:23.106160Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 20.0,
+            "path": [
+              "c3",
+              "c4"
+            ],
+            "conceptTags": [
+              "pressure",
+              "creativity"
+            ],
+            "glossaryShown": [
+              "concept.pressure.intro",
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-11-07T10:02:23.106160Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 1.8,
+            "path": [
+              "c3"
+            ],
+            "conceptTags": [
+              "gravity",
+              "creativity",
+              "logic"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q009",
+            "timestamp": "2025-11-07T10:03:23.106160Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 1.9,
+            "path": [
+              "c4"
+            ],
+            "conceptTags": [
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-11-07T10:04:23.106160Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 7.1,
+            "path": [
+              "c2",
+              "c3"
+            ],
+            "conceptTags": [
+              "logic"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": 1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_005",
+        "generated_at": "2025-11-06T19:53:06.771475Z",
+        "logs": [
+          {
+            "questionId": "q010",
+            "timestamp": "2025-11-06T19:53:06.771475Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 10.3,
+            "path": [
+              "c4",
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "creativity",
+              "fluid"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q010",
+            "timestamp": "2025-11-06T19:54:06.771475Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 7.3,
+            "path": [
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "astronomy",
+              "creativity"
+            ],
+            "glossaryShown": [
+              "concept.gravity.basic",
+              "concept.cognition.metacognition"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q009",
+            "timestamp": "2025-11-06T19:55:06.771475Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 21.6,
+            "path": [
+              "c3",
+              "c4",
+              "c2",
+              "c4"
+            ],
+            "conceptTags": [
+              "creativity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-11-06T19:56:06.771475Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 1.7,
+            "path": [
+              "c2",
+              "c3"
+            ],
+            "conceptTags": [
+              "analysis"
+            ],
+            "glossaryShown": [
+              "concept.analysis.basic"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q010",
+            "timestamp": "2025-11-06T19:57:06.771475Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 6.3,
+            "path": [
+              "c3"
+            ],
+            "conceptTags": [
+              "astronomy",
+              "pressure",
+              "logic"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q002",
+            "timestamp": "2025-11-06T19:58:06.771475Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 0.6,
+            "path": [
+              "c4",
+              "c1",
+              "c3"
+            ],
+            "conceptTags": [
+              "problem-solving"
+            ],
+            "glossaryShown": [
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": -1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_006",
+        "generated_at": "2025-11-12T14:44:06.937830Z",
+        "logs": [
+          {
+            "questionId": "q009",
+            "timestamp": "2025-11-12T14:44:06.937830Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 11.5,
+            "path": [
+              "c4"
+            ],
+            "conceptTags": [
+              "astronomy"
+            ],
+            "glossaryShown": [
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q004",
+            "timestamp": "2025-11-12T14:45:06.937830Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 31.4,
+            "path": [
+              "c3",
+              "c1"
+            ],
+            "conceptTags": [
+              "fluid",
+              "cognition",
+              "problem-solving"
+            ],
+            "glossaryShown": [
+              "concept.logic.intro"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-11-12T14:46:06.937830Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 10.6,
+            "path": [
+              "c4",
+              "c2",
+              "c1",
+              "c4"
+            ],
+            "conceptTags": [
+              "gravity",
+              "cognition"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q008",
+            "timestamp": "2025-11-12T14:47:06.937830Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 0.7,
+            "path": [
+              "c1"
+            ],
+            "conceptTags": [
+              "logic",
+              "pressure"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q008",
+            "timestamp": "2025-11-12T14:48:06.937830Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 36.1,
+            "path": [
+              "c3"
+            ],
+            "conceptTags": [
+              "cognition",
+              "problem-solving"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-11-12T14:49:06.937830Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 15.6,
+            "path": [
+              "c4",
+              "c3",
+              "c2",
+              "c4"
+            ],
+            "conceptTags": [
+              "problem-solving"
+            ],
+            "glossaryShown": [
+              "concept.creativity.basic"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q008",
+            "timestamp": "2025-11-12T14:50:06.937830Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 0.9,
+            "path": [
+              "c3",
+              "c4"
+            ],
+            "conceptTags": [
+              "astronomy",
+              "gravity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q004",
+            "timestamp": "2025-11-12T14:51:06.937830Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 34.0,
+            "path": [
+              "c2",
+              "c1",
+              "c2",
+              "c3"
+            ],
+            "conceptTags": [
+              "creativity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_007",
+        "generated_at": "2025-10-27T04:06:02.081556Z",
+        "logs": [
+          {
+            "questionId": "q010",
+            "timestamp": "2025-10-27T04:06:02.081556Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 0.6,
+            "path": [
+              "c1",
+              "c2"
+            ],
+            "conceptTags": [
+              "logic",
+              "pressure",
+              "cognition"
+            ],
+            "glossaryShown": [
+              "concept.creativity.basic"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q004",
+            "timestamp": "2025-10-27T04:07:02.081556Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 1.9,
+            "path": [
+              "c2",
+              "c4",
+              "c2"
+            ],
+            "conceptTags": [
+              "fluid"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-10-27T04:08:02.081556Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 1.7,
+            "path": [
+              "c1",
+              "c3"
+            ],
+            "conceptTags": [
+              "astronomy",
+              "memory"
+            ],
+            "glossaryShown": [
+              "concept.cognition.metacognition",
+              "concept.gravity.basic"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-27T04:09:02.081556Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 3.3,
+            "path": [
+              "c1"
+            ],
+            "conceptTags": [
+              "gravity",
+              "fluid",
+              "creativity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-10-27T04:10:02.081556Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 8.9,
+            "path": [
+              "c1",
+              "c4",
+              "c1"
+            ],
+            "conceptTags": [
+              "problem-solving"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-10-27T04:11:02.081556Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 34.0,
+            "path": [
+              "c3",
+              "c2",
+              "c4",
+              "c1"
+            ],
+            "conceptTags": [
+              "astronomy",
+              "memory",
+              "analysis"
+            ],
+            "glossaryShown": [
+              "concept.gravity.deep",
+              "concept.logic.intro"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-10-27T04:12:02.081556Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 8.7,
+            "path": [
+              "c1",
+              "c3",
+              "c4",
+              "c2"
+            ],
+            "conceptTags": [
+              "gravity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-27T04:13:02.081556Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 11.2,
+            "path": [
+              "c4"
+            ],
+            "conceptTags": [
+              "pressure",
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q010",
+            "timestamp": "2025-10-27T04:14:02.081556Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 17.2,
+            "path": [
+              "c4"
+            ],
+            "conceptTags": [
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q003",
+            "timestamp": "2025-10-27T04:15:02.081556Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 30.8,
+            "path": [
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "cognition",
+              "fluid"
+            ],
+            "glossaryShown": [
+              "concept.pressure.intro",
+              "concept.analysis.basic"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_008",
+        "generated_at": "2025-10-29T15:42:58.206034Z",
+        "logs": [
+          {
+            "questionId": "q008",
+            "timestamp": "2025-10-29T15:42:58.206034Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 1.8,
+            "path": [
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "creativity"
+            ],
+            "glossaryShown": [
+              "concept.gravity.basic",
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-10-29T15:43:58.206034Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 1.8,
+            "path": [
+              "c4",
+              "c2",
+              "c3",
+              "c1"
+            ],
+            "conceptTags": [
+              "astronomy",
+              "cognition",
+              "memory"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q002",
+            "timestamp": "2025-10-29T15:44:58.206034Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 8.1,
+            "path": [
+              "c2",
+              "c1"
+            ],
+            "conceptTags": [
+              "analysis"
+            ],
+            "glossaryShown": [
+              "concept.cognition.metacognition"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q003",
+            "timestamp": "2025-10-29T15:45:58.206034Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 28.8,
+            "path": [
+              "c3",
+              "c1"
+            ],
+            "conceptTags": [
+              "astronomy",
+              "memory"
+            ],
+            "glossaryShown": [
+              "concept.creativity.basic",
+              "concept.logic.intro"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q003",
+            "timestamp": "2025-10-29T15:46:58.206034Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 37.9,
+            "path": [
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "creativity",
+              "gravity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q010",
+            "timestamp": "2025-10-29T15:47:58.206034Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 8.2,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "analysis"
+            ],
+            "glossaryShown": [
+              "concept.analysis.basic",
+              "concept.creativity.basic"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": 0
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_009",
+        "generated_at": "2025-10-28T06:56:43.233240Z",
+        "logs": [
+          {
+            "questionId": "q009",
+            "timestamp": "2025-10-28T06:56:43.233240Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 4.1,
+            "path": [
+              "c1",
+              "c2",
+              "c3",
+              "c1"
+            ],
+            "conceptTags": [
+              "memory",
+              "creativity"
+            ],
+            "glossaryShown": [
+              "concept.gravity.deep"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-28T06:57:43.233240Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 4.9,
+            "path": [
+              "c2",
+              "c1",
+              "c3"
+            ],
+            "conceptTags": [
+              "pressure",
+              "gravity",
+              "creativity"
+            ],
+            "glossaryShown": [
+              "concept.cognition.metacognition",
+              "concept.gravity.deep"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q002",
+            "timestamp": "2025-10-28T06:58:43.233240Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 32.1,
+            "path": [
+              "c3",
+              "c1",
+              "c4"
+            ],
+            "conceptTags": [
+              "problem-solving",
+              "memory"
+            ],
+            "glossaryShown": [
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q003",
+            "timestamp": "2025-10-28T06:59:43.233240Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 36.3,
+            "path": [
+              "c4",
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "creativity",
+              "gravity"
+            ],
+            "glossaryShown": [
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q008",
+            "timestamp": "2025-10-28T07:00:43.233240Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 1.4,
+            "path": [
+              "c4"
+            ],
+            "conceptTags": [
+              "analysis"
+            ],
+            "glossaryShown": [
+              "concept.pressure.intro",
+              "concept.gravity.deep"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q010",
+            "timestamp": "2025-10-28T07:01:43.233240Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 5.7,
+            "path": [
+              "c3",
+              "c4",
+              "c3",
+              "c1"
+            ],
+            "conceptTags": [
+              "problem-solving",
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q009",
+            "timestamp": "2025-10-28T07:02:43.233240Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 4.2,
+            "path": [
+              "c4"
+            ],
+            "conceptTags": [
+              "memory"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q003",
+            "timestamp": "2025-10-28T07:03:43.233240Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 7.8,
+            "path": [
+              "c2",
+              "c3"
+            ],
+            "conceptTags": [
+              "analysis",
+              "memory"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-28T07:04:43.233240Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 18.6,
+            "path": [
+              "c4"
+            ],
+            "conceptTags": [
+              "astronomy",
+              "pressure"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_010",
+        "generated_at": "2025-10-28T15:38:49.320553Z",
+        "logs": [
+          {
+            "questionId": "q007",
+            "timestamp": "2025-10-28T15:38:49.320553Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 1.2,
+            "path": [
+              "c2",
+              "c4",
+              "c2"
+            ],
+            "conceptTags": [
+              "memory",
+              "problem-solving",
+              "fluid"
+            ],
+            "glossaryShown": [
+              "concept.pressure.intro"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q007",
+            "timestamp": "2025-10-28T15:39:49.320553Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 0.6,
+            "path": [
+              "c1"
+            ],
+            "conceptTags": [
+              "astronomy",
+              "logic"
+            ],
+            "glossaryShown": [
+              "concept.analysis.basic",
+              "concept.pressure.intro"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q003",
+            "timestamp": "2025-10-28T15:40:49.320553Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 24.8,
+            "path": [
+              "c3"
+            ],
+            "conceptTags": [
+              "problem-solving",
+              "memory"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q002",
+            "timestamp": "2025-10-28T15:41:49.320553Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 15.3,
+            "path": [
+              "c1",
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "problem-solving"
+            ],
+            "glossaryShown": [
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q010",
+            "timestamp": "2025-10-28T15:42:49.320553Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 2.0,
+            "path": [
+              "c2",
+              "c3",
+              "c2",
+              "c3"
+            ],
+            "conceptTags": [
+              "logic"
+            ],
+            "glossaryShown": [
+              "concept.gravity.deep"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q003",
+            "timestamp": "2025-10-28T15:43:49.320553Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 8.0,
+            "path": [
+              "c3",
+              "c4"
+            ],
+            "conceptTags": [
+              "pressure"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-28T15:44:49.320553Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 3.6,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "creativity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_011",
+        "generated_at": "2025-11-13T11:48:09.121968Z",
+        "logs": [
+          {
+            "questionId": "q009",
+            "timestamp": "2025-11-13T11:48:09.121968Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 30.4,
+            "path": [
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "logic",
+              "astronomy",
+              "cognition"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q004",
+            "timestamp": "2025-11-13T11:49:09.121968Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 1.1,
+            "path": [
+              "c1",
+              "c2",
+              "c1"
+            ],
+            "conceptTags": [
+              "pressure",
+              "analysis"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q009",
+            "timestamp": "2025-11-13T11:50:09.121968Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 10.0,
+            "path": [
+              "c1",
+              "c3",
+              "c4"
+            ],
+            "conceptTags": [
+              "astronomy",
+              "logic"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-11-13T11:51:09.121968Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 8.0,
+            "path": [
+              "c1",
+              "c4",
+              "c1",
+              "c2"
+            ],
+            "conceptTags": [
+              "problem-solving",
+              "fluid"
+            ],
+            "glossaryShown": [
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q003",
+            "timestamp": "2025-11-13T11:52:09.121968Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 32.4,
+            "path": [
+              "c3",
+              "c1"
+            ],
+            "conceptTags": [
+              "memory"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q004",
+            "timestamp": "2025-11-13T11:53:09.121968Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 11.9,
+            "path": [
+              "c4",
+              "c1"
+            ],
+            "conceptTags": [
+              "logic"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-11-13T11:54:09.121968Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 10.9,
+            "path": [
+              "c3"
+            ],
+            "conceptTags": [
+              "fluid"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": 0
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_012",
+        "generated_at": "2025-11-12T07:18:12.372970Z",
+        "logs": [
+          {
+            "questionId": "q007",
+            "timestamp": "2025-11-12T07:18:12.372970Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 22.1,
+            "path": [
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "gravity"
+            ],
+            "glossaryShown": [
+              "concept.analysis.basic",
+              "concept.cognition.metacognition"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q008",
+            "timestamp": "2025-11-12T07:19:12.372970Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 30.3,
+            "path": [
+              "c1",
+              "c2",
+              "c4",
+              "c2"
+            ],
+            "conceptTags": [
+              "gravity"
+            ],
+            "glossaryShown": [
+              "concept.cognition.metacognition",
+              "concept.creativity.basic"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q004",
+            "timestamp": "2025-11-12T07:20:12.372970Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 1.6,
+            "path": [
+              "c1",
+              "c4"
+            ],
+            "conceptTags": [
+              "creativity",
+              "gravity"
+            ],
+            "glossaryShown": [
+              "concept.gravity.deep",
+              "concept.creativity.basic"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": -1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_013",
+        "generated_at": "2025-10-22T01:17:17.050436Z",
+        "logs": [
+          {
+            "questionId": "q008",
+            "timestamp": "2025-10-22T01:17:17.050436Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 10.7,
+            "path": [
+              "c2",
+              "c4"
+            ],
+            "conceptTags": [
+              "pressure",
+              "memory"
+            ],
+            "glossaryShown": [
+              "concept.pressure.intro"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q002",
+            "timestamp": "2025-10-22T01:18:17.050436Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 9.8,
+            "path": [
+              "c1",
+              "c2",
+              "c3",
+              "c1"
+            ],
+            "conceptTags": [
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q009",
+            "timestamp": "2025-10-22T01:19:17.050436Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 7.3,
+            "path": [
+              "c1",
+              "c3",
+              "c1"
+            ],
+            "conceptTags": [
+              "fluid"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q007",
+            "timestamp": "2025-10-22T01:20:17.050436Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 26.1,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "cognition",
+              "astronomy",
+              "fluid"
+            ],
+            "glossaryShown": [
+              "concept.pressure.intro"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q007",
+            "timestamp": "2025-10-22T01:21:17.050436Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 9.5,
+            "path": [
+              "c3",
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "fluid",
+              "gravity"
+            ],
+            "glossaryShown": [
+              "concept.gravity.deep"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_014",
+        "generated_at": "2025-11-19T02:26:12.726073Z",
+        "logs": [
+          {
+            "questionId": "q008",
+            "timestamp": "2025-11-19T02:26:12.726073Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 1.2,
+            "path": [
+              "c3",
+              "c1",
+              "c3"
+            ],
+            "conceptTags": [
+              "cognition",
+              "astronomy",
+              "creativity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q009",
+            "timestamp": "2025-11-19T02:27:12.726073Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 38.9,
+            "path": [
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "pressure",
+              "gravity",
+              "memory"
+            ],
+            "glossaryShown": [
+              "concept.pressure.intro"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q008",
+            "timestamp": "2025-11-19T02:28:12.726073Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 18.4,
+            "path": [
+              "c3"
+            ],
+            "conceptTags": [
+              "fluid",
+              "analysis"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-11-19T02:29:12.726073Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 0.7,
+            "path": [
+              "c4",
+              "c1"
+            ],
+            "conceptTags": [
+              "fluid",
+              "pressure",
+              "logic"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q009",
+            "timestamp": "2025-11-19T02:30:12.726073Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 1.6,
+            "path": [
+              "c4",
+              "c1",
+              "c2"
+            ],
+            "conceptTags": [
+              "gravity",
+              "fluid",
+              "problem-solving"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-11-19T02:31:12.726073Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 0.7,
+            "path": [
+              "c1",
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "pressure"
+            ],
+            "glossaryShown": [
+              "concept.cognition.metacognition",
+              "concept.gravity.deep"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q003",
+            "timestamp": "2025-11-19T02:32:12.726073Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 4.5,
+            "path": [
+              "c4"
+            ],
+            "conceptTags": [
+              "analysis"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q009",
+            "timestamp": "2025-11-19T02:33:12.726073Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 1.5,
+            "path": [
+              "c3",
+              "c2",
+              "c3"
+            ],
+            "conceptTags": [
+              "astronomy",
+              "logic"
+            ],
+            "glossaryShown": [
+              "concept.gravity.basic"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q009",
+            "timestamp": "2025-11-19T02:34:12.726073Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 7.1,
+            "path": [
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "analysis",
+              "logic",
+              "memory"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q003",
+            "timestamp": "2025-11-19T02:35:12.726073Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 2.0,
+            "path": [
+              "c3"
+            ],
+            "conceptTags": [
+              "memory",
+              "gravity",
+              "fluid"
+            ],
+            "glossaryShown": [
+              "concept.logic.intro",
+              "concept.gravity.deep"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 0
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_015",
+        "generated_at": "2025-10-31T15:36:54.292036Z",
+        "logs": [
+          {
+            "questionId": "q003",
+            "timestamp": "2025-10-31T15:36:54.292036Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 37.5,
+            "path": [
+              "c3",
+              "c1"
+            ],
+            "conceptTags": [
+              "fluid",
+              "memory",
+              "analysis"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q004",
+            "timestamp": "2025-10-31T15:37:54.292036Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 7.0,
+            "path": [
+              "c2",
+              "c1",
+              "c2",
+              "c4"
+            ],
+            "conceptTags": [
+              "creativity",
+              "cognition",
+              "problem-solving"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q008",
+            "timestamp": "2025-10-31T15:38:54.292036Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 1.9,
+            "path": [
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "memory",
+              "cognition",
+              "gravity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q010",
+            "timestamp": "2025-10-31T15:39:54.292036Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 32.8,
+            "path": [
+              "c4",
+              "c3",
+              "c4"
+            ],
+            "conceptTags": [
+              "analysis",
+              "fluid",
+              "logic"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-10-31T15:40:54.292036Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 9.0,
+            "path": [
+              "c1",
+              "c4"
+            ],
+            "conceptTags": [
+              "creativity",
+              "memory",
+              "cognition"
+            ],
+            "glossaryShown": [
+              "concept.gravity.deep",
+              "concept.gravity.basic"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q003",
+            "timestamp": "2025-10-31T15:41:54.292036Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 9.4,
+            "path": [
+              "c2",
+              "c3",
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "gravity",
+              "pressure"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q004",
+            "timestamp": "2025-10-31T15:42:54.292036Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 15.3,
+            "path": [
+              "c4",
+              "c2",
+              "c4"
+            ],
+            "conceptTags": [
+              "problem-solving",
+              "fluid",
+              "astronomy"
+            ],
+            "glossaryShown": [
+              "concept.memory.working",
+              "concept.analysis.basic"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q009",
+            "timestamp": "2025-10-31T15:43:54.292036Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 32.1,
+            "path": [
+              "c1",
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "cognition",
+              "problem-solving"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-31T15:44:54.292036Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 8.1,
+            "path": [
+              "c2",
+              "c1",
+              "c3",
+              "c4"
+            ],
+            "conceptTags": [
+              "astronomy",
+              "cognition",
+              "fluid"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q007",
+            "timestamp": "2025-10-31T15:45:54.292036Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 1.6,
+            "path": [
+              "c3",
+              "c4"
+            ],
+            "conceptTags": [
+              "fluid"
+            ],
+            "glossaryShown": [
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 0
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_016",
+        "generated_at": "2025-10-26T06:49:15.862183Z",
+        "logs": [
+          {
+            "questionId": "q003",
+            "timestamp": "2025-10-26T06:49:15.862183Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 1.0,
+            "path": [
+              "c2",
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "gravity",
+              "analysis"
+            ],
+            "glossaryShown": [
+              "concept.analysis.basic",
+              "concept.pressure.intro"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q002",
+            "timestamp": "2025-10-26T06:50:15.862183Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 0.6,
+            "path": [
+              "c2",
+              "c1",
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "problem-solving",
+              "memory"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q002",
+            "timestamp": "2025-10-26T06:51:15.862183Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 1.8,
+            "path": [
+              "c4",
+              "c2"
+            ],
+            "conceptTags": [
+              "memory",
+              "cognition"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q008",
+            "timestamp": "2025-10-26T06:52:15.862183Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 2.0,
+            "path": [
+              "c2",
+              "c1",
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "astronomy",
+              "fluid"
+            ],
+            "glossaryShown": [
+              "concept.pressure.intro",
+              "concept.creativity.basic"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-26T06:53:15.862183Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 0.8,
+            "path": [
+              "c3"
+            ],
+            "conceptTags": [
+              "gravity",
+              "logic"
+            ],
+            "glossaryShown": [
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q002",
+            "timestamp": "2025-10-26T06:54:15.862183Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 3.6,
+            "path": [
+              "c1",
+              "c4",
+              "c1",
+              "c3"
+            ],
+            "conceptTags": [
+              "fluid",
+              "memory",
+              "analysis"
+            ],
+            "glossaryShown": [
+              "concept.gravity.deep"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": 0
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_017",
+        "generated_at": "2025-10-29T12:33:15.211155Z",
+        "logs": [
+          {
+            "questionId": "q007",
+            "timestamp": "2025-10-29T12:33:15.211155Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 6.8,
+            "path": [
+              "c4",
+              "c2",
+              "c4"
+            ],
+            "conceptTags": [
+              "cognition",
+              "pressure",
+              "logic"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-10-29T12:34:15.211155Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 4.1,
+            "path": [
+              "c2",
+              "c1",
+              "c3",
+              "c4"
+            ],
+            "conceptTags": [
+              "gravity",
+              "logic",
+              "problem-solving"
+            ],
+            "glossaryShown": [
+              "concept.pressure.intro"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q008",
+            "timestamp": "2025-10-29T12:35:15.211155Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 5.9,
+            "path": [
+              "c4",
+              "c2",
+              "c4"
+            ],
+            "conceptTags": [
+              "analysis",
+              "astronomy",
+              "pressure"
+            ],
+            "glossaryShown": [
+              "concept.creativity.basic"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-10-29T12:36:15.211155Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 1.9,
+            "path": [
+              "c1",
+              "c4",
+              "c2",
+              "c1"
+            ],
+            "conceptTags": [
+              "astronomy"
+            ],
+            "glossaryShown": [
+              "concept.creativity.basic",
+              "concept.analysis.basic"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-29T12:37:15.211155Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 5.9,
+            "path": [
+              "c4",
+              "c2",
+              "c4"
+            ],
+            "conceptTags": [
+              "analysis",
+              "memory"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-29T12:38:15.211155Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 23.2,
+            "path": [
+              "c4",
+              "c2",
+              "c3"
+            ],
+            "conceptTags": [
+              "gravity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": 1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_018",
+        "generated_at": "2025-11-14T22:01:28.212111Z",
+        "logs": [
+          {
+            "questionId": "q006",
+            "timestamp": "2025-11-14T22:01:28.212111Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 1.6,
+            "path": [
+              "c2",
+              "c1"
+            ],
+            "conceptTags": [
+              "cognition",
+              "astronomy",
+              "pressure"
+            ],
+            "glossaryShown": [
+              "concept.cognition.metacognition",
+              "concept.logic.intro"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-11-14T22:02:28.212111Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 15.9,
+            "path": [
+              "c2",
+              "c3",
+              "c2",
+              "c1"
+            ],
+            "conceptTags": [
+              "cognition"
+            ],
+            "glossaryShown": [
+              "concept.cognition.metacognition",
+              "concept.creativity.basic"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q004",
+            "timestamp": "2025-11-14T22:03:28.212111Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 0.6,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "pressure"
+            ],
+            "glossaryShown": [
+              "concept.cognition.metacognition"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": 0
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_019",
+        "generated_at": "2025-10-27T02:52:04.937029Z",
+        "logs": [
+          {
+            "questionId": "q007",
+            "timestamp": "2025-10-27T02:52:04.937029Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 39.4,
+            "path": [
+              "c2",
+              "c3"
+            ],
+            "conceptTags": [
+              "pressure",
+              "creativity",
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q004",
+            "timestamp": "2025-10-27T02:53:04.937029Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 10.9,
+            "path": [
+              "c4",
+              "c2"
+            ],
+            "conceptTags": [
+              "astronomy"
+            ],
+            "glossaryShown": [
+              "concept.memory.working",
+              "concept.analysis.basic"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q008",
+            "timestamp": "2025-10-27T02:54:04.937029Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 0.8,
+            "path": [
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "memory",
+              "creativity",
+              "problem-solving"
+            ],
+            "glossaryShown": [
+              "concept.logic.intro"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q008",
+            "timestamp": "2025-10-27T02:55:04.937029Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 1.1,
+            "path": [
+              "c1",
+              "c4",
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "memory"
+            ],
+            "glossaryShown": [
+              "concept.cognition.metacognition"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_020",
+        "generated_at": "2025-11-08T23:34:15.528824Z",
+        "logs": [
+          {
+            "questionId": "q010",
+            "timestamp": "2025-11-08T23:34:15.528824Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 16.5,
+            "path": [
+              "c3",
+              "c1",
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "pressure",
+              "fluid"
+            ],
+            "glossaryShown": [
+              "concept.logic.intro",
+              "concept.creativity.basic"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-11-08T23:35:15.528824Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 0.8,
+            "path": [
+              "c3"
+            ],
+            "conceptTags": [
+              "memory",
+              "logic",
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q007",
+            "timestamp": "2025-11-08T23:36:15.528824Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 12.0,
+            "path": [
+              "c1",
+              "c2",
+              "c3",
+              "c4"
+            ],
+            "conceptTags": [
+              "cognition"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-11-08T23:37:15.528824Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 2.0,
+            "path": [
+              "c3",
+              "c4"
+            ],
+            "conceptTags": [
+              "cognition"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q010",
+            "timestamp": "2025-11-08T23:38:15.528824Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 7.2,
+            "path": [
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "analysis"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q003",
+            "timestamp": "2025-11-08T23:39:15.528824Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 0.9,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "pressure",
+              "cognition",
+              "gravity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-11-08T23:40:15.528824Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 18.3,
+            "path": [
+              "c3",
+              "c4"
+            ],
+            "conceptTags": [
+              "problem-solving"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": 0
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_021",
+        "generated_at": "2025-11-04T00:57:34.688727Z",
+        "logs": [
+          {
+            "questionId": "q003",
+            "timestamp": "2025-11-04T00:57:34.688727Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 34.0,
+            "path": [
+              "c2",
+              "c1",
+              "c2"
+            ],
+            "conceptTags": [
+              "fluid",
+              "logic",
+              "gravity"
+            ],
+            "glossaryShown": [
+              "concept.logic.intro",
+              "concept.cognition.metacognition"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-11-04T00:58:34.688727Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 29.5,
+            "path": [
+              "c2",
+              "c3",
+              "c1",
+              "c3"
+            ],
+            "conceptTags": [
+              "logic",
+              "pressure"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-11-04T00:59:34.688727Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 18.9,
+            "path": [
+              "c4"
+            ],
+            "conceptTags": [
+              "cognition",
+              "analysis",
+              "gravity"
+            ],
+            "glossaryShown": [
+              "concept.creativity.basic",
+              "concept.logic.intro"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 0
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_022",
+        "generated_at": "2025-11-18T15:20:04.559576Z",
+        "logs": [
+          {
+            "questionId": "q001",
+            "timestamp": "2025-11-18T15:20:04.559576Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 4.6,
+            "path": [
+              "c4"
+            ],
+            "conceptTags": [
+              "memory",
+              "creativity"
+            ],
+            "glossaryShown": [
+              "concept.analysis.basic"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q007",
+            "timestamp": "2025-11-18T15:21:04.559576Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 6.5,
+            "path": [
+              "c1",
+              "c2",
+              "c1"
+            ],
+            "conceptTags": [
+              "logic"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q007",
+            "timestamp": "2025-11-18T15:22:04.559576Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 23.8,
+            "path": [
+              "c3",
+              "c2",
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "astronomy",
+              "gravity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q007",
+            "timestamp": "2025-11-18T15:23:04.559576Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 28.2,
+            "path": [
+              "c1",
+              "c4",
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "cognition",
+              "gravity",
+              "logic"
+            ],
+            "glossaryShown": [
+              "concept.analysis.basic",
+              "concept.gravity.basic"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q007",
+            "timestamp": "2025-11-18T15:24:04.559576Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 1.5,
+            "path": [
+              "c1",
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "memory",
+              "fluid"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q004",
+            "timestamp": "2025-11-18T15:25:04.559576Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 4.9,
+            "path": [
+              "c1",
+              "c4"
+            ],
+            "conceptTags": [
+              "analysis"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-11-18T15:26:04.559576Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 9.2,
+            "path": [
+              "c4",
+              "c1"
+            ],
+            "conceptTags": [
+              "pressure",
+              "gravity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-11-18T15:27:04.559576Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 8.4,
+            "path": [
+              "c2",
+              "c4"
+            ],
+            "conceptTags": [
+              "pressure",
+              "memory",
+              "problem-solving"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": -1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_023",
+        "generated_at": "2025-10-24T07:56:36.633812Z",
+        "logs": [
+          {
+            "questionId": "q010",
+            "timestamp": "2025-10-24T07:56:36.633812Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 11.8,
+            "path": [
+              "c1",
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "problem-solving",
+              "cognition",
+              "logic"
+            ],
+            "glossaryShown": [
+              "concept.gravity.basic",
+              "concept.gravity.deep"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q007",
+            "timestamp": "2025-10-24T07:57:36.633812Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 22.1,
+            "path": [
+              "c1",
+              "c2"
+            ],
+            "conceptTags": [
+              "cognition",
+              "creativity",
+              "problem-solving"
+            ],
+            "glossaryShown": [
+              "concept.cognition.metacognition",
+              "concept.pressure.intro"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-10-24T07:58:36.633812Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 31.7,
+            "path": [
+              "c1",
+              "c4",
+              "c3",
+              "c4"
+            ],
+            "conceptTags": [
+              "fluid",
+              "creativity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q004",
+            "timestamp": "2025-10-24T07:59:36.633812Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 8.0,
+            "path": [
+              "c3"
+            ],
+            "conceptTags": [
+              "cognition",
+              "analysis"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-10-24T08:00:36.633812Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 15.6,
+            "path": [
+              "c4",
+              "c2"
+            ],
+            "conceptTags": [
+              "logic",
+              "cognition"
+            ],
+            "glossaryShown": [
+              "concept.gravity.basic",
+              "concept.creativity.basic"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q004",
+            "timestamp": "2025-10-24T08:01:36.633812Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 0.9,
+            "path": [
+              "c3",
+              "c1"
+            ],
+            "conceptTags": [
+              "cognition"
+            ],
+            "glossaryShown": [
+              "concept.creativity.basic"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q002",
+            "timestamp": "2025-10-24T08:02:36.633812Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 6.3,
+            "path": [
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "cognition",
+              "creativity",
+              "pressure"
+            ],
+            "glossaryShown": [
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-10-24T08:03:36.633812Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 1.6,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "cognition",
+              "problem-solving"
+            ],
+            "glossaryShown": [
+              "concept.memory.working",
+              "concept.analysis.basic"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 0
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_024",
+        "generated_at": "2025-10-29T19:33:14.552598Z",
+        "logs": [
+          {
+            "questionId": "q004",
+            "timestamp": "2025-10-29T19:33:14.552598Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 6.9,
+            "path": [
+              "c1",
+              "c3",
+              "c1"
+            ],
+            "conceptTags": [
+              "fluid",
+              "analysis"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q008",
+            "timestamp": "2025-10-29T19:34:14.552598Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 28.5,
+            "path": [
+              "c4",
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "pressure",
+              "problem-solving",
+              "cognition"
+            ],
+            "glossaryShown": [
+              "concept.pressure.intro",
+              "concept.analysis.basic"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q002",
+            "timestamp": "2025-10-29T19:35:14.552598Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 1.9,
+            "path": [
+              "c4"
+            ],
+            "conceptTags": [
+              "fluid",
+              "analysis",
+              "logic"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-29T19:36:14.552598Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 1.1,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "problem-solving"
+            ],
+            "glossaryShown": [
+              "concept.pressure.intro",
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-29T19:37:14.552598Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 8.1,
+            "path": [
+              "c3"
+            ],
+            "conceptTags": [
+              "creativity",
+              "problem-solving",
+              "fluid"
+            ],
+            "glossaryShown": [
+              "concept.pressure.intro",
+              "concept.cognition.metacognition"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q003",
+            "timestamp": "2025-10-29T19:38:14.552598Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 8.2,
+            "path": [
+              "c4",
+              "c1",
+              "c3"
+            ],
+            "conceptTags": [
+              "memory",
+              "gravity"
+            ],
+            "glossaryShown": [
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_025",
+        "generated_at": "2025-11-08T21:44:55.342818Z",
+        "logs": [
+          {
+            "questionId": "q005",
+            "timestamp": "2025-11-08T21:44:55.342818Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 7.7,
+            "path": [
+              "c2",
+              "c3",
+              "c2",
+              "c3"
+            ],
+            "conceptTags": [
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q007",
+            "timestamp": "2025-11-08T21:45:55.342818Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 38.1,
+            "path": [
+              "c3"
+            ],
+            "conceptTags": [
+              "pressure",
+              "gravity",
+              "creativity"
+            ],
+            "glossaryShown": [
+              "concept.gravity.deep",
+              "concept.pressure.intro"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q007",
+            "timestamp": "2025-11-08T21:46:55.342818Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 1.6,
+            "path": [
+              "c1",
+              "c2",
+              "c1"
+            ],
+            "conceptTags": [
+              "pressure"
+            ],
+            "glossaryShown": [
+              "concept.logic.intro",
+              "concept.analysis.basic"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q007",
+            "timestamp": "2025-11-08T21:47:55.342818Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 17.9,
+            "path": [
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "logic",
+              "fluid",
+              "analysis"
+            ],
+            "glossaryShown": [
+              "concept.analysis.basic"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q008",
+            "timestamp": "2025-11-08T21:48:55.342818Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 1.2,
+            "path": [
+              "c4",
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "creativity",
+              "astronomy",
+              "fluid"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_026",
+        "generated_at": "2025-11-11T09:47:15.570812Z",
+        "logs": [
+          {
+            "questionId": "q005",
+            "timestamp": "2025-11-11T09:47:15.570812Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 1.7,
+            "path": [
+              "c4",
+              "c1"
+            ],
+            "conceptTags": [
+              "astronomy",
+              "fluid",
+              "creativity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q010",
+            "timestamp": "2025-11-11T09:48:15.570812Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 0.7,
+            "path": [
+              "c3",
+              "c2",
+              "c4"
+            ],
+            "conceptTags": [
+              "problem-solving"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-11-11T09:49:15.570812Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 7.5,
+            "path": [
+              "c4"
+            ],
+            "conceptTags": [
+              "astronomy"
+            ],
+            "glossaryShown": [
+              "concept.gravity.deep"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": -1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_027",
+        "generated_at": "2025-10-21T15:00:33.011693Z",
+        "logs": [
+          {
+            "questionId": "q004",
+            "timestamp": "2025-10-21T15:00:33.011693Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 1.2,
+            "path": [
+              "c3"
+            ],
+            "conceptTags": [
+              "logic",
+              "fluid",
+              "creativity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-21T15:01:33.011693Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 0.6,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "astronomy",
+              "pressure",
+              "fluid"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q009",
+            "timestamp": "2025-10-21T15:02:33.011693Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 1.2,
+            "path": [
+              "c4",
+              "c2"
+            ],
+            "conceptTags": [
+              "cognition",
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q009",
+            "timestamp": "2025-10-21T15:03:33.011693Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 5.7,
+            "path": [
+              "c2",
+              "c3"
+            ],
+            "conceptTags": [
+              "fluid",
+              "pressure",
+              "cognition"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q010",
+            "timestamp": "2025-10-21T15:04:33.011693Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 1.2,
+            "path": [
+              "c3"
+            ],
+            "conceptTags": [
+              "fluid",
+              "analysis",
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q010",
+            "timestamp": "2025-10-21T15:05:33.011693Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 2.0,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "problem-solving",
+              "analysis"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-10-21T15:06:33.011693Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 1.4,
+            "path": [
+              "c3"
+            ],
+            "conceptTags": [
+              "creativity",
+              "problem-solving",
+              "analysis"
+            ],
+            "glossaryShown": [
+              "concept.gravity.deep",
+              "concept.cognition.metacognition"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q008",
+            "timestamp": "2025-10-21T15:07:33.011693Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 0.7,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "pressure"
+            ],
+            "glossaryShown": [
+              "concept.pressure.intro"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 1,
+              "creativity": 0
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_028",
+        "generated_at": "2025-10-23T04:37:23.356586Z",
+        "logs": [
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-23T04:37:23.356586Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 1.6,
+            "path": [
+              "c2",
+              "c4"
+            ],
+            "conceptTags": [
+              "pressure",
+              "problem-solving"
+            ],
+            "glossaryShown": [
+              "concept.memory.working",
+              "concept.creativity.basic"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q003",
+            "timestamp": "2025-10-23T04:38:23.356586Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 5.3,
+            "path": [
+              "c1"
+            ],
+            "conceptTags": [
+              "creativity",
+              "pressure",
+              "fluid"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-10-23T04:39:23.356586Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 1.5,
+            "path": [
+              "c3",
+              "c1",
+              "c2"
+            ],
+            "conceptTags": [
+              "problem-solving",
+              "cognition"
+            ],
+            "glossaryShown": [
+              "concept.gravity.basic",
+              "concept.pressure.intro"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q002",
+            "timestamp": "2025-10-23T04:40:23.356586Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 1.1,
+            "path": [
+              "c1",
+              "c2",
+              "c4",
+              "c2"
+            ],
+            "conceptTags": [
+              "memory"
+            ],
+            "glossaryShown": [
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-23T04:41:23.356586Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 35.8,
+            "path": [
+              "c3"
+            ],
+            "conceptTags": [
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_029",
+        "generated_at": "2025-10-28T23:22:08.914847Z",
+        "logs": [
+          {
+            "questionId": "q005",
+            "timestamp": "2025-10-28T23:22:08.914847Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 0.6,
+            "path": [
+              "c3",
+              "c4"
+            ],
+            "conceptTags": [
+              "logic",
+              "memory",
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-28T23:23:08.914847Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 8.6,
+            "path": [
+              "c1"
+            ],
+            "conceptTags": [
+              "fluid",
+              "pressure",
+              "creativity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-28T23:24:08.914847Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 1.9,
+            "path": [
+              "c1",
+              "c4",
+              "c1"
+            ],
+            "conceptTags": [
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-10-28T23:25:08.914847Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 0.5,
+            "path": [
+              "c4",
+              "c3",
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "analysis",
+              "gravity",
+              "pressure"
+            ],
+            "glossaryShown": [
+              "concept.gravity.deep"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-28T23:26:08.914847Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 4.9,
+            "path": [
+              "c1",
+              "c3",
+              "c1"
+            ],
+            "conceptTags": [
+              "problem-solving"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-10-28T23:27:08.914847Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 27.3,
+            "path": [
+              "c4",
+              "c3",
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "pressure",
+              "logic",
+              "fluid"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q004",
+            "timestamp": "2025-10-28T23:28:08.914847Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 1.2,
+            "path": [
+              "c2",
+              "c4"
+            ],
+            "conceptTags": [
+              "memory"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-28T23:29:08.914847Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 9.2,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "pressure",
+              "fluid"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_030",
+        "generated_at": "2025-11-03T06:24:03.018454Z",
+        "logs": [
+          {
+            "questionId": "q001",
+            "timestamp": "2025-11-03T06:24:03.018454Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 9.6,
+            "path": [
+              "c3",
+              "c4",
+              "c1"
+            ],
+            "conceptTags": [
+              "gravity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q009",
+            "timestamp": "2025-11-03T06:25:03.018454Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 10.5,
+            "path": [
+              "c1"
+            ],
+            "conceptTags": [
+              "memory"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-11-03T06:26:03.018454Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 11.4,
+            "path": [
+              "c4"
+            ],
+            "conceptTags": [
+              "analysis",
+              "gravity",
+              "pressure"
+            ],
+            "glossaryShown": [
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q009",
+            "timestamp": "2025-11-03T06:27:03.018454Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 3.9,
+            "path": [
+              "c4"
+            ],
+            "conceptTags": [
+              "pressure",
+              "analysis",
+              "problem-solving"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q004",
+            "timestamp": "2025-11-03T06:28:03.018454Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 11.7,
+            "path": [
+              "c2",
+              "c3",
+              "c4",
+              "c2"
+            ],
+            "conceptTags": [
+              "logic",
+              "analysis",
+              "pressure"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-11-03T06:29:03.018454Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 21.0,
+            "path": [
+              "c1",
+              "c2",
+              "c4",
+              "c1"
+            ],
+            "conceptTags": [
+              "problem-solving",
+              "pressure"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-11-03T06:30:03.018454Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 8.2,
+            "path": [
+              "c1"
+            ],
+            "conceptTags": [
+              "cognition"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-11-03T06:31:03.018454Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 4.6,
+            "path": [
+              "c4",
+              "c2",
+              "c4",
+              "c2"
+            ],
+            "conceptTags": [
+              "memory",
+              "analysis"
+            ],
+            "glossaryShown": [
+              "concept.cognition.metacognition"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-11-03T06:32:03.018454Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 1.8,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "logic"
+            ],
+            "glossaryShown": [
+              "concept.cognition.metacognition",
+              "concept.pressure.intro"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q009",
+            "timestamp": "2025-11-03T06:33:03.018454Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 31.5,
+            "path": [
+              "c2",
+              "c4"
+            ],
+            "conceptTags": [
+              "analysis",
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": 0
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_031",
+        "generated_at": "2025-10-26T18:16:33.943144Z",
+        "logs": [
+          {
+            "questionId": "q003",
+            "timestamp": "2025-10-26T18:16:33.943144Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 5.1,
+            "path": [
+              "c3",
+              "c4"
+            ],
+            "conceptTags": [
+              "memory",
+              "pressure"
+            ],
+            "glossaryShown": [
+              "concept.analysis.basic"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-10-26T18:17:33.943144Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 7.4,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "memory",
+              "logic",
+              "pressure"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q009",
+            "timestamp": "2025-10-26T18:18:33.943144Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 20.4,
+            "path": [
+              "c4",
+              "c1",
+              "c3",
+              "c4"
+            ],
+            "conceptTags": [
+              "pressure"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-26T18:19:33.943144Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 0.6,
+            "path": [
+              "c4",
+              "c2",
+              "c3"
+            ],
+            "conceptTags": [
+              "analysis",
+              "gravity",
+              "pressure"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q010",
+            "timestamp": "2025-10-26T18:20:33.943144Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 7.0,
+            "path": [
+              "c4",
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q007",
+            "timestamp": "2025-10-26T18:21:33.943144Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 4.8,
+            "path": [
+              "c1",
+              "c4"
+            ],
+            "conceptTags": [
+              "problem-solving",
+              "gravity"
+            ],
+            "glossaryShown": [
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-10-26T18:22:33.943144Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 25.0,
+            "path": [
+              "c3",
+              "c1",
+              "c3"
+            ],
+            "conceptTags": [
+              "problem-solving"
+            ],
+            "glossaryShown": [
+              "concept.cognition.metacognition",
+              "concept.pressure.intro"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": -1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_032",
+        "generated_at": "2025-11-11T20:00:31.819781Z",
+        "logs": [
+          {
+            "questionId": "q001",
+            "timestamp": "2025-11-11T20:00:31.819781Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 19.5,
+            "path": [
+              "c3",
+              "c1",
+              "c3"
+            ],
+            "conceptTags": [
+              "logic",
+              "cognition",
+              "problem-solving"
+            ],
+            "glossaryShown": [
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q007",
+            "timestamp": "2025-11-11T20:01:31.819781Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 25.6,
+            "path": [
+              "c4",
+              "c2",
+              "c1"
+            ],
+            "conceptTags": [
+              "pressure",
+              "analysis"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-11-11T20:02:31.819781Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 5.0,
+            "path": [
+              "c2",
+              "c3",
+              "c2",
+              "c4"
+            ],
+            "conceptTags": [
+              "pressure",
+              "problem-solving"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q003",
+            "timestamp": "2025-11-11T20:03:31.819781Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 6.5,
+            "path": [
+              "c3",
+              "c2",
+              "c1",
+              "c4"
+            ],
+            "conceptTags": [
+              "gravity",
+              "astronomy",
+              "fluid"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": 0
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_033",
+        "generated_at": "2025-11-09T01:05:32.192902Z",
+        "logs": [
+          {
+            "questionId": "q009",
+            "timestamp": "2025-11-09T01:05:32.192902Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 28.0,
+            "path": [
+              "c3",
+              "c2",
+              "c3"
+            ],
+            "conceptTags": [
+              "logic"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-11-09T01:06:32.192902Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 11.0,
+            "path": [
+              "c4",
+              "c2"
+            ],
+            "conceptTags": [
+              "memory",
+              "pressure"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q007",
+            "timestamp": "2025-11-09T01:07:32.192902Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 0.7,
+            "path": [
+              "c2",
+              "c3",
+              "c4",
+              "c1"
+            ],
+            "conceptTags": [
+              "problem-solving",
+              "fluid"
+            ],
+            "glossaryShown": [
+              "concept.creativity.basic"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q004",
+            "timestamp": "2025-11-09T01:08:32.192902Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 3.1,
+            "path": [
+              "c1"
+            ],
+            "conceptTags": [
+              "memory",
+              "fluid",
+              "logic"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q009",
+            "timestamp": "2025-11-09T01:09:32.192902Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 21.1,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "logic"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": 0
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_034",
+        "generated_at": "2025-10-23T02:59:56.112597Z",
+        "logs": [
+          {
+            "questionId": "q010",
+            "timestamp": "2025-10-23T02:59:56.112597Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 0.5,
+            "path": [
+              "c3",
+              "c2",
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "pressure",
+              "logic",
+              "problem-solving"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-23T03:00:56.112597Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 1.4,
+            "path": [
+              "c4"
+            ],
+            "conceptTags": [
+              "gravity",
+              "cognition"
+            ],
+            "glossaryShown": [
+              "concept.analysis.basic",
+              "concept.cognition.metacognition"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q002",
+            "timestamp": "2025-10-23T03:01:56.112597Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 0.6,
+            "path": [
+              "c1",
+              "c4",
+              "c1"
+            ],
+            "conceptTags": [
+              "logic",
+              "fluid"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q003",
+            "timestamp": "2025-10-23T03:02:56.112597Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 23.6,
+            "path": [
+              "c2",
+              "c3"
+            ],
+            "conceptTags": [
+              "problem-solving",
+              "memory"
+            ],
+            "glossaryShown": [
+              "concept.logic.intro",
+              "concept.cognition.metacognition"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-23T03:03:56.112597Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 10.0,
+            "path": [
+              "c2",
+              "c1"
+            ],
+            "conceptTags": [
+              "analysis",
+              "cognition",
+              "pressure"
+            ],
+            "glossaryShown": [
+              "concept.gravity.deep"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q002",
+            "timestamp": "2025-10-23T03:04:56.112597Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 7.5,
+            "path": [
+              "c4"
+            ],
+            "conceptTags": [
+              "fluid",
+              "creativity",
+              "cognition"
+            ],
+            "glossaryShown": [
+              "concept.cognition.metacognition",
+              "concept.gravity.basic"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q004",
+            "timestamp": "2025-10-23T03:05:56.112597Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 0.5,
+            "path": [
+              "c3"
+            ],
+            "conceptTags": [
+              "gravity"
+            ],
+            "glossaryShown": [
+              "concept.gravity.deep",
+              "concept.gravity.basic"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 0
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_035",
+        "generated_at": "2025-10-22T16:38:52.073263Z",
+        "logs": [
+          {
+            "questionId": "q002",
+            "timestamp": "2025-10-22T16:38:52.073263Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 23.9,
+            "path": [
+              "c1",
+              "c3",
+              "c1"
+            ],
+            "conceptTags": [
+              "memory",
+              "cognition",
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-22T16:39:52.073263Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 23.6,
+            "path": [
+              "c3",
+              "c4",
+              "c1"
+            ],
+            "conceptTags": [
+              "pressure",
+              "problem-solving"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-10-22T16:40:52.073263Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 1.5,
+            "path": [
+              "c3",
+              "c1",
+              "c3"
+            ],
+            "conceptTags": [
+              "logic",
+              "gravity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_036",
+        "generated_at": "2025-10-22T09:03:00.138319Z",
+        "logs": [
+          {
+            "questionId": "q002",
+            "timestamp": "2025-10-22T09:03:00.138319Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 38.3,
+            "path": [
+              "c1"
+            ],
+            "conceptTags": [
+              "analysis"
+            ],
+            "glossaryShown": [
+              "concept.memory.working",
+              "concept.gravity.deep"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q009",
+            "timestamp": "2025-10-22T09:04:00.138319Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 5.6,
+            "path": [
+              "c2",
+              "c3",
+              "c4",
+              "c1"
+            ],
+            "conceptTags": [
+              "analysis",
+              "logic"
+            ],
+            "glossaryShown": [
+              "concept.memory.working",
+              "concept.gravity.deep"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-22T09:05:00.138319Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 30.6,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "fluid",
+              "cognition"
+            ],
+            "glossaryShown": [
+              "concept.gravity.deep",
+              "concept.logic.intro"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q009",
+            "timestamp": "2025-10-22T09:06:00.138319Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 9.1,
+            "path": [
+              "c4",
+              "c2",
+              "c1"
+            ],
+            "conceptTags": [
+              "pressure",
+              "analysis"
+            ],
+            "glossaryShown": [
+              "concept.gravity.deep"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q003",
+            "timestamp": "2025-10-22T09:07:00.138319Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 3.1,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "problem-solving",
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q010",
+            "timestamp": "2025-10-22T09:08:00.138319Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 30.8,
+            "path": [
+              "c1",
+              "c4"
+            ],
+            "conceptTags": [
+              "cognition"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q010",
+            "timestamp": "2025-10-22T09:09:00.138319Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 27.3,
+            "path": [
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "cognition",
+              "creativity",
+              "pressure"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-10-22T09:10:00.138319Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 10.4,
+            "path": [
+              "c3",
+              "c2",
+              "c1"
+            ],
+            "conceptTags": [
+              "fluid"
+            ],
+            "glossaryShown": [
+              "concept.cognition.metacognition"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q003",
+            "timestamp": "2025-10-22T09:11:00.138319Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 3.1,
+            "path": [
+              "c2",
+              "c3"
+            ],
+            "conceptTags": [
+              "problem-solving",
+              "fluid",
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 0
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_037",
+        "generated_at": "2025-10-22T10:17:21.771132Z",
+        "logs": [
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-22T10:17:21.771132Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 31.4,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "cognition"
+            ],
+            "glossaryShown": [
+              "concept.cognition.metacognition",
+              "concept.gravity.basic"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-10-22T10:18:21.771132Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 4.4,
+            "path": [
+              "c1",
+              "c2",
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "analysis",
+              "memory"
+            ],
+            "glossaryShown": [
+              "concept.gravity.basic",
+              "concept.pressure.intro"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q002",
+            "timestamp": "2025-10-22T10:19:21.771132Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 1.1,
+            "path": [
+              "c4",
+              "c1",
+              "c2",
+              "c1"
+            ],
+            "conceptTags": [
+              "logic"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q010",
+            "timestamp": "2025-10-22T10:20:21.771132Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 9.9,
+            "path": [
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "pressure",
+              "analysis",
+              "creativity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q007",
+            "timestamp": "2025-10-22T10:21:21.771132Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 1.8,
+            "path": [
+              "c4"
+            ],
+            "conceptTags": [
+              "fluid",
+              "cognition"
+            ],
+            "glossaryShown": [
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q009",
+            "timestamp": "2025-10-22T10:22:21.771132Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 26.6,
+            "path": [
+              "c2",
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "fluid"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_038",
+        "generated_at": "2025-11-15T20:44:47.199966Z",
+        "logs": [
+          {
+            "questionId": "q004",
+            "timestamp": "2025-11-15T20:44:47.199966Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 16.4,
+            "path": [
+              "c1",
+              "c3",
+              "c1"
+            ],
+            "conceptTags": [
+              "logic",
+              "memory"
+            ],
+            "glossaryShown": [
+              "concept.logic.intro"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q004",
+            "timestamp": "2025-11-15T20:45:47.199966Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 35.5,
+            "path": [
+              "c1"
+            ],
+            "conceptTags": [
+              "logic",
+              "gravity",
+              "creativity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q009",
+            "timestamp": "2025-11-15T20:46:47.199966Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 1.8,
+            "path": [
+              "c1",
+              "c2",
+              "c4"
+            ],
+            "conceptTags": [
+              "gravity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q010",
+            "timestamp": "2025-11-15T20:47:47.199966Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 39.2,
+            "path": [
+              "c2",
+              "c1",
+              "c4",
+              "c1"
+            ],
+            "conceptTags": [
+              "cognition",
+              "gravity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-11-15T20:48:47.199966Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 1.0,
+            "path": [
+              "c1",
+              "c2",
+              "c1",
+              "c4"
+            ],
+            "conceptTags": [
+              "cognition"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-11-15T20:49:47.199966Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 20.5,
+            "path": [
+              "c3",
+              "c4",
+              "c2"
+            ],
+            "conceptTags": [
+              "analysis"
+            ],
+            "glossaryShown": [
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_039",
+        "generated_at": "2025-11-10T23:41:10.496123Z",
+        "logs": [
+          {
+            "questionId": "q002",
+            "timestamp": "2025-11-10T23:41:10.496123Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 1.4,
+            "path": [
+              "c2",
+              "c4",
+              "c1"
+            ],
+            "conceptTags": [
+              "fluid",
+              "gravity",
+              "logic"
+            ],
+            "glossaryShown": [
+              "concept.creativity.basic",
+              "concept.cognition.metacognition"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-11-10T23:42:10.496123Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 26.4,
+            "path": [
+              "c3"
+            ],
+            "conceptTags": [
+              "cognition"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q008",
+            "timestamp": "2025-11-10T23:43:10.496123Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 9.4,
+            "path": [
+              "c3",
+              "c1"
+            ],
+            "conceptTags": [
+              "gravity",
+              "pressure"
+            ],
+            "glossaryShown": [
+              "concept.cognition.metacognition",
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q010",
+            "timestamp": "2025-11-10T23:44:10.496123Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 1.1,
+            "path": [
+              "c4"
+            ],
+            "conceptTags": [
+              "analysis",
+              "logic"
+            ],
+            "glossaryShown": [
+              "concept.creativity.basic",
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q008",
+            "timestamp": "2025-11-10T23:45:10.496123Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 1.0,
+            "path": [
+              "c2",
+              "c4"
+            ],
+            "conceptTags": [
+              "creativity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q009",
+            "timestamp": "2025-11-10T23:46:10.496123Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 33.1,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "creativity",
+              "gravity"
+            ],
+            "glossaryShown": [
+              "concept.analysis.basic"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 0
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_040",
+        "generated_at": "2025-11-07T17:41:47.352541Z",
+        "logs": [
+          {
+            "questionId": "q001",
+            "timestamp": "2025-11-07T17:41:47.352541Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 11.5,
+            "path": [
+              "c2",
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "gravity",
+              "astronomy"
+            ],
+            "glossaryShown": [
+              "concept.gravity.deep"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-11-07T17:42:47.352541Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 26.9,
+            "path": [
+              "c2",
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "memory",
+              "logic",
+              "astronomy"
+            ],
+            "glossaryShown": [
+              "concept.creativity.basic"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-11-07T17:43:47.352541Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 0.6,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "fluid",
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_041",
+        "generated_at": "2025-10-30T19:14:58.317387Z",
+        "logs": [
+          {
+            "questionId": "q009",
+            "timestamp": "2025-10-30T19:14:58.317387Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 10.6,
+            "path": [
+              "c1",
+              "c3",
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "logic",
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-30T19:15:58.317387Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 25.8,
+            "path": [
+              "c4",
+              "c1",
+              "c4"
+            ],
+            "conceptTags": [
+              "fluid"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q010",
+            "timestamp": "2025-10-30T19:16:58.317387Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 5.1,
+            "path": [
+              "c3",
+              "c2",
+              "c1"
+            ],
+            "conceptTags": [
+              "pressure"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-10-30T19:17:58.317387Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 0.9,
+            "path": [
+              "c4"
+            ],
+            "conceptTags": [
+              "pressure",
+              "analysis",
+              "creativity"
+            ],
+            "glossaryShown": [
+              "concept.cognition.metacognition",
+              "concept.analysis.basic"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": -1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_042",
+        "generated_at": "2025-11-01T01:27:52.413613Z",
+        "logs": [
+          {
+            "questionId": "q006",
+            "timestamp": "2025-11-01T01:27:52.413613Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 8.4,
+            "path": [
+              "c3",
+              "c4"
+            ],
+            "conceptTags": [
+              "creativity"
+            ],
+            "glossaryShown": [
+              "concept.gravity.basic"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-11-01T01:28:52.413613Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 8.0,
+            "path": [
+              "c3",
+              "c2",
+              "c4"
+            ],
+            "conceptTags": [
+              "gravity",
+              "analysis",
+              "memory"
+            ],
+            "glossaryShown": [
+              "concept.memory.working",
+              "concept.cognition.metacognition"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q007",
+            "timestamp": "2025-11-01T01:29:52.413613Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 4.6,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "astronomy",
+              "logic"
+            ],
+            "glossaryShown": [
+              "concept.analysis.basic"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q004",
+            "timestamp": "2025-11-01T01:30:52.413613Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 0.5,
+            "path": [
+              "c1"
+            ],
+            "conceptTags": [
+              "gravity",
+              "creativity"
+            ],
+            "glossaryShown": [
+              "concept.creativity.basic",
+              "concept.cognition.metacognition"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q002",
+            "timestamp": "2025-11-01T01:31:52.413613Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 7.0,
+            "path": [
+              "c3"
+            ],
+            "conceptTags": [
+              "astronomy",
+              "creativity"
+            ],
+            "glossaryShown": [
+              "concept.pressure.intro",
+              "concept.creativity.basic"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-11-01T01:32:52.413613Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 36.1,
+            "path": [
+              "c1",
+              "c3"
+            ],
+            "conceptTags": [
+              "cognition",
+              "creativity"
+            ],
+            "glossaryShown": [
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_043",
+        "generated_at": "2025-11-10T13:19:26.134053Z",
+        "logs": [
+          {
+            "questionId": "q008",
+            "timestamp": "2025-11-10T13:19:26.134053Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 1.8,
+            "path": [
+              "c3"
+            ],
+            "conceptTags": [
+              "creativity",
+              "memory",
+              "cognition"
+            ],
+            "glossaryShown": [
+              "concept.memory.working",
+              "concept.logic.intro"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q004",
+            "timestamp": "2025-11-10T13:20:26.134053Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 17.1,
+            "path": [
+              "c4"
+            ],
+            "conceptTags": [
+              "creativity",
+              "fluid",
+              "analysis"
+            ],
+            "glossaryShown": [
+              "concept.logic.intro",
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q007",
+            "timestamp": "2025-11-10T13:21:26.134053Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 4.6,
+            "path": [
+              "c3",
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "cognition",
+              "memory"
+            ],
+            "glossaryShown": [
+              "concept.analysis.basic",
+              "concept.cognition.metacognition"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-11-10T13:22:26.134053Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 0.7,
+            "path": [
+              "c4",
+              "c1",
+              "c4"
+            ],
+            "conceptTags": [
+              "cognition"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-11-10T13:23:26.134053Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 6.9,
+            "path": [
+              "c3"
+            ],
+            "conceptTags": [
+              "fluid"
+            ],
+            "glossaryShown": [
+              "concept.analysis.basic"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q007",
+            "timestamp": "2025-11-10T13:24:26.134053Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 11.5,
+            "path": [
+              "c3",
+              "c1",
+              "c2"
+            ],
+            "conceptTags": [
+              "logic",
+              "memory",
+              "pressure"
+            ],
+            "glossaryShown": [
+              "concept.gravity.basic"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q010",
+            "timestamp": "2025-11-10T13:25:26.134053Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 10.7,
+            "path": [
+              "c3",
+              "c4"
+            ],
+            "conceptTags": [
+              "memory",
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-11-10T13:26:26.134053Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 10.3,
+            "path": [
+              "c4",
+              "c2",
+              "c1"
+            ],
+            "conceptTags": [
+              "fluid",
+              "logic",
+              "cognition"
+            ],
+            "glossaryShown": [
+              "concept.creativity.basic",
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q002",
+            "timestamp": "2025-11-10T13:27:26.134053Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 9.7,
+            "path": [
+              "c3",
+              "c2",
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "memory",
+              "fluid",
+              "logic"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q007",
+            "timestamp": "2025-11-10T13:28:26.134053Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 0.7,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "memory",
+              "logic"
+            ],
+            "glossaryShown": [
+              "concept.gravity.basic"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_044",
+        "generated_at": "2025-10-30T02:49:26.029067Z",
+        "logs": [
+          {
+            "questionId": "q007",
+            "timestamp": "2025-10-30T02:49:26.029067Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 1.3,
+            "path": [
+              "c1"
+            ],
+            "conceptTags": [
+              "gravity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q003",
+            "timestamp": "2025-10-30T02:50:26.029067Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 4.3,
+            "path": [
+              "c2",
+              "c4",
+              "c1"
+            ],
+            "conceptTags": [
+              "pressure",
+              "memory"
+            ],
+            "glossaryShown": [
+              "concept.logic.intro",
+              "concept.analysis.basic"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q008",
+            "timestamp": "2025-10-30T02:51:26.029067Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 0.5,
+            "path": [
+              "c2",
+              "c4",
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "cognition"
+            ],
+            "glossaryShown": [
+              "concept.gravity.deep"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q007",
+            "timestamp": "2025-10-30T02:52:26.029067Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 38.5,
+            "path": [
+              "c1",
+              "c4",
+              "c1",
+              "c3"
+            ],
+            "conceptTags": [
+              "astronomy",
+              "analysis",
+              "fluid"
+            ],
+            "glossaryShown": [
+              "concept.memory.working",
+              "concept.gravity.deep"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-30T02:53:26.029067Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 27.7,
+            "path": [
+              "c4"
+            ],
+            "conceptTags": [
+              "gravity",
+              "analysis"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 0
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_045",
+        "generated_at": "2025-11-20T05:11:16.016463Z",
+        "logs": [
+          {
+            "questionId": "q002",
+            "timestamp": "2025-11-20T05:11:16.016463Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 31.5,
+            "path": [
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "pressure",
+              "gravity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q003",
+            "timestamp": "2025-11-20T05:12:16.016463Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 3.3,
+            "path": [
+              "c1",
+              "c3",
+              "c4"
+            ],
+            "conceptTags": [
+              "logic",
+              "pressure"
+            ],
+            "glossaryShown": [
+              "concept.logic.intro",
+              "concept.analysis.basic"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q008",
+            "timestamp": "2025-11-20T05:13:16.016463Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 0.6,
+            "path": [
+              "c1"
+            ],
+            "conceptTags": [
+              "problem-solving"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": 0
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_046",
+        "generated_at": "2025-10-24T05:28:57.631517Z",
+        "logs": [
+          {
+            "questionId": "q008",
+            "timestamp": "2025-10-24T05:28:57.631517Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 21.4,
+            "path": [
+              "c3",
+              "c4",
+              "c2",
+              "c4"
+            ],
+            "conceptTags": [
+              "cognition"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q003",
+            "timestamp": "2025-10-24T05:29:57.631517Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 1.7,
+            "path": [
+              "c2",
+              "c1",
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "pressure",
+              "cognition",
+              "gravity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q002",
+            "timestamp": "2025-10-24T05:30:57.631517Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 3.5,
+            "path": [
+              "c1",
+              "c2",
+              "c3",
+              "c1"
+            ],
+            "conceptTags": [
+              "problem-solving",
+              "memory",
+              "creativity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-10-24T05:31:57.631517Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 22.4,
+            "path": [
+              "c3"
+            ],
+            "conceptTags": [
+              "logic",
+              "pressure",
+              "creativity"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q008",
+            "timestamp": "2025-10-24T05:32:57.631517Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 24.2,
+            "path": [
+              "c1",
+              "c2",
+              "c1",
+              "c2"
+            ],
+            "conceptTags": [
+              "creativity",
+              "astronomy",
+              "cognition"
+            ],
+            "glossaryShown": [
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q008",
+            "timestamp": "2025-10-24T05:33:57.631517Z",
+            "final_answer": "c1",
+            "correct": true,
+            "response_time": 38.0,
+            "path": [
+              "c1"
+            ],
+            "conceptTags": [
+              "logic"
+            ],
+            "glossaryShown": [
+              "concept.creativity.basic",
+              "concept.logic.intro"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q010",
+            "timestamp": "2025-10-24T05:34:57.631517Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 38.7,
+            "path": [
+              "c1",
+              "c3",
+              "c2",
+              "c1"
+            ],
+            "conceptTags": [
+              "pressure",
+              "creativity",
+              "analysis"
+            ],
+            "glossaryShown": [
+              "concept.gravity.basic"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-10-24T05:35:57.631517Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 1.0,
+            "path": [
+              "c3",
+              "c4",
+              "c1",
+              "c2"
+            ],
+            "conceptTags": [
+              "logic",
+              "problem-solving"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": -1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_047",
+        "generated_at": "2025-10-30T00:28:54.342537Z",
+        "logs": [
+          {
+            "questionId": "q010",
+            "timestamp": "2025-10-30T00:28:54.342537Z",
+            "final_answer": "c4",
+            "correct": false,
+            "response_time": 11.4,
+            "path": [
+              "c4",
+              "c3",
+              "c4"
+            ],
+            "conceptTags": [
+              "memory",
+              "gravity",
+              "creativity"
+            ],
+            "glossaryShown": [
+              "concept.analysis.basic"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q009",
+            "timestamp": "2025-10-30T00:29:54.342537Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 39.5,
+            "path": [
+              "c3",
+              "c2"
+            ],
+            "conceptTags": [
+              "analysis",
+              "gravity",
+              "logic"
+            ],
+            "glossaryShown": [
+              "concept.analysis.basic",
+              "concept.logic.intro"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q006",
+            "timestamp": "2025-10-30T00:30:54.342537Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 10.4,
+            "path": [
+              "c4"
+            ],
+            "conceptTags": [
+              "fluid",
+              "analysis"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-10-30T00:31:54.342537Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 4.5,
+            "path": [
+              "c3",
+              "c2",
+              "c1",
+              "c4"
+            ],
+            "conceptTags": [
+              "fluid",
+              "memory"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_048",
+        "generated_at": "2025-11-16T16:57:29.056244Z",
+        "logs": [
+          {
+            "questionId": "q004",
+            "timestamp": "2025-11-16T16:57:29.056244Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 15.1,
+            "path": [
+              "c4",
+              "c2"
+            ],
+            "conceptTags": [
+              "cognition"
+            ],
+            "glossaryShown": [
+              "concept.memory.working",
+              "concept.gravity.basic"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q004",
+            "timestamp": "2025-11-16T16:58:29.056244Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 8.9,
+            "path": [
+              "c4"
+            ],
+            "conceptTags": [
+              "analysis"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 1,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q010",
+            "timestamp": "2025-11-16T16:59:29.056244Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 8.2,
+            "path": [
+              "c3",
+              "c4"
+            ],
+            "conceptTags": [
+              "creativity"
+            ],
+            "glossaryShown": [
+              "concept.creativity.basic",
+              "concept.analysis.basic"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q004",
+            "timestamp": "2025-11-16T17:00:29.056244Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 7.4,
+            "path": [
+              "c4",
+              "c2"
+            ],
+            "conceptTags": [
+              "cognition"
+            ],
+            "glossaryShown": [
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-11-16T17:01:29.056244Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 18.2,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "memory",
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": 0
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_049",
+        "generated_at": "2025-11-06T04:18:03.650216Z",
+        "logs": [
+          {
+            "questionId": "q009",
+            "timestamp": "2025-11-06T04:18:03.650216Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 34.1,
+            "path": [
+              "c3"
+            ],
+            "conceptTags": [
+              "logic",
+              "analysis"
+            ],
+            "glossaryShown": [
+              "concept.cognition.metacognition"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q003",
+            "timestamp": "2025-11-06T04:19:03.650216Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 9.8,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "pressure"
+            ],
+            "glossaryShown": [
+              "concept.memory.working",
+              "concept.gravity.deep"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": 0,
+              "creativity": -1
+            }
+          },
+          {
+            "questionId": "q008",
+            "timestamp": "2025-11-06T04:20:03.650216Z",
+            "final_answer": "c2",
+            "correct": true,
+            "response_time": 0.9,
+            "path": [
+              "c1",
+              "c4",
+              "c2"
+            ],
+            "conceptTags": [
+              "pressure",
+              "fluid",
+              "gravity"
+            ],
+            "glossaryShown": [
+              "concept.analysis.basic",
+              "concept.cognition.metacognition"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 1,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q001",
+            "timestamp": "2025-11-06T04:21:03.650216Z",
+            "final_answer": "c2",
+            "correct": false,
+            "response_time": 1.8,
+            "path": [
+              "c2"
+            ],
+            "conceptTags": [
+              "cognition",
+              "creativity",
+              "logic"
+            ],
+            "glossaryShown": [
+              "concept.gravity.deep"
+            ],
+            "vector": {
+              "logic": 1,
+              "analysis": -1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q005",
+            "timestamp": "2025-11-06T04:22:03.650216Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 31.2,
+            "path": [
+              "c4",
+              "c3"
+            ],
+            "conceptTags": [
+              "cognition",
+              "fluid"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": 0,
+              "creativity": 0
+            }
+          },
+          {
+            "questionId": "q007",
+            "timestamp": "2025-11-06T04:23:03.650216Z",
+            "final_answer": "c3",
+            "correct": false,
+            "response_time": 29.6,
+            "path": [
+              "c3",
+              "c1",
+              "c3"
+            ],
+            "conceptTags": [
+              "pressure"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": 0,
+              "analysis": -1,
+              "creativity": 1
+            }
+          }
+        ]
+      },
+      {
+        "session_id": "session_050",
+        "generated_at": "2025-11-07T09:17:08.984634Z",
+        "logs": [
+          {
+            "questionId": "q008",
+            "timestamp": "2025-11-07T09:17:08.984634Z",
+            "final_answer": "c1",
+            "correct": false,
+            "response_time": 4.1,
+            "path": [
+              "c1",
+              "c2",
+              "c1"
+            ],
+            "conceptTags": [
+              "astronomy",
+              "logic"
+            ],
+            "glossaryShown": [
+              "concept.memory.working"
+            ],
+            "vector": {
+              "logic": -1,
+              "analysis": 1,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q003",
+            "timestamp": "2025-11-07T09:18:08.984634Z",
+            "final_answer": "c3",
+            "correct": true,
+            "response_time": 4.2,
+            "path": [
+              "c1",
+              "c3",
+              "c1",
+              "c3"
+            ],
+            "conceptTags": [
+              "astronomy"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 1
+            }
+          },
+          {
+            "questionId": "q008",
+            "timestamp": "2025-11-07T09:19:08.984634Z",
+            "final_answer": "c4",
+            "correct": true,
+            "response_time": 4.9,
+            "path": [
+              "c1",
+              "c4"
+            ],
+            "conceptTags": [
+              "problem-solving",
+              "cognition"
+            ],
+            "glossaryShown": [],
+            "vector": {
+              "logic": -1,
+              "analysis": 0,
+              "creativity": 1
+            }
+          }
+        ]
+      }
+    ]
+  }
 }

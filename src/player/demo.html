@@ -140,7 +140,15 @@
     </style>
 </head>
 <body>
-    <div class="container" id="container">
+    <!-- 生徒ID入力ボックス -->
+    <div id="student-id-box" class="container" style="display: block;">
+        <h3 style="margin-bottom: 20px;">生徒IDを入力してください</h3>
+        <input id="student-id-input" type="text" placeholder="student001" style="padding: 15px; font-size: 1.2em; border-radius: 10px; border: 2px solid #667eea; width: 300px; margin-bottom: 20px; text-align: center;" />
+        <br />
+        <button id="start-quiz-btn" style="padding: 15px 40px; font-size: 1.2em;">開始</button>
+    </div>
+
+    <div class="container" id="container" style="display: none;">
         <p>読み込み中...</p>
     </div>
     <button class="back-button" onclick="goHome()">🏠 ホームに戻る</button>
@@ -418,8 +426,28 @@
             return div.innerHTML;
         }
 
-        // 初期化を実行
-        window.addEventListener('DOMContentLoaded', init);
+        // 生徒ID入力処理
+        document.getElementById("start-quiz-btn").addEventListener("click", function() {
+            const id = document.getElementById("student-id-input").value.trim();
+            if (!id) {
+                alert("生徒IDを入力してください");
+                return;
+            }
+            window.PlayerConfig = { user_id: id };
+            localStorage.setItem("last_student_id", id);
+            document.getElementById("student-id-box").style.display = "none";
+            document.getElementById("container").style.display = "block";
+            init();
+        });
+
+        // 保存された生徒IDを復元
+        const saved = localStorage.getItem("last_student_id");
+        if (saved) {
+            document.getElementById("student-id-input").value = saved;
+        }
+
+        // 初期化を実行（生徒ID入力後に実行されるため、ここではコメントアウト）
+        // window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>

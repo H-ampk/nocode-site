@@ -243,7 +243,7 @@
       var fs = require('fs');
       var path = require('path');
       
-      var outputPath = path.join(__dirname, '..', 'data', 'quiz_log_dummy.json');
+      var outputPath = path.join(__dirname, '..', '..', 'students', 'quiz_log_dummy.json');
       fs.writeFileSync(outputPath, JSON.stringify(logData, null, 2), 'utf8');
       console.log('\nファイルに保存しました: ' + outputPath);
     }

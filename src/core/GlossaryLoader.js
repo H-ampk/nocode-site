@@ -308,13 +308,68 @@
     });
   }
 
+  /**
+   * エディタで読み込んでいる glossary の内容を取得
+   * @returns {Object} Glossaryオブジェクト（termIdをキーとする）
+   */
+  function getCurrentGlossaryForQuiz() {
+    // window.currentGlossary から直接取得
+    if (window.currentGlossary && window.currentGlossary.terms) {
+      return window.currentGlossary.terms;
+    }
+    // フォールバック: localStorage から取得
+    try {
+      var saved = localStorage.getItem('currentGlossary');
+      if (saved) {
+        var glossary = JSON.parse(saved);
+        if (glossary && glossary.terms) {
+          return glossary.terms;
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to load glossary from localStorage:', e);
+    }
+    return {};
+  }
+
+  /**
+   * latest.json から quiz vectors を読み込む
+   * @param {string} projectId - プロジェクトID（デフォルト: 'default'）
+   * @param {Object} opts - オプション（admin: true で相対パスを調整）
+   * @returns {Promise<Object>} glossary_vector オブジェクト
+   */
+  function loadLatestQuizVectors(projectId, opts) {
+    projectId = projectId || 'default';
+    var admin = opts && opts.admin;
+    var base = getBasePath(admin);
+    var path = base + 'projects/' + projectId + '/quiz_versions/latest.json';
+    
+    return fetch(path, { cache: 'no-store' })
+      .then(function (response) {
+        if (!response.ok) {
+          return {}; // ファイルが存在しない場合は空オブジェクトを返す
+        }
+        return response.json();
+      })
+      .then(function (data) {
+        // glossary_vector を返す
+        return data.glossary_vector || {};
+      })
+      .catch(function (error) {
+        console.warn('Latest quiz vectors load failed:', error);
+        return {};
+      });
+  }
+
   // グローバルに公開
   global.GlossaryLoader = {
     loadProjectGlossary: loadProjectGlossary,
     loadDomainGlossary: loadDomainGlossary,
     loadGlobalGlossary: loadGlobalGlossary,
     mergeGlossaries: mergeGlossaries,
-    loadGlossaryByPolicy: loadGlossaryByPolicy
+    loadGlossaryByPolicy: loadGlossaryByPolicy,
+    getCurrentGlossaryForQuiz: getCurrentGlossaryForQuiz,
+    loadLatestQuizVectors: loadLatestQuizVectors
   };
 
 })(window);

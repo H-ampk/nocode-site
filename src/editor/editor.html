@@ -394,6 +394,19 @@
         #vectorSettingArea > div {
             margin-bottom: 20px;
         }
+
+        .save-button {
+            padding: 8px 12px;
+            background: #2d7bf4;
+            border: none;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .save-button:hover {
+            background: #1b5cd6;
+        }
     </style>
     <script>
         // 互換: ルート`data/`を当面利用。今後は`public/`に移行予定。
@@ -517,6 +530,7 @@
                 <button class="btn" onclick="addDiagnosticQuestion()">+ 診断質問を追加</button>
                 <button class="btn" onclick="addResult()">+ 結果を追加</button>
                 <button class="btn btn-secondary" onclick="saveProject()">💾 プロジェクトを保存</button>
+                <button class="btn btn-secondary" id="saveQuizButton" onclick="saveQuiz()">💾 バージョン保存</button>
                 <button class="btn btn-secondary" onclick="loadProject()">📂 プロジェクトを読み込み</button>
                 <input type="file" id="fileInput" accept=".json" onchange="handleFileLoad(event)" style="display: none;">
             </div>

@@ -96,7 +96,7 @@
   /**
    * path（迷いパターン）を生成
    */
-  function generatePath(responseTime) {
+  function generatePath() {
     var steps = randomInt(1, 4);
     var path = [];
     
@@ -129,24 +129,35 @@
    * clicks を生成（path と整合性を保つ）
    */
   function generateClicks(path, responseTime) {
+    if (!path || path.length === 0) {
+      return [];
+    }
+    
+    // response_time が0以下の場合は最小値に設定
+    if (responseTime <= 0) {
+      responseTime = 0.1;
+    }
+    
     var clicks = [];
     var cumulativeTime = 0;
     
     for (var i = 0; i < path.length; i++) {
       var choiceId = path[i];
+      var remainingTime = Math.max(0.1, responseTime - cumulativeTime);
+      var remainingClicks = path.length - i;
       var time;
       
       if (i === path.length - 1) {
-        // 最後のクリックは response_time に近い値
-        time = Math.max(0.1, responseTime - cumulativeTime - 0.5);
-        time = Math.min(time, responseTime - cumulativeTime);
+        // 最後のクリックは response_time に合わせる
+        time = remainingTime;
       } else {
         // 中間のクリックは均等に分散
-        var remainingTime = responseTime - cumulativeTime;
-        var remainingClicks = path.length - i;
-        var averageInterval = remainingTime / remainingClicks;
-        time = randomFloat(averageInterval * 0.5, averageInterval * 1.5);
-        time = Math.min(time, responseTime - cumulativeTime - 0.5);
+        if (remainingClicks > 1) {
+          var averageInterval = remainingTime / remainingClicks;
+          time = randomFloat(Math.max(0.1, averageInterval * 0.5), Math.min(averageInterval * 1.5, remainingTime * 0.9));
+        } else {
+          time = remainingTime;
+        }
       }
       
       cumulativeTime += time;
@@ -167,12 +178,12 @@
   /**
    * 1つのログエントリを生成
    */
-  function generateLog(index) {
+  function generateLog() {
     var questionId = randomChoice(QUESTIONS);
     var isCorrect = Math.random() < 0.5; // 50%の確率で正解
     var category = getResponseTimeCategory();
     var responseTime = generateResponseTime(category);
-    var path = generatePath(responseTime);
+    var path = generatePath();
     var clicks = generateClicks(path, responseTime);
     var finalAnswer = path[path.length - 1];
     
@@ -213,17 +224,12 @@
     
     var logs = [];
     for (var i = 0; i < TOTAL_LOGS; i++) {
-      logs.push(generateLog(i));
+      logs.push(generateLog());
     }
     
-    var logData = {
-      version: '1.0',
-      generated_at: new Date().toISOString(),
-      logs: logs
-    };
-    
     console.log('生成完了: ' + TOTAL_LOGS + '件のログ');
-    console.log('正答率: ' + (logs.filter(function(l) { return l.correct; }).length / logs.length * 100).toFixed(1) + '%');
+    var correctCount = logs.filter(function(l) { return l.correct; }).length;
+    console.log('正答率: ' + (correctCount / logs.length * 100).toFixed(1) + '%');
     
     // 分類別の統計
     var instantCount = logs.filter(function(l) { return l.response_time <= 2; }).length;
@@ -235,18 +241,65 @@
     console.log('  searching (3-12秒): ' + searchingCount + '件');
     console.log('  deliberate (15-40秒): ' + deliberateCount + '件');
     
-    console.log('\nJSONデータ:');
-    console.log(JSON.stringify(logData, null, 2));
-    
     // Node.js環境の場合はファイルに保存
     if (typeof require !== 'undefined' && require.main === module) {
       var fs = require('fs');
       var path = require('path');
       
-      var outputPath = path.join(__dirname, '..', 'data', 'quiz_log_dummy.json');
-      fs.writeFileSync(outputPath, JSON.stringify(logData, null, 2), 'utf8');
-      console.log('\nファイルに保存しました: ' + outputPath);
+      var outputPath = path.join(__dirname, '..', 'students', 'quiz_log_dummy.json');
+      var existingData = {};
+      
+      // 既存のファイルを読み込む
+      try {
+        if (fs.existsSync(outputPath)) {
+          existingData = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
+        }
+      } catch (e) {
+        console.warn('警告: ' + outputPath + ' の読み込みに失敗しました: ' + e.message);
+        console.log('新規作成します。');
+      }
+      
+      // 既存のデータを保持しつつ、logs を更新
+      var logData;
+      if (existingData.dataset_name || existingData.type) {
+        // 新しいフォーマット（dataset_name, type を含む）
+        existingData.logs = logs;
+        if (!existingData.created_at) {
+          existingData.created_at = new Date().toISOString();
+        }
+        logData = existingData;
+      } else {
+        // 旧フォーマットまたは新規作成
+        logData = {
+          dataset_name: 'quiz_log_dummy',
+          type: 'class',
+          created_at: new Date().toISOString(),
+          logs: logs
+        };
+        // vector_test_sessions が既に存在する場合は保持
+        if (existingData.vector_test_sessions) {
+          logData.vector_test_sessions = existingData.vector_test_sessions;
+        }
+      }
+      
+      try {
+        fs.writeFileSync(outputPath, JSON.stringify(logData, null, 2), 'utf8');
+        console.log('\nファイルに保存しました: ' + outputPath);
+      } catch (e) {
+        console.error('エラー: ファイルの書き込みに失敗しました: ' + e.message);
+        return null;
+      }
+      
+      return logData;
     }
+    
+    // ブラウザ環境用のフォールバック
+    var logData = {
+      dataset_name: 'quiz_log_dummy',
+      type: 'class',
+      created_at: new Date().toISOString(),
+      logs: logs
+    };
     
     return logData;
   }

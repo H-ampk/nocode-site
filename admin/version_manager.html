@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>クイズバージョン管理</title>
+  <link rel="stylesheet" href="../public/css/main.css" />
+  <script src="../src/admin/pin.js" defer></script>
+  <script>window.addEventListener('DOMContentLoaded',function(){ if(window.AdminAuth) AdminAuth.init({admin:true}); });</script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h1 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .version-item {
+      padding: 12px 16px;
+      margin: 8px 0;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      transition: all 0.2s;
+    }
+    .version-item:hover {
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      transform: translateY(-1px);
+    }
+    .version-info {
+      flex: 1;
+    }
+    .version-name {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 4px;
+    }
+    .version-meta {
+      font-size: 0.85em;
+      color: #666;
+    }
+    .version-actions {
+      display: flex;
+      gap: 8px;
+    }
+    button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9em;
+      transition: all 0.2s;
+    }
+    .btn-view {
+      background: #2d7bf4;
+      color: white;
+    }
+    .btn-view:hover {
+      background: #1b5cd6;
+    }
+    .btn-diff {
+      background: #48bb78;
+      color: white;
+    }
+    .btn-diff:hover {
+      background: #38a169;
+    }
+    .btn-delete {
+      background: #e53e3e;
+      color: white;
+    }
+    .btn-delete:hover {
+      background: #c53030;
+    }
+    .diff-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      overflow: auto;
+    }
+    .diff-modal.active {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .diff-content {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      max-width: 90%;
+      max-height: 90%;
+      overflow: auto;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .diff-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 10px;
+    }
+    .diff-close {
+      background: #e53e3e;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .diff-item {
+      margin: 15px 0;
+      padding: 15px;
+      background: #f9f9f9;
+      border-radius: 6px;
+      border-left: 4px solid #2d7bf4;
+    }
+    .diff-key {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+    .diff-old {
+      background: #fee;
+      padding: 8px;
+      border-radius: 4px;
+      margin: 4px 0;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+    .diff-new {
+      background: #efe;
+      padding: 8px;
+      border-radius: 4px;
+      margin: 4px 0;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>📦 クイズバージョン管理</h1>
+  <div id="versionList" class="loading">読み込み中...</div>
+
+  <!-- 差分表示モーダル -->
+  <div id="diffModal" class="diff-modal">
+    <div class="diff-content">
+      <div class="diff-header">
+        <h2>バージョン差分</h2>
+        <button class="diff-close" onclick="closeDiffModal()">閉じる</button>
+      </div>
+      <div id="diffContent"></div>
+    </div>
+  </div>
+
+  <script src="../src/admin/version_manager.js"></script>
+</body>
+</html>
+

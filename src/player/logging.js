@@ -160,6 +160,6 @@
     clearLogs: clearLogs,
     downloadLogs: downloadLogs
   };
-
 })(window);
+
 

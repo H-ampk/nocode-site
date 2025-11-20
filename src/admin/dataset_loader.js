@@ -37,18 +37,79 @@
   }
 
   /**
+   * 生徒ログファイルを読み込む（localStorageから multi-session 構造を読み込む）
+   * @param {string} studentId - 生徒ID
+   * @returns {Promise<Object>} 生徒ログデータ（multi-session 構造）
+   */
+  function loadStudentLogForId(studentId) {
+    if (!studentId) {
+      return Promise.resolve({ error: "no_student_id" });
+    }
+    
+    try {
+      var key = 'student_' + studentId;
+      var raw = localStorage.getItem(key);
+      if (!raw) {
+        return Promise.resolve({ error: "no_data" });
+      }
+      var data = JSON.parse(raw);
+      return Promise.resolve(data);
+    } catch (e) {
+      console.error('Failed to load student log:', e);
+      return Promise.resolve({ error: "parse_error" });
+    }
+  }
+
+  /**
+   * 生徒ログファイルを読み込む（ファイルから）
+   * @param {string} userId - ユーザーID
+   * @param {string} sessionId - セッションID
+   * @returns {Promise<Object>} 生徒ログデータ
+   */
+  async function loadStudentLog(userId, sessionId) {
+    if (!userId || !sessionId) {
+      return Promise.resolve(null);
+    }
+    
+    // ファイル名を生成: {userId}_{sessionId}.json
+    var fileName = userId + '_' + sessionId + '.json';
+    var filePath = '../students/' + fileName;
+    
+    return fetch(filePath)
+      .then(function (response) {
+        if (!response.ok) {
+          // ファイルが存在しない場合はnullを返す
+          return null;
+        }
+        return response.json();
+      })
+      .catch(function (error) {
+        console.warn('生徒ログの読み込みに失敗しました:', error);
+        return null;
+      });
+  }
+
+  /**
    * 指定されたデータセットファイルを読み込む（index.json方式）
    * @param {Object} dataset - データセット情報オブジェクト { file, dataset_name, type }
+   * @param {Object} config - オプション設定 { student_id, session_id }
    * @returns {Promise<Object>} JSON データオブジェクト
    */
-  function loadDataset(dataset) {
+  function loadDataset(dataset, config) {
     if (!dataset || !dataset.file) {
       return Promise.reject(new Error('無効なデータセット情報です'));
     }
 
     // folder プロパティがある場合は ../students/${folder}/${file}、ない場合は ../students/${file}
-    var folderPart = dataset.folder ? dataset.folder + '/' : '';
+    // config.dataset_folder を優先し、なければ dataset.folder を使用
+    var folderPart = '';
+    if (config && config.dataset_folder) {
+      folderPart = config.dataset_folder.replace(/\/?$/, '/');
+    } else if (dataset.folder) {
+      folderPart = dataset.folder.replace(/\/?$/, '/');
+    }
     var filePath = '../students/' + folderPart + dataset.file;
+    console.log('[DatasetLoader] loading:', filePath);
 
     return fetch(filePath)
       .then(function (response) {
@@ -59,19 +120,39 @@
       })
       .then(function (data) {
         // 新しいフォーマット（dataset_name, type を含む）と旧フォーマットの両方に対応
+        var result;
         if (data.logs && Array.isArray(data.logs)) {
           // 新しいフォーマット: { dataset_name, type, logs, ... }
-          return data;
+          result = data;
         } else if (Array.isArray(data)) {
           // 配列形式の場合
-          return { logs: data };
+          result = { logs: data };
         } else if (data.version && data.logs) {
           // 既存の形式: { version, generated_at, logs }
-          return data;
+          result = data;
         } else {
           // それ以外の場合もそのまま返す
-          return data;
+          result = data;
         }
+        
+        // vector_test_sessions がある場合は student_log として設定
+        if (result.vector_test_sessions) {
+          result.student_log = result.vector_test_sessions;
+        }
+        
+        // studentLogsを読み込む（configが提供されている場合）
+        if (config && config.student_id) {
+          return loadStudentLogForId(config.student_id)
+            .then(function (studentLog) {
+              // vector_test_sessions が既に設定されている場合は上書きしない
+              if (!result.student_log) {
+                result.student_log = studentLog;
+              }
+              return result;
+            });
+        }
+        
+        return result;
       })
       .catch(function (error) {
         console.error('データセットの読み込みに失敗しました:', error);
@@ -188,13 +269,62 @@
       });
   }
 
+  /**
+   * プロジェクトフォルダからクイズバージョン一覧を取得
+   * @param {string} projectId - プロジェクトID（デフォルト: 'default'）
+   * @returns {Promise<Array<string>>} バージョンファイル名の配列
+   */
+  function listQuizVersions(projectId) {
+    projectId = projectId || 'default';
+    var versionsPath = '../projects/' + projectId + '/quiz_versions/';
+    
+    // ディレクトリリストを取得するため、index.html のようなファイルを試行
+    // 実際の実装では、サーバー側でディレクトリリストを返すAPIが必要
+    // ここでは、latest.json と localStorage から取得した履歴を使用
+    return fetch(versionsPath + 'latest.json')
+      .then(function (response) {
+        if (!response.ok) {
+          return [];
+        }
+        return response.json();
+      })
+      .then(function (latest) {
+        var versions = ['latest.json'];
+        
+        // localStorage からバージョン履歴を取得
+        try {
+          var historyKey = 'quiz_versions_' + projectId;
+          var saved = localStorage.getItem(historyKey);
+          if (saved) {
+            var history = JSON.parse(saved);
+            history.forEach(function (v) {
+              if (v.filename && v.filename !== 'latest.json' && versions.indexOf(v.filename) === -1) {
+                versions.push(v.filename);
+              }
+            });
+          }
+        } catch (e) {
+          console.warn('Failed to load version history:', e);
+        }
+        
+        return versions;
+      })
+      .catch(function (error) {
+        console.error('バージョン一覧の取得に失敗しました:', error);
+        return [];
+      });
+  }
+
   // グローバルに公開
   global.DatasetLoader = {
     listDatasets: listDatasets,
     loadDataset: loadDataset,
+    loadStudentLog: loadStudentLog,
+    loadStudentLogForId: loadStudentLogForId,
     createNewDataset: createNewDataset,
     updateIndexJson: updateIndexJson,
-    loadProject: loadProject
+    loadProject: loadProject,
+    listQuizVersions: listQuizVersions
   };
 
 })(window);

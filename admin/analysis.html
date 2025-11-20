@@ -426,6 +426,35 @@
   <a href="admin.html" class="back-link">← Admin ダッシュボードに戻る</a>
   <h1>📊 学習データ分析ダッシュボード</h1>
 
+  <!-- クイズバージョン一覧セクション -->
+  <section id="quizVersionListSection" class="dataset-section" style="margin-bottom: 2rem;">
+    <h2>📦 クイズバージョン一覧</h2>
+    <p style="color: #666; margin-bottom: 15px;">
+      プロジェクトフォルダからクイズバージョンを選択して、差分を確認できます。
+    </p>
+    <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 20px; flex-wrap: wrap;">
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-weight: 600;">プロジェクト:</label>
+        <select id="versionProjectSelect" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; min-width: 200px;">
+          <option value="default">default</option>
+          <option value="vector_test">vector_test</option>
+        </select>
+      </div>
+      <div>
+        <label style="display: block; margin-bottom: 5px; font-weight: 600;">バージョンを選択:</label>
+        <select id="quizVersionList" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; min-width: 300px;">
+          <option value="">読み込み中...</option>
+        </select>
+      </div>
+      <div style="align-self: flex-end;">
+        <button id="loadVersionDiffBtn" style="padding: 10px 20px; background: #2d7bf4; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1em;">
+          🔍 差分を表示
+        </button>
+      </div>
+    </div>
+    <div id="diffContainer" style="margin-top: 20px; padding: 15px; background: white; border-radius: 6px; overflow-x: auto; display: none;"></div>
+  </section>
+
   <div class="dataset-section">
     <h2>データセット選択</h2>
     <div id="dataset-list" class="dataset-list">
@@ -461,6 +490,16 @@
     </div>
   </div>
 
+  <!-- セッション選択UI -->
+  <div id="session-selector" class="dataset-section" style="display: none;">
+    <h3>セッション選択</h3>
+    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+      <select id="session-select" style="padding: 10px; font-size: 1em; border-radius: 5px; border: 1px solid #ddd; min-width: 300px;"></select>
+      <button id="view-session" class="btn" style="background: #2196F3;">表示</button>
+      <button id="view-all-sessions" class="btn" style="background: #4CAF50;">全セッション合算</button>
+    </div>
+  </div>
+
   <div id="dashboard" class="dashboard">
     <div class="tabs">
       <button class="tab active" data-tab="overall">全体概要</button>
@@ -471,6 +510,7 @@
       <button class="tab" data-tab="glossary">Glossary 提示履歴</button>
       <button class="tab" data-tab="vector">ベクトル分析</button>
       <button class="tab" data-tab="analysis-run">📊 分析実行</button>
+      <button class="tab" data-tab="cluster-diff-improve">🧠 クラスタリング・Diff・改善度</button>
     </div>
 
     <div id="tab-overall" class="tab-content active">
@@ -534,6 +574,84 @@
 
       <div id="analysis-result-area" style="margin-top:20px;"></div>
     </div>
+
+    <div id="tab-cluster-diff-improve" class="tab-content">
+      <h3>🧠 クラスタリング・Diff・改善度分析</h3>
+
+      <!-- クラスタリング分析セクション -->
+      <section id="clusterAnalysisSection" style="margin-top: 30px; padding: 20px; background: #f9f9f9; border-radius: 8px; margin-bottom: 30px;">
+        <h2>🧠 クラスタリング分析（Julia）</h2>
+        <p style="color: #666; margin-bottom: 15px;">
+          生徒ログをクラスタリング分析して、学習パターンを可視化します。
+        </p>
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+          <button id="runClusterBtn" style="padding: 10px 20px; background: #2d7bf4; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1em;">
+            🧠 クラスタリング分析を実行
+          </button>
+          <button id="loadClusterResultBtn" style="padding: 10px 20px; background: #48bb78; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1em;">
+            📊 最新結果を読み込む
+          </button>
+        </div>
+        <div id="clusterImageContainer" style="margin-top: 20px;"></div>
+        <div id="clusterDetailContainer" style="margin-top: 20px; padding: 15px; background: white; border-radius: 6px;"></div>
+      </section>
+
+      <!-- クラスタ分析セクション（フロントエンド） -->
+      <section id="clusterAnalysisFrontendSection" style="margin-top: 30px; padding: 20px; background: #f0f8ff; border-radius: 8px; margin-bottom: 30px;">
+        <h2>📊 クラスタ分析（フロントエンド）</h2>
+        <p style="color: #666; margin-bottom: 15px;">
+          データセットから cluster_features を抽出して、フロントエンドでクラスタリング分析を実行します。
+        </p>
+        <div style="margin-top: 20px;">
+          <h3 style="margin-bottom: 10px; color: #333;">散布図（2D可視化）</h3>
+          <canvas id="clusterScatter" style="max-width: 100%; height: 400px; border: 1px solid #ddd; border-radius: 6px; background: white;"></canvas>
+        </div>
+        <div style="margin-top: 30px;">
+          <h3 style="margin-bottom: 10px; color: #333;">クラスタ一覧</h3>
+          <div id="clusterTable" style="margin-top: 10px; padding: 15px; background: white; border-radius: 6px; overflow-x: auto;"></div>
+        </div>
+        <div style="margin-top: 30px;">
+          <h3 style="margin-bottom: 10px; color: #333;">デバッグ情報</h3>
+          <pre id="clusterDebug" style="padding: 15px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 6px; overflow-x: auto; font-size: 0.9em; max-height: 300px; overflow-y: auto;"></pre>
+        </div>
+      </section>
+
+      <!-- バージョン差分比較セクション -->
+      <section id="diffAnalysisSection" style="margin-top: 30px; padding: 20px; background: #f9f9f9; border-radius: 8px; margin-bottom: 30px;">
+        <h2>🔍 バージョン差分比較（Diff）</h2>
+        <p style="color: #666; margin-bottom: 15px;">
+          2つのバージョンを比較して、変更内容を確認します。
+        </p>
+        <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 20px; flex-wrap: wrap;">
+          <div>
+            <label style="display: block; margin-bottom: 5px; font-weight: 600;">旧バージョン:</label>
+            <select id="diffOld" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; min-width: 200px;"></select>
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 5px; font-weight: 600;">新バージョン:</label>
+            <select id="diffNew" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; min-width: 200px;"></select>
+          </div>
+          <div style="align-self: flex-end;">
+            <button id="runDiffBtn" style="padding: 10px 20px; background: #2d7bf4; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1em;">
+              🔍 比較する
+            </button>
+          </div>
+        </div>
+        <div id="diffResult" style="margin-top: 20px; padding: 15px; background: white; border-radius: 6px; overflow-x: auto;"></div>
+      </section>
+
+      <!-- バージョン別の改善度分析セクション -->
+      <section id="versionImproveSection" style="margin-top: 30px; padding: 20px; background: #f9f9f9; border-radius: 8px; margin-bottom: 30px;">
+        <h2>📈 バージョン別の改善度分析</h2>
+        <p style="color: #666; margin-bottom: 15px;">
+          バージョンごとの学習データを比較して、改善度を可視化します。
+        </p>
+        <button id="runImproveBtn" style="padding: 10px 20px; background: #2d7bf4; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1em; margin-bottom: 20px;">
+          📈 改善度を計算
+        </button>
+        <div id="improveChart" style="margin-top: 20px; padding: 15px; background: white; border-radius: 6px;"></div>
+      </section>
+    </div>
   </div>
 
   <!-- 反応時間フィッティングセクション -->
@@ -545,8 +663,12 @@
 
   <script src="../src/admin/dataset_loader.js"></script>
   <script src="../analysis/metrics/vector.js"></script>
+  <script type="module">
+    // vector_math.jsをグローバルに公開
+    import { cosineSimilarity } from '../src/utils/vector_math.js';
+    window.cosineSimilarity = cosineSimilarity;
+  </script>
   <script src="../src/admin/analysis.js"></script>
-  <script src="../students/generate_index.js"></script>
   <script>
     var currentDataset = null;
 
@@ -631,52 +753,108 @@
         })
         .catch(function(error) {
           const listContainer = document.getElementById('dataset-list');
-          listContainer.innerHTML = '<div class="dataset-error">データセット一覧の取得に失敗しました: ' + escapeHtml(error.message) + '</div>';
+          if (listContainer) {
+            listContainer.innerHTML = '<div class="dataset-error">データセット一覧の取得に失敗しました: ' + escapeHtml(error.message) + '</div>';
+          }
         });
     }
 
     // データセットを読み込んで分析
     function loadAndAnalyze(dataset) {
       // エラーメッセージを非表示
-      document.getElementById('dataset-error').style.display = 'none';
+      const errorDiv = document.getElementById('dataset-error');
+      if (errorDiv) {
+        errorDiv.style.display = 'none';
+      }
       
       // ローディング表示
       const infoDiv = document.getElementById('dataset-info');
+      if (!infoDiv) return;
       infoDiv.style.display = 'block';
       infoDiv.innerHTML = '<strong>読み込み中...</strong> ' + escapeHtml(dataset.dataset_name);
       infoDiv.className = 'dataset-info';
 
       // データセットとプロジェクト設定を並行して読み込む
+      // student_log を読み込むために config を追加
+      const config = { student_id: dataset.dataset_name };
+      
       Promise.all([
-        DatasetLoader.loadDataset(dataset),
+        DatasetLoader.loadDataset(dataset, config),
         DatasetLoader.loadProject ? DatasetLoader.loadProject('default') : Promise.resolve({})
       ])
         .then(function(results) {
           const data = results[0];
           const projectData = results[1];
-          const logs = AnalysisDashboard.loadQuizLog(data);
+          window.currentProjectData = projectData;
           
-          if (logs && logs.length > 0) {
-            currentDataset = dataset.dataset_name;
+          // student_log がある場合は multi-session 構造
+          if (data.student_log && data.student_log.sessions) {
+            window.currentStudentData = data.student_log;
+            renderSessionSelector(data.student_log);
             
-            var datasetName = data.dataset_name || dataset.dataset_name;
-            var datasetType = data.type || dataset.type || 'unknown';
-            var createdAt = data.created_at || data.generated_at || '不明';
+            // 全セッションを合算して表示
+            const logsAll = AnalysisDashboard.mergeAllSessions(data.student_log);
             
-            infoDiv.innerHTML = `
-              <strong>✅ 選択中のデータセット：</strong> ${escapeHtml(dataset.dataset_name)}<br>
-              ファイル名: ${escapeHtml(dataset.file)} | タイプ: ${escapeHtml(datasetType)}<br>
-              ログ数: ${logs.length}件 | 作成日時: ${escapeHtml(createdAt)}
-            `;
-            infoDiv.className = 'dataset-info';
-            
-            // ダッシュボードを表示
-            document.getElementById('dashboard').classList.add('active');
-            
-            // 分析を実行（projectDataを含める）
-            AnalysisDashboard.analyze(logs, projectData);
+            if (logsAll && logsAll.length > 0) {
+              currentDataset = dataset.dataset_name;
+              
+              infoDiv.innerHTML = `
+                <strong>✅ 選択中のデータセット：</strong> ${escapeHtml(dataset.dataset_name)}<br>
+                ファイル名: ${escapeHtml(dataset.file)} | タイプ: ${escapeHtml(data.type || dataset.type || 'student')}<br>
+                セッション数: ${data.student_log.sessions.length}件 | 合計ログ数: ${logsAll.length}件
+              `;
+              infoDiv.className = 'dataset-info';
+              
+              // ダッシュボードを表示
+              const dashboardEl = document.getElementById('dashboard');
+              if (dashboardEl) {
+                dashboardEl.classList.add('active');
+              }
+              
+              // 全セッション合算で分析を実行
+              AnalysisDashboard.analyze(logsAll, projectData);
+              
+              // クラスタリング分析を実行（data に cluster_features がある場合）
+              if (data && (data.sessions || data.student_log)) {
+                AnalysisDashboard.renderClusterAnalysis(data);
+              }
+            } else {
+              throw new Error('有効なログデータが見つかりませんでした。');
+            }
           } else {
-            throw new Error('有効なログデータが見つかりませんでした。');
+            // 通常のログ形式
+            const logs = AnalysisDashboard.loadQuizLog(data);
+            
+            if (logs && logs.length > 0) {
+              currentDataset = dataset.dataset_name;
+              
+              var datasetName = data.dataset_name || dataset.dataset_name;
+              var datasetType = data.type || dataset.type || 'unknown';
+              var createdAt = data.created_at || data.generated_at || '不明';
+              
+              infoDiv.innerHTML = `
+                <strong>✅ 選択中のデータセット：</strong> ${escapeHtml(dataset.dataset_name)}<br>
+                ファイル名: ${escapeHtml(dataset.file)} | タイプ: ${escapeHtml(datasetType)}<br>
+                ログ数: ${logs.length}件 | 作成日時: ${escapeHtml(createdAt)}
+              `;
+              infoDiv.className = 'dataset-info';
+              
+              // ダッシュボードを表示
+              const dashboardEl2 = document.getElementById('dashboard');
+              if (dashboardEl2) {
+                dashboardEl2.classList.add('active');
+              }
+              
+              // 分析を実行（projectDataを含める）
+              AnalysisDashboard.analyze(logs, projectData);
+              
+              // クラスタリング分析を実行（data に cluster_features がある場合）
+              if (data && (data.sessions || data.student_log)) {
+                AnalysisDashboard.renderClusterAnalysis(data);
+              }
+            } else {
+              throw new Error('有効なログデータが見つかりませんでした。');
+            }
           }
         })
         .catch(function(error) {
@@ -690,8 +868,12 @@
 
     // 新しいデータセットファイルを作成
     function createNewDatasetFile() {
-      const datasetName = document.getElementById('new-dataset-name').value.trim();
-      const datasetType = document.getElementById('new-dataset-type').value;
+      const nameInput = document.getElementById('new-dataset-name');
+      const typeInput = document.getElementById('new-dataset-type');
+      if (!nameInput || !typeInput) return;
+      
+      const datasetName = nameInput.value.trim();
+      const datasetType = typeInput.value;
 
       if (!datasetName) {
         alert('データセット名を入力してください。');
@@ -719,6 +901,7 @@
         DatasetLoader.updateIndexJson(fileName, datasetName, datasetType)
           .then(function(success) {
             const infoDiv = document.getElementById('dataset-info');
+            if (!infoDiv) return;
             infoDiv.style.display = 'block';
             infoDiv.className = 'dataset-info';
             
@@ -730,7 +913,10 @@
               `;
               
               // フォームをリセット
-              document.getElementById('new-dataset-name').value = '';
+              const nameInputReset = document.getElementById('new-dataset-name');
+              if (nameInputReset) {
+                nameInputReset.value = '';
+              }
               
               // 一覧を再読み込み
               setTimeout(function() {
@@ -755,6 +941,7 @@
     // index.json を再生成
     function regenerateIndex() {
       const infoDiv = document.getElementById('dataset-info');
+      if (!infoDiv) return;
       infoDiv.style.display = 'block';
       infoDiv.innerHTML = '<strong>⏳ index.json を再生成中...</strong><br>students/ フォルダ内の JSON ファイルをスキャンしています...';
       infoDiv.className = 'dataset-info';
@@ -790,10 +977,619 @@
       return div.innerHTML;
     }
 
+    // セッション選択UIのレンダリング
+    window.renderSessionSelector = function(studentData) {
+      const selector = document.getElementById('session-selector');
+      const sel = document.getElementById('session-select');
+      
+      if (!selector || !sel) return;
+      
+      if (!studentData || !studentData.sessions || !Array.isArray(studentData.sessions) || studentData.sessions.length === 0) {
+        selector.style.display = 'none';
+        return;
+      }
+      
+      selector.style.display = 'block';
+      sel.innerHTML = '';
+      
+      studentData.sessions.forEach(function(s) {
+        const opt = document.createElement('option');
+        opt.value = s.session_id;
+        opt.textContent = s.session_id + ' (' + (s.generated_at || '日時不明') + ')';
+        sel.appendChild(opt);
+      });
+    };
+
+    // セッション表示ボタン
+    const viewSessionBtn = document.getElementById('view-session');
+    if (viewSessionBtn) {
+      viewSessionBtn.addEventListener('click', function() {
+        const sessionSelect = document.getElementById('session-select');
+        if (!sessionSelect) return;
+        const selectedSessionId = sessionSelect.value;
+        if (!selectedSessionId || !window.currentStudentData) return;
+      
+      const session = window.currentStudentData.sessions.find(function(s) {
+        return s.session_id === selectedSessionId;
+      });
+      
+      if (session && session.logs) {
+        const projectData = window.currentProjectData || {};
+        AnalysisDashboard.analyze(session.logs, projectData);
+      }
+      });
+    }
+
+    // 全セッション合算ボタン
+    const viewAllSessionsBtn = document.getElementById('view-all-sessions');
+    if (viewAllSessionsBtn) {
+      viewAllSessionsBtn.addEventListener('click', function() {
+        if (!window.currentStudentData) return;
+      
+      const logsAll = AnalysisDashboard.mergeAllSessions(window.currentStudentData);
+      const projectData = window.currentProjectData || {};
+      AnalysisDashboard.analyze(logsAll, projectData);
+      });
+    }
+
     // ページ読み込み時にデータセット一覧を取得
     window.addEventListener('DOMContentLoaded', function() {
       loadDatasetList();
+      loadQuizVersionList();
     });
+
+    // クイズバージョン一覧を読み込む
+    async function loadQuizVersionList() {
+      const projectSelect = document.getElementById('versionProjectSelect');
+      const versionList = document.getElementById('quizVersionList');
+      
+      if (!projectSelect || !versionList) return;
+      
+      const projectId = projectSelect.value || 'default';
+      
+      try {
+        if (window.DatasetLoader && window.DatasetLoader.listQuizVersions) {
+          const versions = await window.DatasetLoader.listQuizVersions(projectId);
+          
+          versionList.innerHTML = '';
+          if (versions.length === 0) {
+            versionList.innerHTML = '<option value="">バージョンが見つかりません</option>';
+            return;
+          }
+          
+          versions.forEach(function(version) {
+            const option = document.createElement('option');
+            option.value = version;
+            option.textContent = version;
+            versionList.appendChild(option);
+          });
+        } else {
+          versionList.innerHTML = '<option value="">DatasetLoader が利用できません</option>';
+        }
+      } catch (error) {
+        console.error('Failed to load quiz versions:', error);
+        if (versionList) {
+          versionList.innerHTML = '<option value="">読み込みエラー</option>';
+        }
+      }
+    }
+
+    // プロジェクト選択変更時にバージョン一覧を再読み込み
+    const projectSelect = document.getElementById('versionProjectSelect');
+    if (projectSelect) {
+      projectSelect.addEventListener('change', function() {
+        loadQuizVersionList();
+      });
+    }
+
+    // 差分表示ボタン
+    const loadVersionDiffBtn = document.getElementById('loadVersionDiffBtn');
+    if (loadVersionDiffBtn) {
+      loadVersionDiffBtn.addEventListener('click', async function() {
+        const versionList = document.getElementById('quizVersionList');
+        const projectSelect = document.getElementById('versionProjectSelect');
+        const diffContainer = document.getElementById('diffContainer');
+        
+        if (!versionList || !projectSelect || !diffContainer) return;
+        
+        const selectedVersion = versionList.value;
+        const projectId = projectSelect.value || 'default';
+        
+        if (!selectedVersion) {
+          alert('バージョンを選択してください');
+          return;
+        }
+        
+        diffContainer.innerHTML = '<p style="color: #666;">読み込み中...</p>';
+        diffContainer.style.display = 'block';
+        
+        try {
+          // latest.json と選択されたバージョンを比較
+          const [latestResponse, versionResponse] = await Promise.all([
+            fetch(`../../projects/${projectId}/quiz_versions/latest.json`),
+            fetch(`../../projects/${projectId}/quiz_versions/${selectedVersion}`)
+          ]);
+          
+          if (!latestResponse.ok || !versionResponse.ok) {
+            throw new Error('バージョンファイルの読み込みに失敗しました');
+          }
+          
+          const latestData = await latestResponse.json();
+          const versionData = await versionResponse.json();
+          
+          // JSON diff を計算
+          if (window.AnalysisDashboard && window.AnalysisDashboard.computeJSONDiff) {
+            const diff = window.AnalysisDashboard.computeJSONDiff(latestData, versionData);
+            window.AnalysisDashboard.renderJSONDiff(diff, 'diffContainer');
+          } else {
+            throw new Error('AnalysisDashboard が利用できません');
+          }
+        } catch (error) {
+          console.error('Failed to load version diff:', error);
+          if (diffContainer) {
+            diffContainer.innerHTML = '<p style="color: #e53e3e;">差分の取得に失敗しました: ' + escapeHtml(error.message) + '</p>';
+          }
+        }
+      });
+    }
+    // クラスタリング分析ボタンのイベント（既存のクラスタリング分析セクション用）
+    const clusterAnalysisBtn = document.getElementById('clusterAnalysisBtn');
+    if (clusterAnalysisBtn) {
+      clusterAnalysisBtn.addEventListener('click', function() {
+        if (window.currentStudentData && window.currentStudentData.sessions) {
+          const logsAll = AnalysisDashboard.mergeAllSessions(window.currentStudentData);
+          AnalysisDashboard.runClusterAnalysis(logsAll);
+        } else if (window.currentLogs && Array.isArray(window.currentLogs)) {
+          AnalysisDashboard.runClusterAnalysis(window.currentLogs);
+        } else {
+          alert('ログデータが読み込まれていません。先にデータセットを選択してください。');
+        }
+      });
+    }
+
+    //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // クラスタリング分析（Julia）
+    //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    const runClusterBtn = document.getElementById('runClusterBtn');
+    if (runClusterBtn) {
+      runClusterBtn.addEventListener('click', function() {
+        if (window.currentStudentData && window.currentStudentData.sessions) {
+          const logsAll = AnalysisDashboard.mergeAllSessions(window.currentStudentData);
+          AnalysisDashboard.runClusterAnalysis(logsAll);
+        } else if (window.currentLogs && Array.isArray(window.currentLogs)) {
+          AnalysisDashboard.runClusterAnalysis(window.currentLogs);
+        } else {
+          alert('ログデータが読み込まれていません。先にデータセットを選択してください。');
+        }
+      });
+    }
+
+    const loadClusterResultBtn = document.getElementById('loadClusterResultBtn');
+    if (loadClusterResultBtn) {
+      loadClusterResultBtn.addEventListener('click', async function() {
+        const container = document.getElementById('clusterImageContainer');
+        const detail = document.getElementById('clusterDetailContainer');
+        
+        container.innerHTML = '<p style="color: #666;">読み込み中...</p>';
+        detail.innerHTML = '<p style="color: #666;">読み込み中...</p>';
+        
+        try {
+          // クラスタリング結果の画像を読み込む
+          const imagePath = '../../analysis/student_clusters_2d.png';
+          container.innerHTML = `
+            <h4>クラスタリング結果（2D散布図）</h4>
+            <img src="${imagePath}" style="max-width: 100%; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" 
+                 onerror="this.parentElement.innerHTML='<p style=\\'color: #e53e3e;\\'>画像が見つかりません。Juliaスクリプトを実行してください。</p>'">
+          `;
+          
+          // クラスタ情報を表示（JSONファイルがあれば読み込む）
+          try {
+            const clusterDataPath = '../../analysis/student_logs_clustered.csv';
+            const response = await fetch(clusterDataPath);
+            if (response.ok) {
+              detail.innerHTML = `
+                <h4>クラスタリング結果データ</h4>
+                <p style="color: #666;">CSVファイルが生成されました: student_logs_clustered.csv</p>
+                <p style="color: #666;">各ログに cluster_label が付与されています。</p>
+              `;
+            } else {
+              detail.innerHTML = '<p style="color: #999;">クラスタリング結果データはまだ生成されていません。</p>';
+            }
+          } catch (e) {
+            detail.innerHTML = '<p style="color: #999;">クラスタリング結果データはまだ生成されていません。</p>';
+          }
+        } catch (error) {
+          console.error('Failed to load cluster result:', error);
+          container.innerHTML = '<p style="color: #e53e3e;">結果の読み込みに失敗しました。</p>';
+        }
+      });
+    }
+
+    //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // diff の UI 処理
+    //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    async function loadVersionOptions() {
+      try {
+        const projectId = localStorage.getItem('projectId') || 'default';
+        
+        // latest.json を読み込む
+        const latestPath = `../../projects/${projectId}/quiz_versions/latest.json`;
+        const latestResponse = await fetch(latestPath);
+        
+        const versions = [];
+        if (latestResponse.ok) {
+          const latest = await latestResponse.json();
+          versions.push({ filename: 'latest.json', label: 'latest.json (最新版)' });
+        }
+        
+        // localStorage からバージョン履歴を取得
+        try {
+          const historyKey = `quiz_versions_${projectId}`;
+          const saved = localStorage.getItem(historyKey);
+          if (saved) {
+            const history = JSON.parse(saved);
+            history.forEach(function(v) {
+              if (v.filename !== 'latest.json') {
+                versions.push({ filename: v.filename, label: v.filename });
+              }
+            });
+          }
+        } catch (e) {
+          console.warn('Failed to load version history:', e);
+        }
+        
+        const oldSel = document.getElementById('diffOld');
+        const newSel = document.getElementById('diffNew');
+        
+        if (oldSel && newSel) {
+          oldSel.innerHTML = '';
+          newSel.innerHTML = '';
+          
+          versions.forEach(function(v) {
+            const option1 = new Option(v.label, v.filename);
+            const option2 = new Option(v.label, v.filename);
+            oldSel.appendChild(option1);
+            newSel.appendChild(option2);
+          });
+          
+          // デフォルトで latest.json を選択
+          if (versions.length > 0) {
+            newSel.value = 'latest.json';
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load version options:', error);
+      }
+    }
+
+    // ページ読み込み時にバージョンオプションを読み込む
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadVersionOptions);
+    } else {
+      loadVersionOptions();
+    }
+
+    const runDiffBtn = document.getElementById('runDiffBtn');
+    if (runDiffBtn) {
+      runDiffBtn.addEventListener('click', async function() {
+        const oldVersion = document.getElementById('diffOld').value;
+        const newVersion = document.getElementById('diffNew').value;
+        
+        if (!oldVersion || !newVersion) {
+          alert('両方のバージョンを選択してください。');
+          return;
+        }
+        
+        if (oldVersion === newVersion) {
+          alert('異なるバージョンを選択してください。');
+          return;
+        }
+        
+        const resultDiv = document.getElementById('diffResult');
+        if (!resultDiv) return;
+        resultDiv.innerHTML = '<p style="color: #666;">読み込み中...</p>';
+        
+        try {
+          const projectId = localStorage.getItem('projectId') || 'default';
+          const [oldResponse, newResponse] = await Promise.all([
+            fetch(`../../projects/${projectId}/quiz_versions/${oldVersion}`),
+            fetch(`../../projects/${projectId}/quiz_versions/${newVersion}`)
+          ]);
+          
+          if (!oldResponse.ok || !newResponse.ok) {
+            throw new Error('バージョンファイルの読み込みに失敗しました');
+          }
+          
+          const oldData = await oldResponse.json();
+          const newData = await newResponse.json();
+          
+          const diff = diffJSON(oldData, newData);
+          renderDiffTable(diff);
+        } catch (error) {
+          console.error('Failed to diff versions:', error);
+          resultDiv.innerHTML = '<p style="color: #e53e3e;">差分の取得に失敗しました: ' + escapeHtml(error.message) + '</p>';
+        }
+      });
+    }
+
+    function diffJSON(a, b) {
+      const diff = {};
+      const keys = new Set([...Object.keys(a || {}), ...Object.keys(b || {})]);
+      
+      for (const k of keys) {
+        const aVal = a[k];
+        const bVal = b[k];
+        
+        if (JSON.stringify(aVal) !== JSON.stringify(bVal)) {
+          diff[k] = {
+            old: aVal !== undefined ? aVal : null,
+            new: bVal !== undefined ? bVal : null
+          };
+        }
+      }
+      
+      return diff;
+    }
+
+    function renderDiffTable(diff) {
+      const container = document.getElementById('diffResult');
+      if (!container) return;
+      
+      if (Object.keys(diff).length === 0) {
+        container.innerHTML = '<p style="color: #48bb78; padding: 15px; background: #f0fff4; border-radius: 6px;">✅ 差分はありません</p>';
+        return;
+      }
+      
+      let html = `
+        <h4>差分結果（${Object.keys(diff).length}件の変更）</h4>
+        <table border="1" style="border-collapse: collapse; width: 100%; margin-top: 15px;">
+          <thead>
+            <tr style="background: #f9f9f9;">
+              <th style="padding: 10px; text-align: left;">項目</th>
+              <th style="padding: 10px; text-align: left;">旧バージョン</th>
+              <th style="padding: 10px; text-align: left;">新バージョン</th>
+              <th style="padding: 10px; text-align: left;">変更タイプ</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      
+      for (const k in diff) {
+        const d = diff[k];
+        const type =
+          d.old === null ? 'add' :
+          d.new === null ? 'delete' :
+          'change';
+        
+        const color =
+          type === 'add' ? '#c2f7c2' :
+          type === 'delete' ? '#f7c2c2' :
+          '#fff8b3';
+        
+        const typeLabel =
+          type === 'add' ? '追加' :
+          type === 'delete' ? '削除' :
+          '変更';
+        
+        const oldStr = d.old === null ? '(なし)' : JSON.stringify(d.old, null, 2);
+        const newStr = d.new === null ? '(なし)' : JSON.stringify(d.new, null, 2);
+        
+        html += `
+          <tr style="background: ${color};">
+            <td style="padding: 10px; font-weight: 600;">${escapeHtml(k)}</td>
+            <td style="padding: 10px; font-family: monospace; font-size: 0.9em; max-width: 300px; word-break: break-all;">${escapeHtml(oldStr)}</td>
+            <td style="padding: 10px; font-family: monospace; font-size: 0.9em; max-width: 300px; word-break: break-all;">${escapeHtml(newStr)}</td>
+            <td style="padding: 10px; font-weight: 600;">${typeLabel}</td>
+          </tr>
+        `;
+      }
+      
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // バージョン改善度分析
+    //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    const runImproveBtn = document.getElementById('runImproveBtn');
+    if (runImproveBtn) {
+      runImproveBtn.addEventListener('click', async function() {
+        const chartDiv = document.getElementById('improveChart');
+        if (!chartDiv) return;
+        chartDiv.innerHTML = '<p style="color: #666;">読み込み中...</p>';
+        
+        try {
+          // 生徒ログを読み込む
+          let allLogs = [];
+          
+          // 現在読み込まれているログデータを使用
+          if (window.currentStudentData && window.currentStudentData.sessions) {
+            allLogs = AnalysisDashboard.mergeAllSessions(window.currentStudentData);
+          } else if (window.currentLogs && Array.isArray(window.currentLogs)) {
+            allLogs = window.currentLogs;
+          } else {
+            // students/index.json から読み込む
+            try {
+              const indexResponse = await fetch('../../students/index.json');
+              if (indexResponse.ok) {
+                const index = await indexResponse.json();
+                const students = index.students || [];
+                
+                // 各生徒のログを読み込む
+                for (const student of students.slice(0, 10)) { // 最初の10人まで
+                  try {
+                    const logResponse = await fetch(`../../students/${student.file}`);
+                    if (logResponse.ok) {
+                      const logData = await logResponse.json();
+                      if (logData.sessions) {
+                        logData.sessions.forEach(function(session) {
+                          if (session.logs) {
+                            allLogs = allLogs.concat(session.logs);
+                          }
+                        });
+                      } else if (logData.logs) {
+                        allLogs = allLogs.concat(logData.logs);
+                      }
+                    }
+                  } catch (e) {
+                    console.warn('Failed to load student log:', student.file, e);
+                  }
+                }
+              }
+            } catch (e) {
+              console.warn('Failed to load students index:', e);
+            }
+          }
+          
+          if (allLogs.length === 0) {
+            chartDiv.innerHTML = '<p style="color: #e53e3e;">ログデータが見つかりませんでした。</p>';
+            return;
+          }
+          
+          // バージョンでグループ化
+          const versionStats = {};
+          allLogs.forEach(function(log) {
+            const version = log.quiz_version || 'unknown';
+            if (!versionStats[version]) {
+              versionStats[version] = { count: 0, correct: 0, rt: 0, totalRt: 0 };
+            }
+            versionStats[version].count++;
+            if (log.correct === true) {
+              versionStats[version].correct++;
+            }
+            if (log.response_time) {
+              versionStats[version].totalRt += log.response_time;
+            }
+          });
+          
+          // 平均を計算
+          for (const version in versionStats) {
+            const stats = versionStats[version];
+            stats.correctRate = stats.count > 0 ? (stats.correct / stats.count) * 100 : 0;
+            stats.avgRt = stats.count > 0 ? stats.totalRt / stats.count : 0;
+          }
+          
+          renderImproveChart(versionStats);
+        } catch (error) {
+          console.error('Failed to compute improve stats:', error);
+          chartDiv.innerHTML = '<p style="color: #e53e3e;">改善度の計算に失敗しました: ' + escapeHtml(error.message) + '</p>';
+        }
+      });
+    }
+
+    function renderImproveChart(stats) {
+      const container = document.getElementById('improveChart');
+      
+      const versions = Object.keys(stats).sort();
+      if (versions.length === 0) {
+        container.innerHTML = '<p style="color: #999;">データがありません。</p>';
+        return;
+      }
+      
+      let html = '<h3>バージョン別 正答率の推移</h3>';
+      html += '<div style="margin-top: 20px;">';
+      html += '<table border="1" style="border-collapse: collapse; width: 100%;">';
+      html += '<thead><tr style="background: #f9f9f9;"><th style="padding: 10px;">バージョン</th><th style="padding: 10px;">ログ数</th><th style="padding: 10px;">正答率</th><th style="padding: 10px;">平均反応時間</th></tr></thead>';
+      html += '<tbody>';
+      
+      versions.forEach(function(v) {
+        const s = stats[v];
+        const correctRateColor = s.correctRate >= 70 ? '#48bb78' : s.correctRate >= 50 ? '#f6ad55' : '#e53e3e';
+        
+        html += `
+          <tr>
+            <td style="padding: 10px; font-weight: 600;">${escapeHtml(v)}</td>
+            <td style="padding: 10px;">${s.count}件</td>
+            <td style="padding: 10px; color: ${correctRateColor}; font-weight: 600;">${s.correctRate.toFixed(1)}%</td>
+            <td style="padding: 10px;">${s.avgRt.toFixed(2)}秒</td>
+          </tr>
+        `;
+      });
+      
+      html += '</tbody></table>';
+      html += '</div>';
+      
+      // 改善度の可視化（Chart.jsを使用）
+      if (typeof Chart !== 'undefined') {
+        html += '<div style="margin-top: 30px;"><canvas id="improveChartCanvas" style="max-height: 400px;"></canvas></div>';
+        container.innerHTML = html;
+        
+        // Chart.jsでグラフを描画
+        setTimeout(function() {
+          const ctx = document.getElementById('improveChartCanvas');
+          if (ctx) {
+            const labels = versions;
+            const correctRates = versions.map(v => stats[v].correctRate);
+            const avgRts = versions.map(v => stats[v].avgRt);
+            
+            new Chart(ctx, {
+              type: 'line',
+              data: {
+                labels: labels,
+                datasets: [
+                  {
+                    label: '正答率 (%)',
+                    data: correctRates,
+                    borderColor: '#2d7bf4',
+                    backgroundColor: 'rgba(45, 123, 244, 0.1)',
+                    yAxisID: 'y',
+                    tension: 0.4
+                  },
+                  {
+                    label: '平均反応時間 (秒)',
+                    data: avgRts,
+                    borderColor: '#48bb78',
+                    backgroundColor: 'rgba(72, 187, 120, 0.1)',
+                    yAxisID: 'y1',
+                    tension: 0.4
+                  }
+                ]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                  title: {
+                    display: true,
+                    text: 'バージョン別の改善度推移'
+                  },
+                  legend: {
+                    display: true
+                  }
+                },
+                scales: {
+                  y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    title: {
+                      display: true,
+                      text: '正答率 (%)'
+                    },
+                    min: 0,
+                    max: 100
+                  },
+                  y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    title: {
+                      display: true,
+                      text: '平均反応時間 (秒)'
+                    },
+                    grid: {
+                      drawOnChartArea: false
+                    }
+                  }
+                }
+              }
+            });
+          }
+        }, 100);
+      } else {
+        container.innerHTML = html;
+      }
+    }
   </script>
 </body>
 </html>

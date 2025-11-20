@@ -107,6 +107,26 @@
       </div>
     </div>
 
+    <div class="project-id-setting" style="margin-top: 20px; padding: 10px; border: 1px solid #aaa; border-radius: 6px;">
+      <h3>プロジェクトID設定</h3>
+      <label>Project ID:</label>
+      <input id="projectIdInput" placeholder="例: default or reading_01" style="padding: 8px; margin: 5px; width: 200px;" />
+      <button id="saveProjectIdBtn" style="padding: 8px 15px; background: #2d7bf4; color: white; border: none; border-radius: 6px; cursor: pointer;">保存</button>
+      <p style="font-size: 0.9em; color: #666; margin-top: 10px;">
+        プロジェクトIDを設定すると、エディタで quiz.json を保存する際にこのIDが使用されます。
+      </p>
+    </div>
+
+    <div class="author-field" style="margin-top: 20px; padding: 10px; border: 1px solid #aaa; border-radius: 6px;">
+      <h3>設計者名設定</h3>
+      <label>設計者名:</label>
+      <input id="authorInput" placeholder="例: ray / sensei / admin" style="padding: 8px; margin: 5px; width: 200px;" />
+      <button id="authorSaveBtn" style="padding: 8px 15px; background: #2d7bf4; color: white; border: none; border-radius: 6px; cursor: pointer;">保存</button>
+      <p style="font-size: 0.9em; color: #666; margin-top: 10px;">
+        設計者名はバージョンファイル名に含まれます。例: 20251120-1200-ray-quiz.json
+      </p>
+    </div>
+
     <br/><br/>
     <button id="loadBtn">設定を読み込む</button>
     <button id="saveBtn">project.json をダウンロード</button>
@@ -297,10 +317,75 @@
     }
     document.getElementById('loadBtn').addEventListener('click', loadConfig);
     document.getElementById('saveBtn').addEventListener('click', saveConfig);
+    
+    // Project ID 設定の保存ボタン
+    document.getElementById('saveProjectIdBtn').addEventListener('click', function() {
+      const pid = document.getElementById('projectIdInput').value.trim();
+      if (!pid) {
+        alert('Project ID を入力してください');
+        return;
+      }
+      
+      // localStorage に保存
+      try {
+        localStorage.setItem('projectId', pid);
+      } catch (e) {
+        console.warn('Failed to save projectId to localStorage:', e);
+      }
+      
+      // project.json を生成してダウンロード
+      const newConfig = { 
+        project_id: pid,
+        access_mode: 'public',
+        pin_code: null
+      };
+      
+      const blob = new Blob([JSON.stringify(newConfig, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'project.json';
+      a.click();
+      
+      URL.revokeObjectURL(url);
+      alert('project.json をダウンロードしました。\nプロジェクトフォルダ（projects/' + pid + '/）に配置してください。\n\nProject ID は localStorage にも保存されました。');
+    });
+    
     // 初期状態は public
     setMode('public');
     // 初回自動読み込み
     loadConfig();
+    
+    // Project ID 入力欄に現在の値を設定
+    const currentProjectId = getCurrentProjectId();
+    document.getElementById('projectIdInput').value = currentProjectId;
+    
+    // 設計者名の保存ボタン
+    document.getElementById('authorSaveBtn').addEventListener('click', function() {
+      const name = document.getElementById('authorInput').value.trim();
+      if (!name) {
+        alert('名前を入力してください');
+        return;
+      }
+      try {
+        localStorage.setItem('quiz_author', name);
+        alert('設計者名を保存しました');
+      } catch (e) {
+        console.warn('Failed to save author name:', e);
+        alert('設計者名の保存に失敗しました');
+      }
+    });
+    
+    // 設計者名を読み込んで表示
+    try {
+      const savedAuthor = localStorage.getItem('quiz_author');
+      if (savedAuthor) {
+        document.getElementById('authorInput').value = savedAuthor;
+      }
+    } catch (e) {
+      console.warn('Failed to load author name:', e);
+    }
   </script>
 </body>
 </html>

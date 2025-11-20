@@ -2536,6 +2536,217 @@ function saveProject() {
     URL.revokeObjectURL(url);
 }
 
+// quiz.json をバージョン管理方式で保存する関数
+async function saveQuiz() {
+    try {
+        // 1. project_id の取得
+        const projectId = localStorage.getItem('projectId') || 'default';
+        let projectConfig = null;
+        
+        try {
+            const projectPath = `../../projects/${projectId}/project.json`;
+            const response = await fetch(projectPath);
+            if (response.ok) {
+                projectConfig = await response.json();
+            }
+        } catch (e) {
+            console.warn('Failed to load project.json:', e);
+        }
+        
+        const finalProjectId = (projectConfig && projectConfig.project_id) || projectId;
+        
+        // 2. 生成者名を取得
+        const author = localStorage.getItem("quiz_author") || "unknown";
+        
+        // 3. 日付（YYYYMMDD-HHmm）を生成
+        const now = new Date();
+        const dateStr = now.toISOString().slice(0, 16).replace(/[-:T]/g, "");
+        
+        // 4. バージョンファイル名を生成
+        const versionFile = `${dateStr}-${author}-quiz.json`;
+        
+        // 5. editor UI から currentQuiz を構築
+        const quizData = buildQuizDataFromEditor();
+        
+        // 6. バージョン情報を追加
+        quizData.version = versionFile;
+        quizData.version_date = now.toISOString();
+        quizData.author = author;
+        quizData.project_id = finalProjectId;
+        
+        // 7. Glossary を統合
+        if (typeof GlossaryLoader !== 'undefined' && GlossaryLoader.getCurrentGlossaryForQuiz) {
+            const glossaryTerms = GlossaryLoader.getCurrentGlossaryForQuiz();
+            quizData.glossary_vector = glossaryTerms;
+        } else if (window.currentGlossary && window.currentGlossary.terms) {
+            quizData.glossary_vector = window.currentGlossary.terms;
+        } else {
+            quizData.glossary_vector = {};
+        }
+        
+        // 8. バージョンファイルをダウンロード
+        downloadJSON(quizData, versionFile);
+        
+        // 9. latest.json をダウンロード（最新版として）
+        downloadJSON(quizData, "latest.json");
+        
+        // 10. 自動バックアップ（backup/ フォルダ用）
+        const backupName = `backup_${dateStr}-${author}-quiz.json`;
+        downloadJSON(quizData, backupName);
+        
+        // 11. バージョン履歴を localStorage に保存
+        try {
+            const historyKey = `quiz_versions_${finalProjectId}`;
+            let history = [];
+            const saved = localStorage.getItem(historyKey);
+            if (saved) {
+                history = JSON.parse(saved);
+            }
+            
+            // 新しいバージョンを履歴に追加（重複チェック）
+            const existingIndex = history.findIndex(v => v.filename === versionFile);
+            if (existingIndex >= 0) {
+                history[existingIndex] = {
+                    filename: versionFile,
+                    version: versionFile,
+                    date: quizData.version_date,
+                    author: author
+                };
+            } else {
+                history.unshift({
+                    filename: versionFile,
+                    version: versionFile,
+                    date: quizData.version_date,
+                    author: author
+                });
+            }
+            
+            // 最新50件のみ保持
+            history = history.slice(0, 50);
+            localStorage.setItem(historyKey, JSON.stringify(history));
+        } catch (e) {
+            console.warn('Failed to save version history:', e);
+        }
+        
+        alert(`バージョン保存しました:\n${versionFile}\nプロジェクトID: ${finalProjectId}\n保存先: projects/${finalProjectId}/quiz_versions/\n\nlatest.json も更新されました。`);
+    } catch (error) {
+        console.error("保存エラー:", error);
+        alert("バージョン保存中にエラーが発生しました: " + error.message);
+    }
+}
+
+// editor の現在状態から quiz.json を構築
+function buildQuizDataFromEditor() {
+    // gameData から quiz.json 形式に変換
+    const quizData = {
+        version: gameData.version || 1,
+        startNode: gameData.startNode || null,
+        questions: [],
+        results: []
+    };
+    
+    // questions を変換
+    if (Array.isArray(gameData.questions)) {
+        quizData.questions = gameData.questions.map(function(question) {
+            const q = {
+                id: question.id,
+                type: question.type || 'question',
+                title: question.title || '',
+                question_text: question.question_text || question.text || '',
+                choices: []
+            };
+            
+            // 選択肢を変換
+            if (Array.isArray(question.choices)) {
+                q.choices = question.choices.map(function(choice) {
+                    const c = {
+                        id: choice.id || choice.value,
+                        text: choice.text || '',
+                        nextId: choice.nextId || null,
+                        isCorrect: choice.isCorrect || false
+                    };
+                    
+                    // vector がある場合は追加
+                    if (choice.vector && typeof choice.vector === 'object') {
+                        c.vector = choice.vector;
+                    }
+                    
+                    // value がある場合は追加
+                    if (typeof choice.value !== 'undefined') {
+                        c.value = choice.value;
+                    }
+                    
+                    return c;
+                });
+            }
+            
+            // その他のプロパティを保持
+            if (question.enableGrading !== undefined) {
+                q.enableGrading = question.enableGrading;
+            }
+            if (question.question_type) {
+                q.question_type = question.question_type;
+            }
+            if (question.scoring) {
+                q.scoring = question.scoring;
+            }
+            if (question.scale) {
+                q.scale = question.scale;
+            }
+            if (question.next) {
+                q.next = question.next;
+            }
+            
+            return q;
+        });
+    }
+    
+    // results を変換
+    if (Array.isArray(gameData.results)) {
+        quizData.results = gameData.results.map(function(result) {
+            const r = {
+                id: result.id,
+                type: result.type || 'result',
+                text: result.text || result.title || ''
+            };
+            
+            if (result.url) {
+                r.url = result.url;
+            }
+            if (result.buttonText) {
+                r.buttonText = result.buttonText;
+            }
+            if (result.image) {
+                r.image = result.image;
+            }
+            
+            return r;
+        });
+    }
+    
+    return quizData;
+}
+
+// JSON をダウンロードするヘルパー関数
+function downloadJSON(data, filename) {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement("a");
+    a.href = url;
+    
+    // filename に backup が含まれていたら prefix を付与
+    if (filename.includes("backup")) {
+        a.download = `backup_${filename.replace("backup_", "")}`;
+    } else {
+        a.download = filename;
+    }
+    
+    a.click();
+    
+    URL.revokeObjectURL(url);
+}
+
 // プロジェクトを読み込み
 function loadProject() {
     document.getElementById('fileInput').click();

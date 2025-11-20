@@ -1,0 +1,114 @@
+{
+  "version": "1.0",
+  "questions": [
+    {
+      "questionId": "q001",
+      "text": "月の重力は地球の何倍？",
+      "choices": [
+        {
+          "choiceId": "c1",
+          "text": "約6倍",
+          "correct": false,
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": 0
+          }
+        },
+        {
+          "choiceId": "c2",
+          "text": "約1/6",
+          "correct": true,
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": 0
+          }
+        },
+        {
+          "choiceId": "c3",
+          "text": "磁力の影響で変動する",
+          "correct": false,
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": 1
+          }
+        }
+      ]
+    },
+    {
+      "questionId": "q002",
+      "text": "パスカルの原理を説明したものは？",
+      "choices": [
+        {
+          "choiceId": "c1",
+          "text": "圧力は液体中で均等に伝わる",
+          "correct": true,
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": 0
+          }
+        },
+        {
+          "choiceId": "c2",
+          "text": "全ての物質は波である",
+          "correct": false,
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "choiceId": "c3",
+          "text": "力はエネルギーと等価である",
+          "correct": false,
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": 1
+          }
+        }
+      ]
+    },
+    {
+      "questionId": "q003",
+      "text": "創造性が高い行動は？",
+      "choices": [
+        {
+          "choiceId": "c1",
+          "text": "教科書の手順通りに解く",
+          "correct": false,
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": -1
+          }
+        },
+        {
+          "choiceId": "c2",
+          "text": "独自の方法で試行錯誤する",
+          "correct": true,
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "choiceId": "c3",
+          "text": "例題と同じパターンをそのまま使う",
+          "correct": false,
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": -1
+          }
+        }
+      ]
+    }
+  ]
+}
+

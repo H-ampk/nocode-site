@@ -34,6 +34,46 @@
   }
 
   /**
+   * ログから quiz_version の一覧を取得
+   * @param {Array} logs - ログの配列
+   * @returns {Array} quiz_version の一覧（重複なし）
+   */
+  function getQuizVersionsFromLogs(logs) {
+    if (!logs || !Array.isArray(logs)) {
+      return [];
+    }
+    
+    var versions = new Set();
+    logs.forEach(function(log) {
+      if (log.quiz_version) {
+        versions.add(log.quiz_version);
+      }
+    });
+    
+    return Array.from(versions).sort();
+  }
+
+  /**
+   * ログを quiz_version でフィルタリング
+   * @param {Array} logs - ログの配列
+   * @param {string} version - フィルタリングするバージョン（null の場合は全件）
+   * @returns {Array} フィルタリングされたログの配列
+   */
+  function filterLogsByVersion(logs, version) {
+    if (!logs || !Array.isArray(logs)) {
+      return [];
+    }
+    
+    if (!version || version === 'all') {
+      return logs;
+    }
+    
+    return logs.filter(function(log) {
+      return log.quiz_version === version;
+    });
+  }
+
+  /**
    * 全体統計を計算
    * @param {Array} logs - ログの配列
    * @returns {Object} 統計データ
@@ -335,6 +375,62 @@
       thinkingTypeTerms: thinkingTypeTerms,
       termRanking: termRanking
     };
+  }
+
+  /**
+   * 全セッションを合算する
+   * @param {Object} studentData - 生徒データ（multi-session 構造）
+   * @returns {Array} 合算されたログの配列
+   */
+  function mergeAllSessions(studentData) {
+    if (!studentData || !studentData.sessions || !Array.isArray(studentData.sessions)) {
+      return [];
+    }
+    var merged = [];
+    studentData.sessions.forEach(function(s) {
+      if (s.logs && Array.isArray(s.logs)) {
+        merged = merged.concat(s.logs);
+      }
+    });
+    return merged;
+  }
+
+  /**
+   * ベクトル平均計算
+   * @param {Array} logs - ログの配列
+   * @returns {Object} ベクトル統計データ（軸ごとの平均値）
+   */
+  function computeVectorStats(logs) {
+    if (!logs || logs.length === 0) {
+      return {};
+    }
+    
+    var sum = {};
+    var count = 0;
+    
+    logs.forEach(function(item) {
+      if (!item.vector || typeof item.vector !== 'object') {
+        return;
+      }
+      
+      for (var axis in item.vector) {
+        if (item.vector.hasOwnProperty(axis)) {
+          sum[axis] = (sum[axis] || 0) + (Number(item.vector[axis]) || 0);
+        }
+      }
+      count++;
+    });
+    
+    var avg = {};
+    if (count > 0) {
+      for (var axisKey in sum) {
+        if (sum.hasOwnProperty(axisKey)) {
+          avg[axisKey] = sum[axisKey] / count;
+        }
+      }
+    }
+    
+    return avg;
   }
 
   /**
@@ -1056,15 +1152,98 @@
     }
   }
 
+  /**
+   * クラスタリング分析を実行（Juliaスクリプトへの指示）
+   * @param {Array} logs - ログの配列
+   */
+  function runClusterAnalysis(logs) {
+    if (!logs || logs.length === 0) {
+      alert('クラスタリング分析にはログデータが必要です');
+      return;
+    }
+    
+    // ログデータをCSV形式に変換
+    const csv = convertLogsToCSV(logs);
+    
+    // CSVをダウンロード
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'student_logs.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    alert('クラスタリング分析用のCSVファイルをダウンロードしました。\n\n次のコマンドでJulia分析を実行してください:\njulia analysis/cluster_main.jl');
+  }
+
+  /**
+   * ログデータをCSV形式に変換
+   * @param {Array} logs - ログの配列
+   * @returns {string} CSV文字列
+   */
+  function convertLogsToCSV(logs) {
+    if (!logs || logs.length === 0) {
+      return '';
+    }
+    
+    // ヘッダー行
+    const headers = [
+      'student_id',
+      'question_id',
+      'reaction_time',
+      'error_flag',
+      'vector_sum',
+      'quiz_version',
+      'response_time',
+      'correct'
+    ];
+    
+    let csv = headers.join(',') + '\n';
+    
+    // データ行
+    logs.forEach(function(log) {
+      const reactionTime = log.response_time || 0;
+      const errorFlag = log.correct === false ? 1 : 0;
+      
+      // vector の合計を計算
+      let vectorSum = 0;
+      if (log.vector && typeof log.vector === 'object') {
+        Object.values(log.vector).forEach(function(val) {
+          if (typeof val === 'number') {
+            vectorSum += val;
+          }
+        });
+      }
+      
+      const row = [
+        log.user_id || 'unknown',
+        log.questionId || 'unknown',
+        reactionTime,
+        errorFlag,
+        vectorSum,
+        log.quiz_version || 'unknown',
+        log.response_time || 0,
+        log.correct ? 1 : 0
+      ];
+      
+      csv += row.join(',') + '\n';
+    });
+    
+    return csv;
+  }
+
   // グローバルに公開
   global.AnalysisDashboard = {
     loadQuizLog: loadQuizLog,
+    mergeAllSessions: mergeAllSessions,
     computeOverallStats: computeOverallStats,
     computePerQuestionStats: computePerQuestionStats,
     computeConceptConfusions: computeConceptConfusions,
     computeResponseTimeProfile: computeResponseTimeProfile,
     computePathPatterns: computePathPatterns,
     computeGlossaryUsage: computeGlossaryUsage,
+    computeVectorStats: computeVectorStats,
     renderOverallStats: renderOverallStats,
     renderQuestionStats: renderQuestionStats,
     renderConfusionStats: renderConfusionStats,
@@ -1074,8 +1253,215 @@
     renderVectorAnalysis: renderVectorAnalysis,
     renderAll: renderAll,
     renderAllWithProject: renderAllWithProject,
-    analyze: analyze
+    analyze: analyze,
+    getQuizVersionsFromLogs: getQuizVersionsFromLogs,
+    filterLogsByVersion: filterLogsByVersion,
+    runClusterAnalysis: runClusterAnalysis,
+    convertLogsToCSV: convertLogsToCSV,
+    renderClusterAnalysis: renderClusterAnalysis,
+    computeJSONDiff: computeJSONDiff,
+    renderJSONDiff: renderJSONDiff
   };
+
+  /**
+   * JSON diff を計算（再帰的）
+   * @param {*} oldObj - 旧オブジェクト
+   * @param {*} newObj - 新オブジェクト
+   * @param {string} path - 現在のパス（再帰用）
+   * @returns {Object} diff オブジェクト
+   */
+  function computeJSONDiff(oldObj, newObj, path) {
+    path = path || '';
+    var diff = {};
+    
+    // 両方が null/undefined の場合は差分なし
+    if (oldObj === null && newObj === null) {
+      return {};
+    }
+    if (oldObj === undefined && newObj === undefined) {
+      return {};
+    }
+    
+    // 型が異なる場合は変更
+    if (typeof oldObj !== typeof newObj) {
+      return {
+        type: 'change',
+        old: oldObj,
+        new: newObj,
+        path: path
+      };
+    }
+    
+    // プリミティブ型の場合は直接比較
+    if (oldObj === null || newObj === null || typeof oldObj !== 'object' || typeof newObj !== 'object') {
+      if (oldObj !== newObj) {
+        return {
+          type: 'change',
+          old: oldObj,
+          new: newObj,
+          path: path
+        };
+      }
+      return {};
+    }
+    
+    // 配列の場合
+    if (Array.isArray(oldObj) || Array.isArray(newObj)) {
+      if (!Array.isArray(oldObj)) {
+        return {
+          type: 'change',
+          old: oldObj,
+          new: newObj,
+          path: path
+        };
+      }
+      if (!Array.isArray(newObj)) {
+        return {
+          type: 'change',
+          old: oldObj,
+          new: newObj,
+          path: path
+        };
+      }
+      
+      var maxLen = Math.max(oldObj.length, newObj.length);
+      var arrayDiff = {};
+      
+      for (var i = 0; i < maxLen; i++) {
+        var itemPath = path + '[' + i + ']';
+        if (i >= oldObj.length) {
+          // 追加
+          arrayDiff[itemPath] = {
+            type: 'add',
+            old: null,
+            new: newObj[i],
+            path: itemPath
+          };
+        } else if (i >= newObj.length) {
+          // 削除
+          arrayDiff[itemPath] = {
+            type: 'delete',
+            old: oldObj[i],
+            new: null,
+            path: itemPath
+          };
+        } else {
+          // 再帰的に比較
+          var itemDiff = computeJSONDiff(oldObj[i], newObj[i], itemPath);
+          if (Object.keys(itemDiff).length > 0 && itemDiff.type) {
+            arrayDiff[itemPath] = itemDiff;
+          } else if (Object.keys(itemDiff).length > 0) {
+            // オブジェクトの場合はマージ
+            Object.assign(arrayDiff, itemDiff);
+          }
+        }
+      }
+      
+      return arrayDiff;
+    }
+    
+    // オブジェクトの場合
+    var allKeys = new Set();
+    if (oldObj) {
+      Object.keys(oldObj).forEach(function(k) { allKeys.add(k); });
+    }
+    if (newObj) {
+      Object.keys(newObj).forEach(function(k) { allKeys.add(k); });
+    }
+    
+    allKeys.forEach(function(key) {
+      var keyPath = path ? path + '.' + key : key;
+      var oldVal = oldObj && oldObj.hasOwnProperty(key) ? oldObj[key] : undefined;
+      var newVal = newObj && newObj.hasOwnProperty(key) ? newObj[key] : undefined;
+      
+      if (oldVal === undefined && newVal !== undefined) {
+        // 追加
+        diff[keyPath] = {
+          type: 'add',
+          old: null,
+          new: newVal,
+          path: keyPath
+        };
+      } else if (oldVal !== undefined && newVal === undefined) {
+        // 削除
+        diff[keyPath] = {
+          type: 'delete',
+          old: oldVal,
+          new: null,
+          path: keyPath
+        };
+      } else {
+        // 再帰的に比較
+        var valDiff = computeJSONDiff(oldVal, newVal, keyPath);
+        if (Object.keys(valDiff).length > 0 && valDiff.type) {
+          diff[keyPath] = valDiff;
+        } else if (Object.keys(valDiff).length > 0) {
+          // オブジェクトの場合はマージ
+          Object.assign(diff, valDiff);
+        }
+      }
+    });
+    
+    return diff;
+  }
+
+  /**
+   * JSON diff をHTMLで描画
+   * @param {Object} diff - diff オブジェクト
+   * @param {string} containerId - コンテナID
+   */
+  function renderJSONDiff(diff, containerId) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+    
+    var diffKeys = Object.keys(diff);
+    if (diffKeys.length === 0) {
+      container.innerHTML = '<p style="color: #48bb78; padding: 15px; background: #f0fff4; border-radius: 6px;">✅ 差分はありません</p>';
+      container.style.display = 'block';
+      return;
+    }
+    
+    var html = '<h3 style="margin-bottom: 15px; color: #333;">差分結果（' + diffKeys.length + '件の変更）</h3>';
+    html += '<table border="1" style="border-collapse: collapse; width: 100%; font-size: 0.9em;">';
+    html += '<thead><tr style="background: #f9f9f9;">';
+    html += '<th style="padding: 10px; text-align: left; width: 30%;">パス</th>';
+    html += '<th style="padding: 10px; text-align: left; width: 10%;">タイプ</th>';
+    html += '<th style="padding: 10px; text-align: left; width: 30%;">旧値</th>';
+    html += '<th style="padding: 10px; text-align: left; width: 30%;">新値</th>';
+    html += '</tr></thead><tbody>';
+    
+    diffKeys.sort().forEach(function(key) {
+      var item = diff[key];
+      if (!item || !item.type) return;
+      
+      var type = item.type;
+      var bgColor = type === 'add' ? '#c2f7c2' : // green
+                   type === 'delete' ? '#f7c2c2' : // red
+                   '#fff8b3'; // yellow
+      
+      var typeLabel = type === 'add' ? '追加' :
+                     type === 'delete' ? '削除' :
+                     '変更';
+      
+      var oldValStr = item.old === null || item.old === undefined ? '(なし)' : 
+                     typeof item.old === 'object' ? JSON.stringify(item.old, null, 2) : 
+                     String(item.old);
+      var newValStr = item.new === null || item.new === undefined ? '(なし)' : 
+                     typeof item.new === 'object' ? JSON.stringify(item.new, null, 2) : 
+                     String(item.new);
+      
+      html += '<tr style="background: ' + bgColor + ';">';
+      html += '<td style="padding: 10px; font-weight: 600; font-family: monospace;">' + escapeHtml(key) + '</td>';
+      html += '<td style="padding: 10px; font-weight: 600;">' + escapeHtml(typeLabel) + '</td>';
+      html += '<td style="padding: 10px; font-family: monospace; font-size: 0.85em; word-break: break-all;">' + escapeHtml(oldValStr) + '</td>';
+      html += '<td style="padding: 10px; font-family: monospace; font-size: 0.85em; word-break: break-all;">' + escapeHtml(newValStr) + '</td>';
+      html += '</tr>';
+    });
+    
+    html += '</tbody></table>';
+    container.innerHTML = html;
+    container.style.display = 'block';
+  }
 
 })(window);
 
@@ -1323,7 +1709,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         runAnalysisBtn.textContent = '📊 このデータを分析する';
                         return;
                     }
-                    document.getElementById('analysis-banner').classList.remove('hidden');
+                    const bannerEl = document.getElementById('analysis-banner');
+                    if (bannerEl) {
+                        bannerEl.classList.remove('hidden');
+                    }
                     window.latestAnalysisResult = result;
                     runAnalysisBtn.disabled = false;
                     runAnalysisBtn.textContent = '📊 このデータを分析する';

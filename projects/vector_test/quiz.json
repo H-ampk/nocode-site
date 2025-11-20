@@ -1,0 +1,247 @@
+{
+  "version": "1.0",
+  "id": "vector_test_questions",
+  "questions": [
+    {
+      "questionId": "q001",
+      "text": "問題を解決する際、あなたはどのアプローチを取りますか？",
+      "type": "diagnostic_question",
+      "choices": [
+        {
+          "choiceId": "c1",
+          "text": "論理的な手順を順番に実行する",
+          "correct": true,
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": 0,
+            "comprehension": 0,
+            "application": 0
+          }
+        },
+        {
+          "choiceId": "c2",
+          "text": "直感的に答えを導き出す",
+          "correct": false,
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": 1,
+            "comprehension": 0,
+            "application": 0
+          }
+        },
+        {
+          "choiceId": "c3",
+          "text": "複数の情報を分析して統合する",
+          "correct": false,
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": 0,
+            "comprehension": 0,
+            "application": 0
+          }
+        },
+        {
+          "choiceId": "c4",
+          "text": "既存の知識を応用して解決する",
+          "correct": false,
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 0,
+            "comprehension": 0,
+            "application": 1
+          }
+        }
+      ]
+    },
+    {
+      "questionId": "q002",
+      "text": "新しい概念を理解する際、どの方法が最も効果的だと思いますか？",
+      "type": "diagnostic_question",
+      "choices": [
+        {
+          "choiceId": "c1",
+          "text": "定義を暗記する",
+          "correct": false,
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": -1,
+            "comprehension": 0,
+            "application": 0
+          }
+        },
+        {
+          "choiceId": "c2",
+          "text": "具体例を通じて本質を理解する",
+          "correct": true,
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 0,
+            "comprehension": 1,
+            "application": 1
+          }
+        },
+        {
+          "choiceId": "c3",
+          "text": "関連する概念と比較分析する",
+          "correct": false,
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": 0,
+            "comprehension": 1,
+            "application": 0
+          }
+        }
+      ]
+    },
+    {
+      "questionId": "q003",
+      "text": "複雑な問題に直面したとき、どのようにアプローチしますか？",
+      "type": "diagnostic_question",
+      "choices": [
+        {
+          "choiceId": "c1",
+          "text": "問題を細かく分解して分析する",
+          "correct": true,
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": 0,
+            "comprehension": 0,
+            "application": 0
+          }
+        },
+        {
+          "choiceId": "c2",
+          "text": "全体像を把握してから詳細に入る",
+          "correct": false,
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 1,
+            "comprehension": 1,
+            "application": 0
+          }
+        },
+        {
+          "choiceId": "c3",
+          "text": "類似した問題の解決方法を応用する",
+          "correct": false,
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": -1,
+            "comprehension": 0,
+            "application": 1
+          }
+        }
+      ]
+    },
+    {
+      "questionId": "q004",
+      "text": "学習した内容を実践する際、どの方法を選びますか？",
+      "type": "diagnostic_question",
+      "choices": [
+        {
+          "choiceId": "c1",
+          "text": "理論をそのまま適用する",
+          "correct": false,
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": -1,
+            "comprehension": 0,
+            "application": 0
+          }
+        },
+        {
+          "choiceId": "c2",
+          "text": "状況に合わせて柔軟に応用する",
+          "correct": true,
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": 1,
+            "comprehension": 1,
+            "application": 1
+          }
+        },
+        {
+          "choiceId": "c3",
+          "text": "既存のパターンを繰り返す",
+          "correct": false,
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": -1,
+            "comprehension": 0,
+            "application": 0
+          }
+        }
+      ]
+    },
+    {
+      "questionId": "q005",
+      "text": "創造的な解決策を生み出すために、どの方法が重要だと思いますか？",
+      "type": "diagnostic_question",
+      "choices": [
+        {
+          "choiceId": "c1",
+          "text": "既存の知識を組み合わせる",
+          "correct": false,
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": 0,
+            "comprehension": 1,
+            "application": 1
+          }
+        },
+        {
+          "choiceId": "c2",
+          "text": "自由な発想で試行錯誤する",
+          "correct": true,
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": 1,
+            "comprehension": 0,
+            "application": 0
+          }
+        },
+        {
+          "choiceId": "c3",
+          "text": "論理的な手順に従う",
+          "correct": false,
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": -1,
+            "comprehension": 0,
+            "application": 0
+          }
+        },
+        {
+          "choiceId": "c4",
+          "text": "他分野の知識を応用する",
+          "correct": false,
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": 1,
+            "comprehension": 1,
+            "application": 1
+          }
+        }
+      ]
+    }
+  ],
+  "glossary_vector": {}
+}
+

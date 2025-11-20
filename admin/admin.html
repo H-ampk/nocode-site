@@ -18,6 +18,98 @@
     <a href="../projects/">📁 プロジェクト一覧</a>
     <a href="../main.html">← ホームに戻る</a>
   </div>
+
+  <section id="quizVersionList" style="margin-top: 30px; padding: 20px; background: #f9f9f9; border-radius: 8px; max-width: 800px;">
+    <h3>📦 クイズバージョン一覧</h3>
+    <p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">
+      プロジェクト: <span id="currentProjectId">default</span>
+    </p>
+    <ul id="versionList" style="list-style: none; padding: 0;">
+      <li style="padding: 10px; background: #fff; margin-bottom: 5px; border-radius: 5px;">読み込み中...</li>
+    </ul>
+  </section>
+
+  <section id="versionManagerSection" style="margin-top: 30px; padding: 20px; background: #f9f9f9; border-radius: 8px; max-width: 1000px;">
+    <h2>📦 バージョン管理</h2>
+    <iframe src="version_manager.html" style="width:100%; height:600px; border:1px solid #ddd; border-radius: 8px;"></iframe>
+  </section>
+
+  <script>
+    // プロジェクトIDを取得
+    function getCurrentProjectId() {
+      try {
+        return localStorage.getItem('projectId') || 'default';
+      } catch (e) {
+        return 'default';
+      }
+    }
+
+    // バージョン一覧を読み込む
+    async function loadVersionList() {
+      const projectId = getCurrentProjectId();
+      document.getElementById('currentProjectId').textContent = projectId;
+      
+      const ul = document.getElementById('versionList');
+      ul.innerHTML = '<li style="padding: 10px; background: #fff; margin-bottom: 5px; border-radius: 5px;">読み込み中...</li>';
+      
+      try {
+        // 注意: ブラウザから直接ディレクトリ一覧を取得することはできないため、
+        // 実際の運用ではサーバー側APIが必要です
+        // ここでは latest.json の存在確認と、localStorage に保存されたバージョン履歴を表示
+        const latestPath = `../projects/${projectId}/quiz_versions/latest.json`;
+        const response = await fetch(latestPath);
+        
+        if (response.ok) {
+          const latest = await response.json();
+          ul.innerHTML = '';
+          
+          // latest.json の情報を表示
+          const li = document.createElement('li');
+          li.style.cssText = 'padding: 10px; background: #fff; margin-bottom: 5px; border-radius: 5px; border-left: 4px solid #2d7bf4;';
+          li.innerHTML = `
+            <strong>latest.json</strong> (最新版)<br>
+            <small style="color: #666;">
+              バージョン: ${latest.version || 'N/A'}<br>
+              作成日時: ${latest.version_date ? new Date(latest.version_date).toLocaleString('ja-JP') : 'N/A'}<br>
+              作成者: ${latest.author || 'N/A'}
+            </small>
+          `;
+          ul.appendChild(li);
+          
+          // ローカルストレージからバージョン履歴を取得（あれば）
+          try {
+            const history = JSON.parse(localStorage.getItem(`quiz_versions_${projectId}`) || '[]');
+            if (history.length > 0) {
+              const historyTitle = document.createElement('li');
+              historyTitle.style.cssText = 'padding: 10px; background: #e8f4f8; margin-top: 15px; margin-bottom: 5px; border-radius: 5px; font-weight: bold;';
+              historyTitle.textContent = '保存履歴（ローカル）';
+              ul.appendChild(historyTitle);
+              
+              history.slice(0, 10).forEach(function(version) {
+                const historyLi = document.createElement('li');
+                historyLi.style.cssText = 'padding: 10px; background: #fff; margin-bottom: 5px; border-radius: 5px;';
+                historyLi.innerHTML = `
+                  <strong>${version.filename}</strong><br>
+                  <small style="color: #666;">${version.date ? new Date(version.date).toLocaleString('ja-JP') : 'N/A'}</small>
+                `;
+                ul.appendChild(historyLi);
+              });
+            }
+          } catch (e) {
+            console.warn('Failed to load version history:', e);
+          }
+        } else {
+          ul.innerHTML = '<li style="padding: 10px; background: #fff; margin-bottom: 5px; border-radius: 5px; color: #999;">バージョンファイルが見つかりません</li>';
+        }
+      } catch (error) {
+        console.error('Failed to load version list:', error);
+        ul.innerHTML = '<li style="padding: 10px; background: #fff; margin-bottom: 5px; border-radius: 5px; color: #e53e3e;">エラー: バージョン一覧の読み込みに失敗しました</li>';
+      }
+    }
+
+    // ページ読み込み時に実行
+    window.addEventListener('DOMContentLoaded', loadVersionList);
+  </script>
 </body>
 </html>
 

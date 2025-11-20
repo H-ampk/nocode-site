@@ -1,0 +1,14 @@
+{
+  "project_id": "vector_test",
+  "access_mode": "public",
+  "pin_code": null,
+  "values": {
+    "logic": 1,
+    "analysis": 1,
+    "creativity": 1,
+    "comprehension": 1,
+    "application": 1
+  },
+  "description": "ベクトル分析テスト用プロジェクト"
+}
+
