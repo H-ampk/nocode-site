@@ -162,7 +162,15 @@
         function init() {
             QuizPlayer.loadProject()
                 .then(function() {
-                    // デモ用のクイズデータを設定
+                    // window.currentProjectData が設定されている場合はそれを使用
+                    if (window.currentProjectData && window.currentProjectData.questions) {
+                        QuizPlayer.loadQuiz = function() {
+                            return Promise.resolve(window.currentProjectData);
+                        };
+                        return QuizPlayer.loadQuiz();
+                    }
+                    
+                    // デモ用のクイズデータを設定（フォールバック）
                     var demoQuiz = {
                         questions: [
                             {

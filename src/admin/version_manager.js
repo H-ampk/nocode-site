@@ -31,13 +31,13 @@
     const container = document.getElementById('versionList');
     
     try {
-      // latest.json を読み込んで情報を取得
-      const latestPath = `../projects/${currentProjectId}/quiz_versions/latest.json`;
-      const latestResponse = await fetch(latestPath);
+      // quiz.json を読み込んで情報を取得
+      const quizPath = `../projects/${currentProjectId}/quiz.json`;
+      const quizResponse = await fetch(quizPath);
       
-      let latestInfo = null;
-      if (latestResponse.ok) {
-        latestInfo = await latestResponse.json();
+      let quizInfo = null;
+      if (quizResponse.ok) {
+        quizInfo = await quizResponse.json();
       }
       
       // 注意: ブラウザから直接ディレクトリ一覧を取得することはできないため、
@@ -54,14 +54,14 @@
         console.warn('Failed to load version history:', e);
       }
       
-      // latest.json が存在する場合は先頭に追加
-      if (latestInfo && latestInfo.version) {
+      // quiz.json が存在する場合は先頭に追加
+      if (quizInfo && quizInfo.version) {
         versions.unshift({
-          filename: 'latest.json',
-          version: latestInfo.version,
-          date: latestInfo.version_date,
-          author: latestInfo.author,
-          isLatest: true
+          filename: 'quiz.json',
+          version: quizInfo.version,
+          date: quizInfo.version_date,
+          author: quizInfo.author,
+          isCurrent: true
         });
       }
       
@@ -88,13 +88,13 @@
       div.className = 'version-item';
       
       const dateStr = version.date ? new Date(version.date).toLocaleString('ja-JP') : 'N/A';
-      const isLatest = version.isLatest || version.filename === 'latest.json';
+      const isCurrent = version.isCurrent || version.filename === 'quiz.json';
       
       div.innerHTML = `
         <div class="version-info">
           <div class="version-name">
             ${escapeHtml(version.filename)}
-            ${isLatest ? '<span style="color: #2d7bf4; margin-left: 8px;">(最新版)</span>' : ''}
+            ${isCurrent ? '<span style="color: #2d7bf4; margin-left: 8px;">(現在のクイズ)</span>' : ''}
           </div>
           <div class="version-meta">
             バージョン: ${escapeHtml(version.version || version.filename)} | 
@@ -104,8 +104,8 @@
         </div>
         <div class="version-actions">
           <button class="btn-view" onclick="viewVersion('${escapeHtml(version.filename)}')">表示</button>
-          ${!isLatest ? `<button class="btn-diff" onclick="diffVersion('${escapeHtml(version.filename)}')">差分</button>` : ''}
-          ${!isLatest ? `<button class="btn-delete" onclick="deleteVersion('${escapeHtml(version.filename)}')">削除</button>` : ''}
+          ${!isCurrent ? `<button class="btn-diff" onclick="diffVersion('${escapeHtml(version.filename)}')">差分</button>` : ''}
+          ${!isCurrent ? `<button class="btn-delete" onclick="deleteVersion('${escapeHtml(version.filename)}')">削除</button>` : ''}
         </div>
       `;
       
@@ -118,7 +118,10 @@
    */
   async function viewVersion(filename) {
     try {
-      const path = `../projects/${currentProjectId}/quiz_versions/${filename}`;
+      // quiz.json の場合は直接読み込み、それ以外は quiz_versions/ から読み込み
+      const path = filename === 'quiz.json'
+        ? `../projects/${currentProjectId}/quiz.json`
+        : `../projects/${currentProjectId}/quiz_versions/${filename}`;
       const response = await fetch(path);
       
       if (!response.ok) {
@@ -157,8 +160,8 @@
    * バージョンを削除
    */
   async function deleteVersion(filename) {
-    if (filename === 'latest.json') {
-      alert('⚠️ latest.json は削除できません');
+    if (filename === 'quiz.json') {
+      alert('⚠️ quiz.json は削除できません（現在のクイズファイルです）');
       return;
     }
     
@@ -197,18 +200,21 @@
       content.innerHTML = '<div class="loading">読み込み中...</div>';
       modal.classList.add('active');
       
-      // latest.json と対象バージョンを読み込む
-      const [latestResponse, targetResponse] = await Promise.all([
-        fetch(`../projects/${currentProjectId}/quiz_versions/latest.json`),
-        fetch(`../projects/${currentProjectId}/quiz_versions/${filename}`)
+      // quiz.json と対象バージョンを読み込む
+      const quizPath = `../projects/${currentProjectId}/quiz.json`;
+      const versionPath = `../projects/${currentProjectId}/quiz_versions/${filename}`;
+      
+      const [quizResponse, targetResponse] = await Promise.all([
+        fetch(quizPath),
+        fetch(versionPath)
       ]);
       
-      if (!latestResponse.ok || !targetResponse.ok) {
+      if (!quizResponse.ok || !targetResponse.ok) {
         content.innerHTML = '<div class="empty-state">バージョンファイルの読み込みに失敗しました</div>';
         return;
       }
       
-      const base = await latestResponse.json();
+      const base = await quizResponse.json();
       const target = await targetResponse.json();
       
       const diff = diffJSON(base, target);

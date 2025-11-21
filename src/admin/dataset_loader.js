@@ -119,41 +119,62 @@
         return response.json();
       })
       .then(function (data) {
-        // 標準形に統一: { user_id, session_id, quiz_version, logs, raw }
+        // 標準形に統一: { user_id, session_id, quiz_version, logs, sessions, raw }
         var standardResult = {
           user_id: null,
           session_id: null,
           quiz_version: null,
           logs: [],
+          sessions: [], // sessions 配列を追加
           raw: data // 元データを保持
         };
         
         // 様々な形式から標準形に変換
         var logs = [];
+        var sessions = [];
         var user_id = null;
         var session_id = null;
         var quiz_version = null;
         
-        // 1. logs 配列を抽出
-        if (data.logs && Array.isArray(data.logs)) {
-          logs = data.logs;
-        } else if (Array.isArray(data)) {
-          logs = data;
-        } else if (data.sessions && Array.isArray(data.sessions)) {
-          // multi-session 形式: すべてのセッションのログを結合
-          data.sessions.forEach(function(session) {
+        // 1. sessions 配列を抽出（優先順位: vector_test_sessions.sessions > sessions）
+        if (data.vector_test_sessions && data.vector_test_sessions.sessions && Array.isArray(data.vector_test_sessions.sessions)) {
+          // quiz_log_dummy.json 形式: vector_test_sessions.sessions[]
+          sessions = data.vector_test_sessions.sessions;
+          // すべてのセッションのログを結合
+          sessions.forEach(function(session) {
             if (session.logs && Array.isArray(session.logs)) {
               logs = logs.concat(session.logs);
             }
           });
           // 最初のセッションの情報を使用
-          if (data.sessions.length > 0) {
-            user_id = data.sessions[0].user_id || data.user_id;
-            session_id = data.sessions[0].session_id;
-            quiz_version = data.sessions[0].quiz_version;
+          if (sessions.length > 0) {
+            user_id = sessions[0].user_id || data.vector_test_sessions.user_id || data.user_id;
+            session_id = sessions[0].session_id;
+            quiz_version = sessions[0].quiz_version;
           }
+        } else if (data.sessions && Array.isArray(data.sessions)) {
+          // multi-session 形式: sessions[]
+          sessions = data.sessions;
+          // すべてのセッションのログを結合
+          sessions.forEach(function(session) {
+            if (session.logs && Array.isArray(session.logs)) {
+              logs = logs.concat(session.logs);
+            }
+          });
+          // 最初のセッションの情報を使用
+          if (sessions.length > 0) {
+            user_id = sessions[0].user_id || data.user_id;
+            session_id = sessions[0].session_id;
+            quiz_version = sessions[0].quiz_version;
+          }
+        } else if (data.logs && Array.isArray(data.logs)) {
+          // 単一ログ配列形式
+          logs = data.logs;
+        } else if (Array.isArray(data)) {
+          logs = data;
         } else if (data.vector_test_sessions && Array.isArray(data.vector_test_sessions)) {
-          // vector_test_sessions 形式
+          // 旧形式: vector_test_sessions が配列の場合（後方互換性）
+          sessions = data.vector_test_sessions;
           data.vector_test_sessions.forEach(function(session) {
             if (session.answer_logs && Array.isArray(session.answer_logs)) {
               // answer_logs を logs 形式に変換
@@ -192,10 +213,11 @@
         standardResult.session_id = session_id;
         standardResult.quiz_version = quiz_version;
         standardResult.logs = logs;
+        standardResult.sessions = sessions; // sessions 配列を設定
         
-        // 4. student_log がある場合は保持（multi-session 構造）
-        if (data.sessions || data.vector_test_sessions) {
-          standardResult.student_log = data.sessions || data.vector_test_sessions;
+        // 4. student_log がある場合は保持（後方互換性のため）
+        if (sessions.length > 0) {
+          standardResult.student_log = sessions;
         }
         
         // 5. studentLogsを読み込む（configが提供されている場合）
@@ -345,20 +367,20 @@
    */
   function listQuizVersions(projectId) {
     projectId = projectId || 'default';
-    var versionsPath = '../projects/' + projectId + '/quiz_versions/';
+    var quizPath = '../projects/' + projectId + '/quiz.json';
     
     // ディレクトリリストを取得するため、index.html のようなファイルを試行
     // 実際の実装では、サーバー側でディレクトリリストを返すAPIが必要
-    // ここでは、latest.json と localStorage から取得した履歴を使用
-    return fetch(versionsPath + 'latest.json')
+    // ここでは、quiz.json と localStorage から取得した履歴を使用
+    return fetch(quizPath)
       .then(function (response) {
         if (!response.ok) {
           return [];
         }
         return response.json();
       })
-      .then(function (latest) {
-        var versions = ['latest.json'];
+      .then(function (quiz) {
+        var versions = ['quiz.json'];
         
         // localStorage からバージョン履歴を取得
         try {
@@ -367,7 +389,7 @@
           if (saved) {
             var history = JSON.parse(saved);
             history.forEach(function (v) {
-              if (v.filename && v.filename !== 'latest.json' && versions.indexOf(v.filename) === -1) {
+              if (v.filename && v.filename !== 'quiz.json' && versions.indexOf(v.filename) === -1) {
                 versions.push(v.filename);
               }
             });

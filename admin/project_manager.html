@@ -132,6 +132,25 @@
     <button id="saveBtn">project.json をダウンロード</button>
   </div>
 
+  <!-- プロジェクト一覧（本棚UI） -->
+  <div style="background:#fff;padding:1rem;border:1px solid #ddd;border-radius:8px;max-width:1200px;margin-top:2rem;">
+    <h2>📚 保存済みプロジェクト一覧</h2>
+    
+    <input id="project-search" placeholder="検索 (名前・タグ)" class="search-input" />
+    
+    <div style="margin-bottom:15px; display:flex; gap:10px; align-items:center;">
+      <label>タグで絞り込み:</label>
+      <input type="text" id="filter-tags" placeholder="タグ名を入力..." 
+             style="flex:1; max-width:300px; padding:8px; border:1px solid #ddd; border-radius:5px;" />
+    </div>
+    
+    <div id="project-list" class="project-grid"></div>
+  </div>
+  
+  <link rel="stylesheet" href="../public/css/admin.css" />
+
+  <script src="js/project_manager.js"></script>
+
   <script>
     function currentMode() {
       var els = document.querySelectorAll('input[name="mode"]');

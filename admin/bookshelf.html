@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>プロジェクト本棚</title>
+  <link rel="stylesheet" href="../public/css/main.css" />
+  <link rel="stylesheet" href="../public/css/admin.css" />
+  <script src="../src/admin/pin.js" defer></script>
+  <script>window.addEventListener('DOMContentLoaded',function(){ if(window.AdminAuth) AdminAuth.init({admin:true}); });</script>
+  <style>
+    body {
+      background: #f5f5f5;
+      padding: 20px;
+    }
+    .header {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .filter-bar {
+      background: white;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .filter-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .filter-tag {
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.9em;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+    }
+    .filter-tag:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .filter-tag.active {
+      border-color: #333;
+      font-weight: bold;
+    }
+    .clear-filter {
+      margin-left: 10px;
+      padding: 6px 12px;
+      background: #e0e0e0;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+    .clear-filter:hover {
+      background: #d0d0d0;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>📚 プロジェクト本棚</h1>
+    <div class="menu">
+      <a href="admin.html">← 管理ダッシュボードに戻る</a>
+      <button id="btn-create-project" class="create-project-btn" style="background: #4CAF50; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; margin-left: 10px; font-size: 0.9em;">
+        ＋ 新規プロジェクト
+      </button>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <h3 style="margin: 0 0 10px 0;">タグフィルタ</h3>
+    <div class="filter-tags" id="filter-tags">
+      <span style="color: #666;">読み込み中...</span>
+    </div>
+    <button class="clear-filter" onclick="clearFilters()">すべて表示</button>
+  </div>
+
+  <div id="project-list" class="project-grid"></div>
+
+  <!-- 新規プロジェクト作成モーダル -->
+  <div id="createProjectModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>新規プロジェクト</h3>
+      <label style="display: block; margin-bottom: 8px; font-weight: 600;">タイトル</label>
+      <input id="newProjectTitle" type="text" placeholder="例：新規プロジェクト" style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; margin-bottom: 16px; box-sizing: border-box;" />
+      
+      <label style="display: block; margin-bottom: 8px; font-weight: 600;">説明</label>
+      <textarea id="newProjectDesc" placeholder="説明を入力" style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; margin-bottom: 16px; min-height: 80px; resize: vertical; box-sizing: border-box;"></textarea>
+
+      <label style="display: block; margin-bottom: 8px; font-weight: 600;">タグ（カンマ区切り）</label>
+      <input id="newProjectTags" type="text" placeholder="例：math,logic" style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 6px; margin-bottom: 20px; box-sizing: border-box;" />
+
+      <div class="modal-actions">
+        <button id="createProjectConfirm" style="background: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 0.95em;">作成</button>
+        <button id="createProjectCancel" style="background: #718096; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 0.95em;">キャンセル</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =======================
+    // テンプレートの自動追加（savedProjectsに統合）
+    // =======================
+    (function ensureTemplates() {
+      try {
+        const templates = [
+          {
+            id: "template_quiz_basic",
+            title: "テンプレ: 選択式クイズ",
+            description: "歴史と科学の二問構成のクイズテンプレート",
+            tags: ["template", "quiz"],
+            updated_at: new Date().toISOString(),
+            questionCount: 2
+          },
+          {
+            id: "template_flashcard_basic",
+            title: "テンプレ: 復習カード",
+            description: "暗記カード形式で前面と裏面を切り替えるテンプレート",
+            tags: ["template", "flashcard"],
+            updated_at: new Date().toISOString(),
+            questionCount: 2
+          }
+        ];
+
+        const list = JSON.parse(localStorage.getItem("savedProjects") || "[]");
+        let updated = false;
+
+        templates.forEach(t => {
+          if (!list.find(x => x.id === t.id)) {
+            list.push(t);
+            updated = true;
+            console.log("📘 テンプレートを追加:", t.id);
+          }
+        });
+
+        if (updated) {
+          localStorage.setItem("savedProjects", JSON.stringify(list));
+          console.log("✅ テンプレートをsavedProjectsに追加しました");
+        }
+      } catch (e) {
+        console.warn("⚠️ テンプレート追加エラー:", e);
+      }
+    })();
+
+    // =======================
+    // タグカラー生成
+    // =======================
+    const tagColorMap = {};
+
+    function getTagColor(tag) {
+      if (!tagColorMap[tag]) {
+        let hash = 0;
+        for (let i = 0; i < tag.length; i++) {
+          hash = tag.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const hue = Math.abs(hash % 360);
+        tagColorMap[tag] = `hsl(${hue}, 70%, 85%)`;
+      }
+      return tagColorMap[tag];
+    }
+
+    // =======================
+    // プロジェクト読み込み
+    // =======================
+    let allProjects = [];
+    let selectedTags = new Set();
+
+    async function loadProjects() {
+      const list = document.getElementById("project-list");
+      list.innerHTML = '<p style="text-align:center; padding:40px;">読み込み中...</p>';
+
+      try {
+        // プロジェクトフォルダのリストを取得
+        // 注意: ブラウザから直接ディレクトリ一覧を取得することはできないため、
+        // 既知のプロジェクトフォルダを列挙するか、サーバー側APIが必要
+        // 将来的には projects/index.json のようなインデックスファイルを作成することを推奨
+        const projectFolders = ['default', 'vector_test', 'dummy_project', 'sample_project', 'demo_project_01', 'demo_project_02', 'demo_project_03'];
+        
+        // projects/index.json があればそれを使用（将来の拡張）
+        try {
+          const indexRes = await fetch('../projects/index.json');
+          if (indexRes && indexRes.ok) {
+            const indexData = await indexRes.json();
+            if (indexData.projects && Array.isArray(indexData.projects)) {
+              projectFolders.length = 0;
+              indexData.projects.forEach(p => {
+                if (p.id) projectFolders.push(p.id);
+              });
+              console.log("📁 index.json からプロジェクトフォルダを読み込み:", projectFolders.length, "件");
+            }
+          } else {
+            console.warn("⚠️ projects/index.json が見つかりません（404）。既知のフォルダリストを使用します。");
+          }
+        } catch (e) {
+          // index.json が存在しない場合は既知のフォルダリストを使用
+          console.warn("⚠️ projects/index.json の読み込みに失敗しました:", e.message);
+          console.log("   既知のフォルダリストを使用します。index.json を生成するには: node projects/generate_index.js");
+        }
+        
+        allProjects = [];
+
+        for (const folder of projectFolders) {
+          try {
+            const projectPath = `../projects/${folder}/project.json`;
+            const quizPath = `../projects/${folder}/quiz.json`;
+            
+            const [projectRes, quizRes] = await Promise.all([
+              fetch(projectPath).catch(() => null),
+              fetch(quizPath).catch(() => null)
+            ]);
+
+            if (projectRes && projectRes.ok) {
+              const projectData = await projectRes.json();
+              let quizData = null;
+              
+              if (quizRes && quizRes.ok) {
+                quizData = await quizRes.json();
+              }
+
+              // project_id の決定: project.json の project_id を優先、なければフォルダ名
+              const projectId = projectData.project_id || folder;
+              
+              // 質問数を取得
+              const questionCount = quizData?.questions?.length || 0;
+
+              // 更新日時を取得
+              // ファイルの最終更新日時は取得できないため、project.json の updated_at または現在時刻を使用
+              let updatedAt = projectData.updated_at || new Date().toISOString();
+              if (quizData && quizData.version_date) {
+                updatedAt = quizData.version_date;
+              }
+
+              allProjects.push({
+                id: projectId,  // project.json の project_id を優先使用
+                title: projectData.title || quizData?.title || folder,
+                description: projectData.description || quizData?.description || '',
+                tags: projectData.tags || quizData?.tags || [],
+                questionCount: questionCount,
+                updated_at: updatedAt,
+                projectPath: projectPath,
+                quizPath: quizPath,
+                folder: folder  // フォルダ名も保持（fetchパス用）
+              });
+            }
+          } catch (e) {
+            console.warn(`Failed to load project ${folder}:`, e);
+          }
+        }
+
+        // localStorage からもプロジェクトを読み込む（savedProjects優先）
+        try {
+          // savedProjects[] から読み込む（新形式）
+          const savedProjects = JSON.parse(localStorage.getItem("savedProjects") || "[]");
+          savedProjects.forEach(p => {
+            if (p && p.id) {
+              // テンプレートの場合は特別処理
+              if (p.id.startsWith("template_")) {
+                allProjects.push({
+                  id: p.id,
+                  title: p.title || 'テンプレート',
+                  description: p.description || '',
+                  tags: p.tags || [],
+                  questionCount: p.questionCount || 0,
+                  updated_at: p.updated_at || new Date().toISOString(),
+                  isTemplate: true
+                });
+              } else {
+                // 通常のプロジェクト（project_<id>からデータを取得）
+                const dataStr = localStorage.getItem("project_" + p.id);
+                if (dataStr) {
+                  try {
+                    const data = JSON.parse(dataStr);
+                    allProjects.push({
+                      id: p.id,
+                      title: p.title || data.title || '無題プロジェクト',
+                      description: p.description || data.description || '',
+                      tags: p.tags || data.tags || [],
+                      questionCount: data.questions?.length || 0,
+                      updated_at: p.updated_at || new Date().toISOString(),
+                      isLocalStorage: true,
+                      data: data
+                    });
+                  } catch (e) {
+                    console.warn("Failed to parse project data:", p.id, e);
+                  }
+                } else {
+                  // project_<id> がない場合はメタデータのみ表示
+                  allProjects.push({
+                    id: p.id,
+                    title: p.title || '無題プロジェクト',
+                    description: p.description || '',
+                    tags: p.tags || [],
+                    questionCount: p.questionCount || 0,
+                    updated_at: p.updated_at || new Date().toISOString(),
+                    isLocalStorage: true
+                  });
+                }
+              }
+            }
+          });
+        } catch (e) {
+          console.warn("Failed to load localStorage projects:", e);
+        }
+        
+        // 旧形式（projects[]）も互換性のために読み込む
+        try {
+          const oldProjects = JSON.parse(localStorage.getItem("projects") || "[]");
+          oldProjects.forEach(p => {
+            if (p.data && !allProjects.find(ap => ap.id === (p.filename || `local_${Date.now()}`))) {
+              allProjects.push({
+                id: p.filename || `local_${Date.now()}`,
+                title: p.name || p.data.title || '無題プロジェクト',
+                description: p.data.description || '',
+                tags: p.tags || p.data.tags || [],
+                questionCount: p.data.questions?.length || 0,
+                updated_at: p.updated_at || new Date().toISOString(),
+                isLocalStorage: true,
+                data: p.data
+              });
+            }
+          });
+        } catch (e) {
+          console.warn("Failed to load old format projects:", e);
+        }
+
+        renderProjects();
+        renderFilterTags();
+      } catch (e) {
+        console.error("Failed to load projects:", e);
+        list.innerHTML = '<p style="text-align:center; padding:40px; color:#e53e3e;">プロジェクトの読み込みに失敗しました。</p>';
+      }
+    }
+
+    // =======================
+    // プロジェクトカード表示
+    // =======================
+    function renderProjects() {
+      const list = document.getElementById("project-list");
+      if (!list) return;
+
+      // フィルタリング
+      let filtered = allProjects;
+      if (selectedTags.size > 0) {
+        filtered = allProjects.filter(p => {
+          const projectTags = p.tags || [];
+          return Array.from(selectedTags).every(tag => projectTags.includes(tag));
+        });
+      }
+
+      if (filtered.length === 0) {
+        list.innerHTML = '<p style="text-align:center; padding:40px; color:#666;">該当するプロジェクトが見つかりません。</p>';
+        return;
+      }
+
+      list.innerHTML = "";
+
+      filtered.forEach(project => {
+        if (!project || !project.id) {
+          console.warn("⚠️ プロジェクトデータが不正です:", project);
+          return;
+        }
+        
+        const card = document.createElement("div");
+        card.className = "project-card";
+        card.setAttribute("data-project-id", project.id);
+
+        const tagHTML = (project.tags || [])
+          .map(t => {
+            const color = getTagColor(t);
+            return `<span class="tag-pill" style="background: ${color}; color: #333;">${escapeHtml(t)}</span>`;
+          })
+          .join("");
+
+        const templateBadge = (project.tags && project.tags.includes('template')) 
+          ? '<span class="badge badge-template" style="background: #4aa3ff; color: white; padding: 3px 8px; border-radius: 5px; font-size: 10px; margin-left: 6px;">テンプレート</span>'
+          : '';
+        
+        const projectId = project.id;
+        
+        card.innerHTML = `
+          <h4 style="display: flex; align-items: center; gap: 8px;">${escapeHtml(project.title)}${templateBadge}</h4>
+          <p style="color:#999; font-size:0.9em; margin:5px 0;">${escapeHtml(project.description || '説明なし')}</p>
+          <div class="tag-area">${tagHTML || '<span style="color:#999;">タグなし</span>'}</div>
+          <div style="display:flex; justify-content:space-between; margin-top:auto; padding-top:10px; border-top:1px solid #333;">
+            <span style="color:#999; font-size:0.85em;">質問数: ${project.questionCount || 0}</span>
+            <span style="color:#999; font-size:0.85em;">${project.isTemplate || (project.tags && project.tags.includes('template')) ? 'テンプレート' : new Date(project.updated_at).toLocaleDateString('ja-JP')}</span>
+          </div>
+          <div style="display:flex; gap:8px; margin-top:10px;">
+            <button class="open-btn" style="flex:1; padding:8px; background:#2d7bf4; color:white; border:none; border-radius:6px; cursor:pointer;" onclick="event.stopPropagation(); openEditor('${escapeHtml(projectId)}');">編集</button>
+            <button class="open-btn" style="flex:1; padding:8px; background:#4a5568; color:white; border:none; border-radius:6px; cursor:pointer;" onclick="event.stopPropagation(); window.location.href='project_manager.html?projectId=${escapeHtml(projectId)}'">設定</button>
+            <button class="delete-btn" style="background:#ff4d4d; color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; font-size:0.9em;" onclick="event.stopPropagation(); if(confirm('このプロジェクトを削除しますか？')) { deleteProject('${escapeHtml(projectId)}'); }">削除</button>
+          </div>
+        `;
+
+        card.addEventListener("click", () => loadProjectToEditor(project));
+        list.appendChild(card);
+      });
+    }
+
+    // =======================
+    // タグフィルタ表示
+    // =======================
+    function renderFilterTags() {
+      const container = document.getElementById("filter-tags");
+      if (!container) return;
+
+      // 全タグを収集
+      const allTags = new Set();
+      allProjects.forEach(p => {
+        (p.tags || []).forEach(tag => allTags.add(tag));
+      });
+
+      if (allTags.size === 0) {
+        container.innerHTML = '<span style="color:#666;">タグがありません</span>';
+        return;
+      }
+
+      container.innerHTML = "";
+
+      Array.from(allTags).sort().forEach(tag => {
+        const tagEl = document.createElement("span");
+        tagEl.className = "filter-tag";
+        if (selectedTags.has(tag)) {
+          tagEl.classList.add("active");
+        }
+        tagEl.style.background = getTagColor(tag);
+        tagEl.style.color = "#333";
+        tagEl.textContent = tag;
+        tagEl.addEventListener("click", (e) => {
+          e.stopPropagation();
+          toggleTagFilter(tag);
+        });
+        container.appendChild(tagEl);
+      });
+    }
+
+    // =======================
+    // タグフィルタ切り替え
+    // =======================
+    function toggleTagFilter(tag) {
+      if (selectedTags.has(tag)) {
+        selectedTags.delete(tag);
+      } else {
+        selectedTags.add(tag);
+      }
+      renderProjects();
+      renderFilterTags();
+    }
+
+    function clearFilters() {
+      selectedTags.clear();
+      renderProjects();
+      renderFilterTags();
+    }
+
+    // =======================
+    // エディタを開く関数
+    // =======================
+    function openEditor(projectId) {
+      if (!projectId) {
+        console.warn("⚠️ プロジェクトIDが指定されていません");
+        return;
+      }
+      const url = '../src/editor/editor.html?project_id=' + encodeURIComponent(projectId);
+      console.log('📁 編集ボタン: 遷移先URL =', url);
+      window.location.href = url;
+    }
+
+    // =======================
+    // プロジェクト削除機能
+    // =======================
+    function deleteProject(id) {
+      if (!id) {
+        console.warn("⚠️ 削除対象のプロジェクトIDが指定されていません");
+        return;
+      }
+      
+      try {
+        // savedProjects[] から削除
+        const list = JSON.parse(localStorage.getItem("savedProjects") || "[]");
+        const filtered = list.filter(proj => proj.id !== id);
+        localStorage.setItem("savedProjects", JSON.stringify(filtered));
+        
+        // project_<id> からも削除
+        localStorage.removeItem("project_" + id);
+        
+        console.log("✅ プロジェクトを削除しました:", id);
+        
+        // ページをリロードして更新
+        location.reload();
+      } catch (e) {
+        console.error("❌ プロジェクト削除エラー:", e);
+        alert("プロジェクトの削除中にエラーが発生しました。");
+      }
+    }
+
+    // =======================
+    // プロジェクトをエディタに読み込み
+    // =======================
+    async function loadProjectToEditor(project) {
+      try {
+        // projectId が指定されている場合は直接エディタに遷移（project_idパラメータで）
+        if (project && project.id) {
+          // テンプレートの場合は特別処理（localStorageに保存してから遷移）
+          if (project.isTemplate || (project.id && project.id.startsWith("template_"))) {
+            console.log("📘 テンプレートを読み込み:", project.id);
+            // テンプレートデータはloadProjectFromIdで処理されるため、直接遷移
+            window.location.href = `../src/editor/editor.html?project_id=${encodeURIComponent(project.id)}`;
+            return;
+          }
+          
+          // 通常のプロジェクトも project_id パラメータで遷移
+          if (!project.isLocalStorage) {
+            window.location.href = `../src/editor/editor.html?project_id=${encodeURIComponent(project.id)}`;
+            return;
+          }
+        }
+        
+        let projectData = null;
+
+        if (project.isLocalStorage && project.data) {
+          // localStorage から読み込み
+          projectData = project.data;
+        } else {
+          // ファイルから読み込み
+          const quizPath = project.quizPath;
+          if (quizPath) {
+            const response = await fetch(quizPath);
+            if (response.ok) {
+              projectData = await response.json();
+            }
+          }
+        }
+
+        if (!projectData) {
+          alert("プロジェクトデータの読み込みに失敗しました。");
+          return;
+        }
+
+        // エディタに渡すために localStorage に保存
+        localStorage.setItem("editor_current_project", JSON.stringify(projectData));
+        
+        // エディタページに遷移
+        window.location.href = "../src/editor/editor.html?mode=edit";
+      } catch (e) {
+        console.error("Failed to load project:", e);
+        alert("プロジェクトの読み込み中にエラーが発生しました。");
+      }
+    }
+
+    // =======================
+    // HTMLエスケープ
+    // =======================
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // =======================
+    // 新規プロジェクト作成機能
+    // =======================
+    (function initCreateProjectModal() {
+      const btnCreate = document.getElementById('btn-create-project');
+      const modal = document.getElementById('createProjectModal');
+      const btnConfirm = document.getElementById('createProjectConfirm');
+      const btnCancel = document.getElementById('createProjectCancel');
+      
+      if (!btnCreate || !modal || !btnConfirm || !btnCancel) {
+        console.warn("⚠️ 新規プロジェクト作成モーダルの要素が見つかりません");
+        return;
+      }
+      
+      // モーダルを開く
+      btnCreate.onclick = () => {
+        document.getElementById('newProjectTitle').value = '';
+        document.getElementById('newProjectDesc').value = '';
+        document.getElementById('newProjectTags').value = '';
+        modal.classList.remove('hidden');
+      };
+      
+      // モーダルを閉じる
+      btnCancel.onclick = () => {
+        modal.classList.add('hidden');
+      };
+      
+      // 背景クリックで閉じる
+      modal.onclick = (e) => {
+        if (e.target === modal) {
+          modal.classList.add('hidden');
+        }
+      };
+      
+      // プロジェクト作成実行
+      btnConfirm.onclick = async () => {
+        const title = document.getElementById('newProjectTitle').value.trim();
+        const desc = document.getElementById('newProjectDesc').value.trim();
+        const tags = document.getElementById('newProjectTags').value.trim()
+          .split(',')
+          .map(s => s.trim())
+          .filter(s => s);
+        
+        if (!title) {
+          alert("タイトルは必須です");
+          return;
+        }
+        
+        // フォルダ名をスラッグ化（英数字、ハイフン、アンダースコアのみ許可）
+        const folder = title
+          .replace(/[^\w\s\-]/g, '') // 英数字、空白、ハイフン以外を削除
+          .replace(/\s+/g, '_')      // 空白をアンダースコアに変換
+          .toLowerCase()
+          .substring(0, 50); // 最大50文字
+        
+        if (!folder) {
+          alert("タイトルからフォルダ名を生成できませんでした。英数字を含むタイトルを入力してください。");
+          return;
+        }
+        
+        try {
+          // 作成要求をサーバーへ送る
+          const res = await fetch('/admin-api/create-project', {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ folder, title, desc, tags })
+          });
+          
+          const data = await res.json();
+          
+          if (!res.ok) {
+            alert("作成に失敗しました: " + (data.error || res.status));
+            return;
+          }
+          
+          // 完了したら index.json 再生成
+          try {
+            await fetch('/admin-api/generate-index');
+          } catch (e) {
+            console.warn("⚠️ index.json の再生成に失敗しました:", e);
+          }
+          
+          // localStorage にプロジェクトメタデータを追加
+          try {
+            const savedProjects = JSON.parse(localStorage.getItem("savedProjects") || "[]");
+            const newProject = {
+              id: folder,
+              title: title,
+              description: desc,
+              tags: tags,
+              updated_at: new Date().toISOString(),
+              questionCount: 0
+            };
+            
+            // 既存のプロジェクトを削除（重複を防ぐ）
+            const filtered = savedProjects.filter(p => p.id !== folder);
+            filtered.push(newProject);
+            localStorage.setItem("savedProjects", JSON.stringify(filtered));
+          } catch (e) {
+            console.warn("⚠️ localStorage への保存に失敗しました:", e);
+          }
+          
+          // モーダルを閉じる
+          modal.classList.add('hidden');
+          
+          // エディタへ遷移
+          window.location.href = `../src/editor/editor.html?project_id=${encodeURIComponent(folder)}`;
+        } catch (e) {
+          console.error("❌ プロジェクト作成エラー:", e);
+          alert("プロジェクトの作成中にエラーが発生しました: " + e.message);
+        }
+      };
+    })();
+
+    // =======================
+    // 初期化
+    // =======================
+    document.addEventListener('DOMContentLoaded', loadProjects);
+  </script>
+</body>
+</html>
+

@@ -38,7 +38,7 @@
   async function getCurrentQuizVersion() {
     try {
       const projectId = getProjectId();
-      const response = await fetch(`../../projects/${projectId}/quiz_versions/latest.json`);
+      const response = await fetch(`../../projects/${projectId}/quiz.json`);
       if (response.ok) {
         const data = await response.json();
         return data.version || data.version_date || "unknown";
@@ -344,4 +344,125 @@
   };
 
 })(window);
+
+// ================================
+// プロジェクト一覧読み込み
+// ================================
+function loadProjectList() {
+  const list = JSON.parse(localStorage.getItem("projects") || "[]");
+  const container = document.getElementById("project-list");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  if (list.length === 0) {
+    container.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">プロジェクトが登録されていません。<br>エディタでプロジェクトを保存するか、JSONファイルをインポートしてください。</p>';
+    return;
+  }
+
+  list.forEach(proj => {
+    const card = document.createElement("div");
+    card.style.cssText = `
+      background: #fff;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border: 2px solid #e2e8f0;
+      transition: all 0.3s ease;
+    `;
+    
+    card.onmouseenter = function() {
+      this.style.transform = 'translateY(-3px)';
+      this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+    };
+    card.onmouseleave = function() {
+      this.style.transform = 'translateY(0)';
+      this.style.boxShadow = '0 2px 6px rgba(0,0,0,0.1)';
+    };
+
+    card.innerHTML = `
+      <h3 style="margin: 0; color: #2d3748; font-size: 1.2em;">📘 ${escapeHtml(proj.name)}</h3>
+      <p style="margin:0; font-size:0.9em; color: #666;">ファイル名：${escapeHtml(proj.filename)}</p>
+      <p style="margin:0; font-size:0.9em; color: #666;">更新日：${new Date(proj.updated_at).toLocaleString('ja-JP')}</p>
+
+      <div style="display:flex; gap:10px; margin-top:10px;">
+        <button class="btn-open" style="flex:1; padding: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease;">▶ 開く</button>
+        <button class="btn-delete" style="flex:1; padding: 10px; background: #f44336; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease;">🗑 削除</button>
+      </div>
+    `;
+
+    // 開く
+    card.querySelector(".btn-open").onclick = function() {
+      window.currentProjectData = proj.data;
+      window.location.href = "demo.html";
+    };
+
+    // 削除
+    card.querySelector(".btn-delete").onclick = function() {
+      if (!confirm(`プロジェクト「${proj.name}」を削除しますか？`)) return;
+
+      const arr = JSON.parse(localStorage.getItem("projects") || "[]");
+      const filtered = arr.filter(p => p.filename !== proj.filename);
+      localStorage.setItem("projects", JSON.stringify(filtered));
+
+      loadProjectList();
+    };
+
+    container.appendChild(card);
+  });
+}
+
+// HTMLエスケープ関数
+function escapeHtml(text) {
+  if (text == null) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// ================================
+// JSON インポート
+// ================================
+document.addEventListener("DOMContentLoaded", function() {
+  const importInput = document.getElementById("import-project");
+  if (importInput) {
+    importInput.addEventListener("change", async function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      try {
+        const text = await file.text();
+        const json = JSON.parse(text);
+
+        const projectMeta = {
+          name: json.title || file.name.replace(".json", ""),
+          filename: file.name,
+          updated_at: new Date().toISOString(),
+          data: json
+        };
+
+        const saved = JSON.parse(localStorage.getItem("projects") || "[]");
+        const filtered = saved.filter(p => p.filename !== projectMeta.filename);
+        filtered.push(projectMeta);
+
+        localStorage.setItem("projects", JSON.stringify(filtered));
+
+        alert(`プロジェクト「${projectMeta.name}」をインポートしました。`);
+        loadProjectList();
+        
+        // ファイル入力をリセット
+        e.target.value = '';
+      } catch (error) {
+        console.error("Import Error:", error);
+        alert("JSONファイルの読み込みに失敗しました。ファイル形式を確認してください。");
+      }
+    });
+  }
+  
+  // 初期起動
+  loadProjectList();
+});
 

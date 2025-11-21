@@ -1,3 +1,44 @@
+// ⭐ editor.js loaded (Legacy/Backward Compatibility Wrapper)
+// 
+// 注意: このファイルは後方互換性のために残されています。
+// 新しいコードでは editor_main.js と modules/* を使用してください。
+//
+// モジュール化された関数は src/editor/editor_main.js から読み込まれます:
+// - showQuestionEditor → src/editor/modules/ui/question-editor.js
+// - showDiagnosticQuestionEditor → src/editor/modules/ui/diagnostic-editor.js
+// - showResultEditor → src/editor/modules/ui/result-editor.js
+// - updateUI, renderNodes → src/editor/modules/ui/editor.js
+//
+console.log("⭐ editor.js loaded (legacy wrapper)");
+
+// ==========================================================
+// 初期化の二重発火を防ぐ（editor_main.js と統合）
+// ==========================================================
+window.addEventListener("DOMContentLoaded", () => {
+    if (window.__EDITOR_INIT__) {
+        console.log("⚠️ Editor初期化は既に完了しています（二重発火防止）");
+        return;
+    }
+    window.__EDITOR_INIT__ = true;
+    
+    // project_id パラメータの自動読み込み（editor_main.jsの補完）
+    const params = new URLSearchParams(location.search);
+    const pid = params.get("project_id");
+    
+    if (!pid) {
+        console.log("📁 Editor: no project_id provided");
+        return;
+    }
+    
+    console.log("📁 Editor: loading project", pid);
+    
+    if (typeof window.loadProjectFromId === "function") {
+        window.loadProjectFromId(pid);
+    } else {
+        console.error("loadProjectFromId が未定義です");
+    }
+});
+
 // Glossaryテンプレート定義（エディタ内で使用）
 const GLOSSARY_TEMPLATES = {
     learning_science: {
@@ -99,17 +140,23 @@ const GLOSSARY_TEMPLATES = {
 };
 
 // ゲームデータ構造
-let gameData = {
-    version: 2,
-    startNode: null,
-    questions: [],
-    results: []
-};
+// gameData は window.gameData に統一
+if (!window.gameData) {
+    window.gameData = {
+        version: 2,
+        startNode: null,
+        questions: [],
+        results: [],
+        tags: [],
+        category: "",
+        thumbnail: null
+    };
+}
 
 let selectedNodeId = null;
 let nodeIdCounter = 0;
 
-gameData = normalizeGameData(gameData);
+window.gameData = normalizeGameData(window.gameData);
 
 function normalizeGameData(data) {
     if (!data || typeof data !== 'object') {
@@ -117,14 +164,20 @@ function normalizeGameData(data) {
             version: 2,
             startNode: null,
             questions: [],
-            results: []
+            results: [],
+            tags: [],
+            category: "",
+            thumbnail: null
         };
     }
     const normalized = {
         version: data.version || 1,
         startNode: data.startNode || null,
         questions: Array.isArray(data.questions) ? data.questions : [],
-        results: Array.isArray(data.results) ? data.results : []
+        results: Array.isArray(data.results) ? data.results : [],
+        tags: Array.isArray(data.tags) ? data.tags : [],
+        category: data.category || "",
+        thumbnail: data.thumbnail || null
     };
     if (normalized.version < 2) {
         normalized.version = 2;
@@ -160,6 +213,12 @@ const TEMPLATE_PROJECTS = {
     quiz: {
         name: '選択式クイズ',
         description: '歴史と科学の二問構成のクイズテンプレート',
+        category: 'クイズ',
+        settings: {
+            background: 'gradient',
+            questionFont: 'メイリオ, Meiryo, sans-serif',
+            choiceFont: 'メイリオ, Meiryo, sans-serif'
+        },
         gameData: {
             startNode: 'q_quiz_0',
             questions: [
@@ -236,6 +295,12 @@ const TEMPLATE_PROJECTS = {
     flashcard: {
         name: '復習カード',
         description: '暗記カード形式で前面と裏面を切り替えるテンプレート',
+        category: '復習',
+        settings: {
+            background: 'color',
+            questionFont: 'メイリオ, Meiryo, sans-serif',
+            choiceFont: 'メイリオ, Meiryo, sans-serif'
+        },
         gameData: {
             startNode: 'q_card_0',
             questions: [
@@ -346,6 +411,12 @@ const TEMPLATE_PROJECTS = {
     diagnosis: {
         name: '理解度チェック診断',
         description: 'YES/NOで理解度を確認するシンプル診断テンプレート',
+        category: '診断',
+        settings: {
+            background: 'gradient',
+            questionFont: 'メイリオ, Meiryo, sans-serif',
+            choiceFont: 'メイリオ, Meiryo, sans-serif'
+        },
         gameData: {
             startNode: 'q_diag_0',
             questions: [
@@ -454,8 +525,8 @@ function loadTemplate(templateKey) {
         alert('テンプレートが見つかりません。');
         return;
     }
-    gameData = cloneTemplateData(template.gameData);
-    selectedNodeId = gameData.startNode || (gameData.questions[0] ? gameData.questions[0].id : null);
+    window.gameData = cloneTemplateData(template.gameData);
+    selectedNodeId = window.gameData.startNode || (window.gameData.questions[0] ? window.gameData.questions[0].id : null);
     nodeIdCounter = calculateNextNodeIdCounterFromData(gameData);
     updateUI();
     showPreview();
@@ -641,18 +712,23 @@ function updateBackgroundImageSelect(questionId) {
 }
 
 // ドロップゾーンのクリックでファイル選択
+// 注意: このイベントリスナーは editor_init.js で統合管理されるため、
+// ここでは削除しないが、editor_init.js が優先される
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("⭐ DOMContentLoaded #1: ドロップゾーン初期化 (legacy, may be overridden by editor_init.js)");
     // ドロップゾーンのクリックイベントは動的に追加する必要があるため、
     // showQuestionEditor内で設定する
 });
 
 // 質問ノードを追加
 function addQuestion() {
+    console.log("⭐ addQuestion called");
+    try {
     const questionId = `q_${nodeIdCounter++}`;
     const question = {
         id: questionId,
         type: 'question',
-        title: `質問 ${gameData.questions.length + 1}`,
+        title: `質問 ${window.gameData.questions.length + 1}`,
         text: '',
         questionFont: '',
         choiceFont: '',
@@ -675,23 +751,30 @@ function addQuestion() {
         ]
     };
     
-    gameData.questions.push(question);
+    window.gameData.questions.push(question);
     
     // 最初の質問の場合はスタートノードに設定
-    if (gameData.questions.length === 1 && !gameData.startNode) {
-        gameData.startNode = questionId;
+    if (window.gameData.questions.length === 1 && !window.gameData.startNode) {
+        window.gameData.startNode = questionId;
     }
     
     updateUI();
     selectNode(questionId);
+        console.log("⭐ addQuestion: Question added successfully");
+    } catch (e) {
+        console.error("⭐ addQuestion: Error adding question:", e);
+        alert("質問の追加中にエラーが発生しました。");
+    }
 }
 
 function addDiagnosticQuestion() {
+    console.log("⭐ addDiagnosticQuestion called");
+    try {
     const questionId = `dq_${nodeIdCounter++}`;
     const question = {
         id: questionId,
         type: 'diagnostic_question',
-        question_text: `診断質問 ${gameData.questions.filter(q => q.type === 'diagnostic_question').length + 1}`,
+        question_text: `診断質問 ${window.gameData.questions.filter(q => q.type === 'diagnostic_question').length + 1}`,
         description: '',
         question_type: 'single_choice',
         choices: [
@@ -706,30 +789,36 @@ function addDiagnosticQuestion() {
         scale: { min: 0, max: 10, step: 1 }
     };
     
-    gameData.questions.push(question);
+    window.gameData.questions.push(question);
     
-    if (!gameData.startNode) {
-        gameData.startNode = questionId;
+    if (!window.gameData.startNode) {
+        window.gameData.startNode = questionId;
     }
     
     updateUI();
     selectNode(questionId);
+        console.log("⭐ addDiagnosticQuestion: Diagnostic question added successfully");
+    } catch (e) {
+        console.error("⭐ addDiagnosticQuestion: Error adding diagnostic question:", e);
+        alert("診断質問の追加中にエラーが発生しました。");
+    }
 }
 
 // 結果ノードを追加
 function addResult() {
+    console.log("⭐ addResult called");
     const resultId = `r_${nodeIdCounter++}`;
     const result = {
         id: resultId,
         type: 'result',
-        title: `結果 ${gameData.results.length + 1}`,
+        title: `結果 ${window.gameData.results.length + 1}`,
         text: '',
         image: '',
         url: '',
         buttonText: ''
     };
     
-    gameData.results.push(result);
+    window.gameData.results.push(result);
     updateUI();
     selectNode(resultId);
 }
@@ -738,7 +827,6 @@ function addResult() {
 function selectNode(nodeId) {
     selectedNodeId = nodeId;
     updateUI();
-    showEditor();
     showPreview();
 }
 
@@ -754,8 +842,8 @@ function updateNodeList() {
     nodeList.innerHTML = '';
     
     // スタートノード
-    if (gameData.startNode) {
-        const startNode = gameData.questions.find(q => q.id === gameData.startNode);
+    if (window.gameData.startNode) {
+        const startNode = window.gameData.questions.find(q => q.id === window.gameData.startNode);
         if (startNode) {
             const node = createListNode(startNode, 'start');
             nodeList.appendChild(node);
@@ -763,13 +851,13 @@ function updateNodeList() {
     }
     
     // 質問ノード
-    gameData.questions.forEach(question => {
+    window.gameData.questions.forEach(question => {
         const node = createListNode(question, question.type || 'question');
         nodeList.appendChild(node);
     });
     
     // 結果ノード
-    gameData.results.forEach(result => {
+    window.gameData.results.forEach(result => {
         const node = createListNode(result, 'result');
         nodeList.appendChild(node);
     });
@@ -794,15 +882,31 @@ function createListNode(data, type) {
         <div class="node-type">${typeLabels[type] || type}</div>
     `;
     
-    div.onclick = () => selectNode(data.id);
+    // クリックハンドラを設定（モジュール版のselectNodeを使用、フォールバックあり）
+    div.onclick = function() {
+        const nodeId = data.id;
+        if (typeof window.selectNode === 'function') {
+            window.selectNode(nodeId);
+        } else if (typeof selectNode === 'function') {
+            selectNode(nodeId);
+        } else {
+            // フォールバック: 直接selectedNodeIdを更新してupdateEditorを呼ぶ
+            selectedNodeId = nodeId;
+            updateEditor();
+            updateNodeList(); // 選択状態を更新
+        }
+    };
     
     return div;
 }
 
 // エディタを表示
 function updateEditor() {
+    const editorContent = document.getElementById('editorContent');
+    if (!editorContent) return;
+    
     if (!selectedNodeId) {
-        document.getElementById('editorContent').innerHTML = `
+        editorContent.innerHTML = `
             <div class="empty-state">
                 <h2>👋 ノードを選択</h2>
                 <p style="margin-top: 20px;">左側のノードをクリックして編集してください。</p>
@@ -811,13 +915,30 @@ function updateEditor() {
         return;
     }
     
-    const question = gameData.questions.find(q => q.id === selectedNodeId);
-    const result = gameData.results.find(r => r.id === selectedNodeId);
+    const question = window.gameData.questions.find(q => q.id === selectedNodeId);
+    const result = window.gameData.results.find(r => r.id === selectedNodeId);
     
     if (question) {
-        showQuestionEditor(question);
+        // グローバル関数を使用（モジュール版またはレガジー版）
+        if (question.type === 'diagnostic_question') {
+            if (typeof window.showDiagnosticQuestionEditor === 'function') {
+                window.showDiagnosticQuestionEditor(question);
+            } else if (typeof showDiagnosticQuestionEditor === 'function') {
+                showDiagnosticQuestionEditor(question);
+            }
+        } else {
+            if (typeof window.showQuestionEditor === 'function') {
+                window.showQuestionEditor(question);
+            } else if (typeof showQuestionEditor === 'function') {
+                showQuestionEditor(question);
+            }
+        }
     } else if (result) {
-        showResultEditor(result);
+        if (typeof window.showResultEditor === 'function') {
+            window.showResultEditor(result);
+        } else if (typeof showResultEditor === 'function') {
+            showResultEditor(result);
+        }
     }
 }
 
@@ -829,6 +950,31 @@ function showQuestionEditor(question) {
     }
     const editorContent = document.getElementById('editorContent');
     editorContent.innerHTML = `
+        <div class="form-group" style="border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 20px;">
+            <h3 style="color: #2d3748; margin-bottom: 15px; font-size: 1.2rem;">📋 プロジェクト情報</h3>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="font-weight: 600; margin-bottom: 8px; display: block;">サムネイル画像:</label>
+                <input type="file" id="thumbnail-input" accept="image/*" style="margin-bottom: 10px;" />
+                <img id="thumbnail-preview" style="max-width:200px; max-height:150px; margin-top:10px; display:none; border-radius:8px; border:2px solid #e2e8f0;" />
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="font-weight: 600; margin-bottom: 8px; display: block;">カテゴリ:</label>
+                <input type="text" id="project-category" value="${escapeHtml(window.gameData.category || "")}" 
+                       placeholder="例: 数学、英語、歴史" 
+                       style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 5px;"
+                       onchange="window.gameData.category = this.value;" />
+            </div>
+            
+            <div class="tag-editor" style="margin-bottom: 20px;">
+                <h3 style="color: #2d3748; margin-bottom: 10px; font-size: 1.1rem;">🏷️ タグ</h3>
+                <div id="tag-list" class="tag-list"></div>
+                <input id="tag-input" placeholder="タグを入力し Enter で追加" 
+                       style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 5px; margin-top: 8px;" />
+            </div>
+        </div>
+        
         <div class="form-group">
             <label>タイトル</label>
             <input type="text" id="questionTitle" value="${escapeHtml(question.title)}" 
@@ -1052,6 +1198,37 @@ function showQuestionEditor(question) {
     
     // 選択肢を表示
     updateChoicesList(question);
+    
+    // タグUIを初期化
+    initTagEditor();
+    
+    // サムネイル画像の処理
+    const thumbInput = document.getElementById("thumbnail-input");
+    const thumbPreview = document.getElementById("thumbnail-preview");
+    
+    if (thumbInput && thumbPreview) {
+        // 既存のサムネイルを表示
+        if (window.gameData.thumbnail) {
+            thumbPreview.src = window.gameData.thumbnail;
+            thumbPreview.style.display = "block";
+        }
+        
+        thumbInput.addEventListener("change", function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function() {
+                window.gameData.thumbnail = reader.result;
+                thumbPreview.src = reader.result;
+                thumbPreview.style.display = "block";
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+    
+    // カテゴリの初期化
+    if (!window.gameData.category) window.gameData.category = "";
     
     // 理解分析（ベクトル設定）UIを表示
     setTimeout(function() {
@@ -2536,11 +2713,94 @@ function saveProject() {
     URL.revokeObjectURL(url);
 }
 
+// ============================
+// 名前を付けて保存（Save As）
+// ============================
+window.saveProjectAs = function() {
+    console.log("⭐ saveProjectAs called");
+    try {
+        // 保存前に選択肢のvectorを設定（saveProject()と同じ処理）
+        if (!gameData || !gameData.questions) {
+            console.warn("⭐ saveProjectAs: No gameData or questions found");
+            alert("保存可能なプロジェクトデータが存在しません。");
+            return;
+        }
+        console.log("⭐ saveProjectAs: gameData found, proceeding with save");
+        
+        gameData.questions.forEach(function(question) {
+            if (question.vector_scores && Array.isArray(question.choices)) {
+                question.choices.forEach(function(choice) {
+                    const choiceId = choice.id || choice.value;
+                    if (choiceId && question.vector_scores[choiceId]) {
+                        choice.vector = question.vector_scores[choiceId];
+                    } else {
+                        choice.vector = choice.vector || {};
+                    }
+                });
+            } else if (Array.isArray(question.choices)) {
+                question.choices.forEach(function(choice) {
+                    choice.vector = choice.vector || {};
+                });
+            }
+        });
+        
+        const defaultName = "project.json";
+        const fileName = prompt("保存するファイル名を入力してください", defaultName);
+
+        if (!fileName) return;
+
+        // tags を確実に含める
+        if (!gameData.tags) gameData.tags = [];
+        const data = JSON.stringify(gameData, null, 2);
+
+        const blob = new Blob([data], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        const finalFileName = fileName.endsWith(".json") ? fileName : fileName + ".json";
+        a.download = finalFileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        URL.revokeObjectURL(url);
+        
+        // localStorage に保存
+        try {
+            const projectMeta = {
+                name: gameData.title || finalFileName.replace(".json", ""),
+                filename: finalFileName,
+                updated_at: new Date().toISOString(),
+                tags: gameData.tags || [],
+                category: gameData.category || "",
+                thumbnail: gameData.thumbnail || null,
+                data: gameData
+            };
+
+            const saved = JSON.parse(localStorage.getItem("projects") || "[]");
+            // 同名ファイルは上書き
+            const filtered = saved.filter(p => p.filename !== projectMeta.filename);
+            filtered.push(projectMeta);
+
+            localStorage.setItem("projects", JSON.stringify(filtered));
+            console.log("[Editor] プロジェクトを localStorage に保存しました:", projectMeta.name);
+        } catch (storageError) {
+            console.warn("[Editor] localStorage への保存に失敗しました:", storageError);
+        }
+    } catch (e) {
+        console.error("SaveAs Error:", e);
+        alert("保存中にエラーが発生しました。");
+    }
+};
+
 // quiz.json をバージョン管理方式で保存する関数
 async function saveQuiz() {
+    console.log("⭐ saveQuiz called");
     try {
         // 1. project_id の取得
         const projectId = localStorage.getItem('projectId') || 'default';
+        console.log("⭐ saveQuiz: projectId =", projectId);
         let projectConfig = null;
         
         try {
@@ -2626,6 +2886,49 @@ async function saveQuiz() {
             localStorage.setItem(historyKey, JSON.stringify(history));
         } catch (e) {
             console.warn('Failed to save version history:', e);
+        }
+        
+        // 12. localStorage にプロジェクトデータを保存（savedProjects / project_<id>）
+        try {
+            // gameDataを取得（既存の変数を使用）
+            let gameDataToSave = null;
+            if (typeof window.getGameData === 'function') {
+                gameDataToSave = window.getGameData();
+            } else if (typeof window.gameData !== 'undefined') {
+                gameDataToSave = window.gameData;
+            } else {
+                // quizDataからgameData形式に変換
+                gameDataToSave = {
+                    id: finalProjectId,
+                    title: quizData.title || '',
+                    description: quizData.description || '',
+                    questions: quizData.questions || [],
+                    results: quizData.results || [],
+                    tags: quizData.tags || [],
+                    category: quizData.category || '',
+                    thumbnail: quizData.thumbnail || null,
+                    startNode: quizData.startNode || null
+                };
+            }
+            
+            // project_<id> として保存
+            if (gameDataToSave) {
+                gameDataToSave.id = finalProjectId; // IDを確実に設定
+                localStorage.setItem("project_" + finalProjectId, JSON.stringify(gameDataToSave));
+                console.log("✅ プロジェクトデータをlocalStorageに保存:", finalProjectId);
+            }
+            
+            // メタデータをsavedProjectsに保存
+            if (typeof window.saveProjectMetadata === 'function') {
+                window.saveProjectMetadata({
+                    id: finalProjectId,
+                    title: gameDataToSave?.title || quizData.title || '無題',
+                    tags: gameDataToSave?.tags || quizData.tags || [],
+                    updated_at: new Date().toLocaleString()
+                });
+            }
+        } catch (e) {
+            console.warn('Failed to save project to localStorage:', e);
         }
         
         alert(`バージョン保存しました:\n${versionFile}\nプロジェクトID: ${finalProjectId}\n保存先: projects/${finalProjectId}/quiz_versions/\n\nlatest.json も更新されました。`);
@@ -2752,7 +3055,33 @@ function loadProject() {
     document.getElementById('fileInput').click();
 }
 
+// プロジェクトデータを直接読み込む（本棚UIから呼び出される）
+window.loadProjectData = function(projectData) {
+    try {
+        if (!projectData) {
+            alert("プロジェクトデータが提供されていません。");
+            return;
+        }
+        
+        // Ensure tags, category, thumbnail exists
+        if (!projectData.tags) projectData.tags = [];
+        if (!projectData.category) projectData.category = "";
+        if (!projectData.thumbnail) projectData.thumbnail = null;
+        
+        gameData = normalizeGameData(projectData);
+        selectedNodeId = null;
+        updateUI();
+        showPreview();
+        
+        console.log("[Editor] プロジェクトを読み込みました:", projectData.title || "無題");
+    } catch (error) {
+        console.error("Failed to load project data:", error);
+        alert('エラー: プロジェクトの読み込みに失敗しました。');
+    }
+};
+
 function handleFileLoad(event) {
+    console.log("⭐ handleFileLoad called");
     const file = event.target.files[0];
     if (!file) return;
     
@@ -2760,6 +3089,10 @@ function handleFileLoad(event) {
     reader.onload = function(e) {
         try {
             const loaded = JSON.parse(e.target.result);
+            // Ensure tags, category, thumbnail exists
+            if (!loaded.tags) loaded.tags = [];
+            if (!loaded.category) loaded.category = "";
+            if (!loaded.thumbnail) loaded.thumbnail = null;
             gameData = normalizeGameData(loaded);
             selectedNodeId = null;
             updateUI();
@@ -2775,6 +3108,7 @@ function handleFileLoad(event) {
 
 // CSV形式でエクスポート
 function exportCSV() {
+    console.log("⭐ exportCSV called");
     let csv = '';
     
     // スタートノードがあればStart行を追加
@@ -2821,11 +3155,13 @@ function exportCSV() {
 
 // HTML形式でエクスポート
 function exportHTML() {
+    console.log("⭐ exportHTML called");
     alert('HTMLエクスポート機能は準備中です。\n現在はCSVをエクスポートして、908.pyのCtrl+H機能を使用してください。');
 }
 
 // プレビューを表示
 function previewGame() {
+    console.log("⭐ previewGame called");
     if (gameData.questions.length === 0 && gameData.results.length === 0) {
         alert('プレビューするためには、少なくとも1つの質問または結果が必要です。');
         return;
@@ -3407,10 +3743,1040 @@ function escapeHtml(text) {
 }
 
 // 初期化
+// 注意: このイベントリスナーは editor_init.js で統合管理されるため、
+// ここでは削除しないが、editor_init.js が優先される
 document.addEventListener('DOMContentLoaded', function() {
-    createTemplateButtons();
+    console.log("⭐ DOMContentLoaded #2: Editor初期化開始 (legacy, may be overridden by editor_init.js)");
+    console.log("⭐ Editor init started");
+    
+    // editor_init.js が読み込まれている場合は、そちらに任せる
+    if (typeof window.EditorInit !== 'undefined' && window.EditorInit.initComplete && window.EditorInit.initComplete()) {
+        console.log("⭐ editor_init.js is managing initialization, skipping legacy init");
+        return;
+    }
+    
+    // テンプレートUIは削除され、プロジェクト本棚に統合されました
+    // try {
+    //     createTemplateButtons();
+    //     console.log("⭐ Template buttons created");
+    // } catch (e) {
+    //     console.error("⭐ Error creating template buttons:", e);
+    // }
+    
+    try {
     updateUI();
+        console.log("⭐ UI updated");
+    } catch (e) {
+        console.error("⭐ Error updating UI:", e);
+    }
+    
+    // 本棚からのプロジェクトロード（URLパラメータ mode=edit または projectId の場合）
+    const params = new URLSearchParams(window.location.search);
+    const projectId = params.get("projectId");
+    
+    if (projectId) {
+        console.log("⭐ Loading project from ID:", projectId);
+        // projectId が指定されている場合は projects/{projectId}/ から読み込む
+        try {
+            loadProjectFromId(projectId);
+        } catch (e) {
+            console.error("⭐ Error loading project from ID:", e);
+        }
+    } else if (params.get("mode") === "edit") {
+        console.log("⭐ Loading project from localStorage (mode=edit)");
+        // localStorage から読み込む
+        const raw = localStorage.getItem("editor_current_project");
+        if (raw) {
+            console.log("⭐ Found editor_current_project in localStorage");
+            try {
+                const data = JSON.parse(raw);
+                if (data && typeof data === 'object') {
+                    console.log("⭐ Parsed project data:", data);
+                    // Ensure tags, category, thumbnail exists
+                    if (!data.tags) data.tags = [];
+                    if (!data.category) data.category = "";
+                    if (!data.thumbnail) data.thumbnail = null;
+                    // gameData にロード
+                    if (data.questions) {
+                        gameData = data;
+                        gameData = normalizeGameData(gameData);
+                        updateUI();
+                        console.log("[Editor] 本棚からプロジェクトをロードしました:", data.title || "無題");
+                        console.log("⭐ Project loaded from localStorage");
+                    } else if (typeof window.loadProjectData === "function") {
+                        console.log("⭐ Using window.loadProjectData");
+                        window.loadProjectData(data);
+                    } else if (typeof window.loadEditorFromData === "function") {
+                        console.log("⭐ Using window.loadEditorFromData");
+                        window.loadEditorFromData(data);
+                    } else {
+                        console.warn("⭐ No valid load function found for project data");
+                    }
+                } else {
+                    console.warn("⭐ Invalid project data format:", typeof data);
+                }
+            } catch (e) {
+                console.error("Editor: 本棚からのロードに失敗", e);
+                console.error("⭐ Error loading from localStorage:", e);
+            }
+        } else {
+            console.log("⭐ No editor_current_project found in localStorage");
+        }
+    } else {
+        console.log("⭐ No projectId or mode=edit parameter, starting with empty project");
+    }
+    
+    // プロジェクトIDから読み込む関数
+    // localStorage優先、フォールバックでファイル読み込み
+    async function loadProjectFromId(id) {
+        try {
+            console.log("🗂 loadProjectFromId:", id);
+            
+            // 1. localStorageから読み込みを試みる
+            const dataStr = localStorage.getItem("project_" + id);
+            if (dataStr) {
+                try {
+                    const data = JSON.parse(dataStr);
+                    console.log("📁 プロジェクトをlocalStorageから読み込み:", id);
+                    
+                    // gameDataに設定
+                    if (typeof window.gameData !== 'undefined') {
+                        window.gameData = data;
+                    }
+                    if (typeof window.setGameData === 'function') {
+                        window.setGameData(data);
+                    }
+                    
+                    // UI復元
+                    if (typeof window.restoreGameToEditorUI === "function") {
+                        window.restoreGameToEditorUI(data);
+                    } else {
+                        console.warn("restoreGameToEditorUI が未定義です");
+                        // 最低限のUI復元
+                        const title = document.getElementById("game-title");
+                        if (title) title.value = data.title || "";
+                        
+                        if (data.tags && Array.isArray(data.tags)) {
+                            if (typeof window.currentTags !== 'undefined') {
+                                window.currentTags = [...data.tags];
+                            }
+                            if (typeof window.renderTagList === "function") {
+                                window.renderTagList();
+                            }
+                        }
+                        
+                        if (Array.isArray(data.questions)) {
+                            if (typeof window.currentNodes !== 'undefined') {
+                                window.currentNodes = [...data.questions];
+                            }
+                            if (typeof window.renderNodes === "function") {
+                                window.renderNodes();
+                            }
+                        }
+                    }
+                    
+                    // UI更新
+                    if (typeof window.updateUI === 'function') {
+                        window.updateUI();
+                    }
+                    if (typeof window.showPreview === 'function') {
+                        window.showPreview();
+                    }
+                    
+                    console.log("✅ プロジェクトをlocalStorageから読み込みました:", id);
+                    return;
+                } catch (e) {
+                    console.warn("⚠️ localStorageからの解析に失敗、ファイルから読み込みを試みます:", e);
+                }
+            }
+            
+            // 2. localStorageにない場合、ファイルから読み込む（フォールバック）
+            console.log("📁 ファイルからプロジェクトを読み込み:", id);
+            // プロジェクトフォルダを決定（通常はproject_idとフォルダ名は一致）
+            // まず直接パスを試し、失敗した場合は既知のフォルダから検索
+            let projectFolder = id;
+            let projectPath = `../../projects/${projectFolder}/project.json`;
+            let quizPath = `../../projects/${projectFolder}/quiz.json`;
+            
+            // 直接パスで試行
+            try {
+                const testRes = await fetch(projectPath);
+                if (testRes && testRes.ok) {
+                    const testData = await testRes.json();
+                    // project.json の project_id と一致するか確認
+                    if (testData.project_id && testData.project_id !== id) {
+                        console.warn(`⚠️ project_id不一致: URL="${id}", project.json="${testData.project_id}"`);
+                    }
+                }
+            } catch (e) {
+                // 直接パスが失敗した場合、既知のフォルダから検索
+                console.log(`📁 フォルダ "${id}" が見つからないため、既知のフォルダから検索します`);
+                const knownFolders = ['default', 'demo_project_01', 'demo_project_02', 'demo_project_03', 'vector_test', 'dummy_project', 'sample_project'];
+                let found = false;
+                for (const folder of knownFolders) {
+                    try {
+                        const testPath = `../../projects/${folder}/project.json`;
+                        const testRes = await fetch(testPath);
+                        if (testRes && testRes.ok) {
+                            const testData = await testRes.json();
+                            if (testData.project_id === id) {
+                                projectFolder = folder;
+                                projectPath = testPath;
+                                quizPath = `../../projects/${folder}/quiz.json`;
+                                console.log(`✅ project_id "${id}" はフォルダ "${folder}" に対応しています`);
+                                found = true;
+                                break;
+                            }
+                        }
+                    } catch (e) {
+                        // 次のフォルダを試す
+                    }
+                }
+                if (!found) {
+                    console.warn(`⚠️ project_id "${id}" に対応するフォルダが見つかりませんでした`);
+                }
+            }
+            
+            console.log("⭐ Fetching project files:", { projectPath, quizPath });
+            
+            const [projectRes, quizRes] = await Promise.all([
+                fetch(projectPath).catch((e) => {
+                    console.warn("⭐ Failed to fetch project.json:", e);
+                    return null;
+                }),
+                fetch(quizPath).catch((e) => {
+                    console.warn("⭐ Failed to fetch quiz.json:", e);
+                    return null;
+                })
+            ]);
+            
+            console.log("⭐ Fetch results:", {
+                project: projectRes?.ok,
+                quiz: quizRes?.ok
+            });
+            
+            if (quizRes && quizRes.ok) {
+                const quizData = await quizRes.json();
+                console.log("⭐ Quiz data loaded:", quizData);
+                
+                // project.json からメタデータを取得
+                let projectMeta = {};
+                if (projectRes && projectRes.ok) {
+                    projectMeta = await projectRes.json();
+                    console.log("⭐ Project metadata loaded:", projectMeta);
+                }
+                
+                // project_id の決定: project.json の project_id を優先、なければURLパラメータのid
+                const actualProjectId = projectMeta.project_id || id;
+                
+                // quiz.json のデータを gameData に設定
+                if (quizData.questions || quizData.results) {
+                    // quiz.json のデータを gameData 形式に統合
+                    const gameData = {
+                        id: actualProjectId,  // プロジェクトIDを確実に設定
+                        title: projectMeta.title || quizData.title || actualProjectId,
+                        description: projectMeta.description || quizData.description || '',
+                        tags: projectMeta.tags || quizData.tags || [],
+                        startNode: quizData.startNode || (quizData.questions && quizData.questions[0]?.id) || '',
+                        questions: quizData.questions || [],
+                        results: quizData.results || []
+                    };
+                    
+                    // project.json のメタデータを統合
+                    if (projectMeta.category) gameData.category = projectMeta.category;
+                    if (projectMeta.thumbnail) gameData.thumbnail = projectMeta.thumbnail;
+                    
+                    // gameDataに設定
+                    if (typeof window.gameData !== 'undefined') {
+                        window.gameData = gameData;
+                    }
+                    if (typeof window.setGameData === 'function') {
+                        window.setGameData(gameData);
+                    }
+                    
+                    // UI復元
+                    if (typeof window.restoreGameToEditorUI === "function") {
+                        window.restoreGameToEditorUI(gameData);
+                    } else {
+                        console.warn("restoreGameToEditorUI が未定義です");
+                        // 最低限のUI復元
+                        const title = document.getElementById("game-title");
+                        if (title) title.value = gameData.title || "";
+                        
+                        if (gameData.tags && Array.isArray(gameData.tags)) {
+                            if (typeof window.currentTags !== 'undefined') {
+                                window.currentTags = [...gameData.tags];
+                            }
+                            if (typeof window.renderTagList === "function") {
+                                window.renderTagList();
+                            }
+                        }
+                        
+                        if (Array.isArray(gameData.questions)) {
+                            if (typeof window.currentNodes !== 'undefined') {
+                                window.currentNodes = [...gameData.questions];
+                            }
+                            if (typeof window.renderNodes === "function") {
+                                window.renderNodes();
+                            }
+                        }
+                    }
+                    
+                    // UI更新
+                    if (typeof window.updateUI === 'function') {
+                        window.updateUI();
+                    }
+                    if (typeof window.showPreview === 'function') {
+                        window.showPreview();
+                    }
+                    
+                    console.log("✅ プロジェクトをファイルから読み込みました:", id);
+                } else {
+                    console.warn("⭐ Quiz data has no questions or results");
+                    alert("クイズデータが見つかりません。");
+                }
+            } else {
+                console.warn("⭐ Quiz file not found or not ok:", quizRes);
+                alert(`プロジェクト「${id}」が見つかりません。\nlocalStorage にもファイルにも存在しません。`);
+            }
+        } catch (e) {
+            console.error("loadProjectFromId error:", e);
+            alert("プロジェクトの読み込み中にエラーが発生しました: " + e.message);
+        }
+    }
+    
+    // windowに公開
+    if (typeof window !== 'undefined') {
+        window.loadProjectFromId = loadProjectFromId;
+    }
+    
+    // 旧実装（ファイル読み込み版）は削除またはコメントアウト
+    /*
+    async function loadProjectFromId_OLD(projectId) {
+        console.log("⭐ loadProjectFromId called with projectId:", projectId);
+        try {
+            const projectPath = `../../projects/${projectId}/project.json`;
+            const quizPath = `../../projects/${projectId}/quiz.json`;
+            const editorPath = `../../projects/${projectId}/editor.json`;
+            
+            console.log("⭐ Fetching project files:", { projectPath, quizPath, editorPath });
+            
+            const [projectRes, quizRes, editorRes] = await Promise.all([
+                fetch(projectPath).catch((e) => {
+                    console.warn("⭐ Failed to fetch project.json:", e);
+                    return null;
+                }),
+                fetch(quizPath).catch((e) => {
+                    console.warn("⭐ Failed to fetch quiz.json:", e);
+                    return null;
+                }),
+                fetch(editorPath).catch((e) => {
+                    console.warn("⭐ Failed to fetch editor.json:", e);
+                    return null;
+                })
+            ]);
+            
+            console.log("⭐ Fetch results:", {
+                project: projectRes?.ok,
+                quiz: quizRes?.ok,
+                editor: editorRes?.ok
+            });
+            
+            if (quizRes && quizRes.ok) {
+                const quizData = await quizRes.json();
+                console.log("⭐ Quiz data loaded:", quizData);
+                
+                // project.json からメタデータを取得
+                let projectMeta = {};
+                if (projectRes && projectRes.ok) {
+                    projectMeta = await projectRes.json();
+                    console.log("⭐ Project metadata loaded:", projectMeta);
+                }
+                
+                // quiz.json のデータを gameData に設定
+                if (quizData.questions) {
+                    gameData = normalizeGameData(quizData);
+                    console.log("⭐ Game data normalized");
+                    
+                    // project.json のメタデータを統合
+                    if (projectMeta.title) gameData.title = projectMeta.title;
+                    if (projectMeta.description) gameData.description = projectMeta.description;
+                    if (projectMeta.tags) gameData.tags = projectMeta.tags;
+                    if (projectMeta.category) gameData.category = projectMeta.category;
+                    if (projectMeta.thumbnail) gameData.thumbnail = projectMeta.thumbnail;
+                    
+                    selectedNodeId = null;
+                    updateUI();
+                    showPreview();
+                    
+                    console.log("[Editor] プロジェクトを読み込みました:", projectId);
+                    console.log("⭐ Project loaded successfully");
+                } else {
+                    console.warn("⭐ Quiz data has no questions");
+                    alert("クイズデータが見つかりません。");
+                }
+            } else {
+                console.warn("⭐ Quiz file not found or not ok:", quizRes);
+                alert(`プロジェクト「${projectId}」が見つかりません。`);
+            }
+        } catch (e) {
+            console.error("Failed to load project:", e);
+            console.error("⭐ Error in loadProjectFromId:", e);
+            alert("プロジェクトの読み込み中にエラーが発生しました。");
+        }
+    }
+    */
 });
+
+// -------------------------------------
+// プロジェクト本棚を開く
+// -------------------------------------
+// テンプレート欄は削除され、本棚UIに統合されました
+// 「プロジェクトを読み込む」ボタンは本棚ページ（bookshelf.html）に遷移します
+window.openProjectShelf = function() {
+    console.log("⭐ openProjectShelf called - redirecting to bookshelf");
+    // 本棚ページに遷移
+    location.href = '../../admin/bookshelf.html';
+};
+
+// -------------------------------------
+// 棚UIを閉じる
+// -------------------------------------
+window.closeProjectShelf = function() {
+    console.log("⭐ closeProjectShelf called");
+    const modal = document.getElementById("project-shelf-modal");
+    if (modal) {
+        modal.style.display = "none";
+    }
+};
+
+// =======================
+// タグカラー生成関数
+// =======================
+function randomTagColor(seed) {
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+        hash = seed.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const hue = Math.abs(hash % 360);
+    return `hsl(${hue}, 70%, 60%)`;
+}
+
+// =======================
+// タグ UI ロジック
+// =======================
+let allExistingTags = [];
+
+async function loadAllTags() {
+    try {
+        allExistingTags = [];
+        
+        // デフォルトタグを追加
+        const defaultTags = ['demo', 'sample', 'education', 'math', 'logic', 'reading', 'inference'];
+        allExistingTags.push(...defaultTags);
+        
+        // localStorage から読み込み
+        const savedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
+        savedProjects.forEach(p => {
+            if (p.tags && Array.isArray(p.tags)) {
+                allExistingTags.push(...p.tags);
+            }
+            if (p.data && p.data.tags && Array.isArray(p.data.tags)) {
+                allExistingTags.push(...p.data.tags);
+            }
+        });
+        
+        // /projects/ フォルダから読み込み
+        const projectFolders = ['default', 'vector_test', 'dummy_project', 'sample_project', 'demo_project_01', 'demo_project_02', 'demo_project_03'];
+        for (const folder of projectFolders) {
+            try {
+                const projectPath = `../../projects/${folder}/project.json`;
+                const quizPath = `../../projects/${folder}/quiz.json`;
+                
+                const [projectRes, quizRes] = await Promise.all([
+                    fetch(projectPath).catch(() => null),
+                    fetch(quizPath).catch(() => null)
+                ]);
+                
+                if (projectRes && projectRes.ok) {
+                    const projectData = await projectRes.json();
+                    if (projectData.tags && Array.isArray(projectData.tags)) {
+                        allExistingTags.push(...projectData.tags);
+                    }
+                }
+                
+                if (quizRes && quizRes.ok) {
+                    const quizData = await quizRes.json();
+                    if (quizData.tags && Array.isArray(quizData.tags)) {
+                        allExistingTags.push(...quizData.tags);
+                    }
+                }
+            } catch (e) {
+                // プロジェクトが見つからない場合はスキップ
+            }
+        }
+        
+        // 重複を除去
+        allExistingTags = [...new Set(allExistingTags)];
+    } catch (e) {
+        console.warn("タグの読み込みに失敗:", e);
+    }
+}
+
+function initTagEditor() {
+    const tagInput = document.getElementById("tag-input");
+    const tagList = document.getElementById("tag-list");
+    
+    if (!tagInput || !tagList) return;
+    
+    // サジェストボックスを作成
+    const tagSuggestBox = document.createElement("div");
+    tagSuggestBox.className = "tag-suggest-box";
+    tagSuggestBox.style.display = "none";
+    tagInput.parentNode.style.position = "relative";
+    tagInput.parentNode.appendChild(tagSuggestBox);
+    
+    // 既存のタグを表示
+    function renderTags() {
+        if (!tagList) return;
+        tagList.innerHTML = "";
+        const tags = gameData.tags || [];
+        tags.forEach((t, i) => {
+            const pill = document.createElement("div");
+            pill.className = "tag-pill";
+            const color = randomTagColor(t);
+            pill.style.cssText = `
+                background: ${color};
+                color: white;
+                padding: 4px 10px;
+                border-radius: 12px;
+                font-size: 12px;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                margin: 4px;
+            `;
+            pill.innerHTML = `${escapeHtml(t)} <span class="remove" data-index="${i}" style="cursor: pointer; font-weight: bold;">×</span>`;
+            tagList.appendChild(pill);
+        });
+    }
+    
+    // 初期表示
+    renderTags();
+    
+    // タグサジェスト
+    tagInput.addEventListener("input", function() {
+        const q = tagInput.value.toLowerCase();
+        if (!q) {
+            tagSuggestBox.style.display = "none";
+            return;
+        }
+        
+        const suggestions = allExistingTags
+            .filter(t => t.toLowerCase().includes(q) && !gameData.tags.includes(t))
+            .slice(0, 5);
+        
+        if (suggestions.length > 0) {
+            tagSuggestBox.innerHTML = suggestions
+                .map(s => `<div class="suggest-item">${escapeHtml(s)}</div>`)
+                .join("");
+            tagSuggestBox.style.display = "block";
+        } else {
+            tagSuggestBox.style.display = "none";
+        }
+    });
+    
+    tagSuggestBox.addEventListener("click", function(e) {
+        if (e.target.classList.contains("suggest-item")) {
+            const tag = e.target.innerText;
+            if (!gameData.tags.includes(tag)) {
+                if (!gameData.tags) gameData.tags = [];
+                gameData.tags.push(tag);
+                renderTags();
+            }
+            tagInput.value = "";
+            tagSuggestBox.style.display = "none";
+        }
+    });
+    
+    // Enter キーでタグ追加
+    tagInput.addEventListener("keydown", function(e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            const val = tagInput.value.trim();
+            if (val && !gameData.tags.includes(val)) {
+                if (!gameData.tags) gameData.tags = [];
+                gameData.tags.push(val);
+                renderTags();
+                tagInput.value = "";
+                tagSuggestBox.style.display = "none";
+            }
+        }
+    });
+    
+    // × ボタンでタグ削除
+    tagList.addEventListener("click", function(e) {
+        if (e.target.classList.contains("remove")) {
+            const index = Number(e.target.dataset.index);
+            if (!isNaN(index) && gameData.tags && gameData.tags[index]) {
+                gameData.tags.splice(index, 1);
+                renderTags();
+            }
+        }
+    });
+    
+    // タグを読み込む
+    loadAllTags();
+}
+
+// =======================
+// オートセーブ機能
+// =======================
+let lastSavedState = "";
+let autosaveInterval = null;
+
+function startAutosave() {
+    if (autosaveInterval) return;
+    
+    autosaveInterval = setInterval(function() {
+        const json = JSON.stringify(gameData);
+        if (json !== lastSavedState) {
+            try {
+                localStorage.setItem("autosave_project", json);
+                lastSavedState = json;
+                console.log("[Editor] オートセーブ完了");
+            } catch (e) {
+                console.warn("[Editor] オートセーブに失敗:", e);
+            }
+        }
+    }, 3000);
+}
+
+function stopAutosave() {
+    if (autosaveInterval) {
+        clearInterval(autosaveInterval);
+        autosaveInterval = null;
+    }
+}
+
+// オートセーブを開始
+// 注意: このイベントリスナーは editor_init.js で統合管理されるため、
+// ここでは削除しないが、editor_init.js が優先される
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("⭐ DOMContentLoaded #3: イベントリスナー登録開始 (legacy, may be overridden by editor_init.js)");
+    console.log("⭐ Registering editor event listeners");
+    
+    // editor_init.js が読み込まれている場合は、そちらに任せる
+    if (typeof window.EditorInit !== 'undefined' && window.EditorInit.initComplete && window.EditorInit.initComplete()) {
+        console.log("⭐ editor_init.js is managing event binding, skipping legacy binding");
+        return;
+    }
+    
+    try {
+        startAutosave();
+        console.log("⭐ Autosave started");
+    } catch (e) {
+        console.error("⭐ Error starting autosave:", e);
+    }
+    
+    // オートセーブから復元
+    try {
+        const autosaved = localStorage.getItem("autosave_project");
+        if (autosaved) {
+            const data = JSON.parse(autosaved);
+            if (data && data.questions && data.questions.length > 0) {
+                if (confirm("オートセーブされたプロジェクトが見つかりました。復元しますか？")) {
+                    gameData = normalizeGameData(data);
+                    updateUI();
+                    console.log("[Editor] オートセーブから復元しました");
+                }
+            }
+        }
+    } catch (e) {
+        console.warn("[Editor] オートセーブの復元に失敗:", e);
+    }
+    
+    // イベントリスナーの設定（onclick 属性の代わり）
+    console.log("⭐ Registering button event listeners...");
+    
+    // 関数の存在確認
+    const requiredFunctions = {
+        'addQuestion': addQuestion,
+        'addDiagnosticQuestion': addDiagnosticQuestion,
+        'addResult': addResult,
+        'saveProjectAs': window.saveProjectAs,
+        'saveQuiz': saveQuiz,
+        'openProjectShelf': window.openProjectShelf,
+        'closeProjectShelf': window.closeProjectShelf,
+        'exportCSV': exportCSV,
+        'exportHTML': exportHTML,
+        'previewGame': previewGame,
+        'handleFileLoad': handleFileLoad
+    };
+    
+    for (const [name, func] of Object.entries(requiredFunctions)) {
+        if (typeof func !== 'function') {
+            console.warn(`⭐ WARNING: Function ${name} is not defined!`);
+        } else {
+            console.log(`⭐ Function ${name} is available`);
+        }
+    }
+    
+    const btnAddQuestion = document.getElementById('btn-add-question');
+    if (btnAddQuestion) {
+        if (typeof addQuestion === 'function') {
+            btnAddQuestion.addEventListener('click', addQuestion);
+            console.log("⭐ Registered: btn-add-question");
+        } else {
+            console.warn("⭐ WARNING: addQuestion function not found!");
+        }
+    } else {
+        console.warn("⭐ WARNING: Button 'btn-add-question' not found in DOM!");
+    }
+    
+    const btnAddDiagnosticQuestion = document.getElementById('btn-add-diagnostic-question');
+    if (btnAddDiagnosticQuestion) {
+        if (typeof addDiagnosticQuestion === 'function') {
+            btnAddDiagnosticQuestion.addEventListener('click', addDiagnosticQuestion);
+            console.log("⭐ Registered: btn-add-diagnostic-question");
+        } else {
+            console.warn("⭐ WARNING: addDiagnosticQuestion function not found!");
+        }
+    } else {
+        console.warn("⭐ WARNING: Button 'btn-add-diagnostic-question' not found in DOM!");
+    }
+    
+    const btnAddResult = document.getElementById('btn-add-result');
+    if (btnAddResult) {
+        if (typeof addResult === 'function') {
+            btnAddResult.addEventListener('click', addResult);
+            console.log("⭐ Registered: btn-add-result");
+        } else {
+            console.warn("⭐ WARNING: addResult function not found!");
+        }
+    } else {
+        console.warn("⭐ WARNING: Button 'btn-add-result' not found in DOM!");
+    }
+    
+    const btnSaveProject = document.getElementById('btn-save-project');
+    if (btnSaveProject) {
+        if (typeof window.saveProjectAs === 'function') {
+            btnSaveProject.addEventListener('click', window.saveProjectAs);
+            console.log("⭐ Registered: btn-save-project");
+        } else {
+            console.warn("⭐ WARNING: saveProjectAs function not found!");
+        }
+    } else {
+        console.warn("⭐ WARNING: Button 'btn-save-project' not found in DOM!");
+    }
+    
+    const saveQuizButton = document.getElementById('saveQuizButton');
+    if (saveQuizButton) {
+        if (typeof saveQuiz === 'function') {
+            saveQuizButton.addEventListener('click', saveQuiz);
+            console.log("⭐ Registered: saveQuizButton");
+        } else {
+            console.warn("⭐ WARNING: saveQuiz function not found!");
+        }
+    } else {
+        console.warn("⭐ WARNING: Button 'saveQuizButton' not found in DOM!");
+    }
+    
+    const btnOpenProjectShelf = document.getElementById('btn-open-project-shelf');
+    if (btnOpenProjectShelf) {
+        if (typeof window.openProjectShelf === 'function') {
+            btnOpenProjectShelf.addEventListener('click', window.openProjectShelf);
+            console.log("⭐ Registered: btn-open-project-shelf");
+        } else {
+            console.warn("⭐ WARNING: openProjectShelf function not found!");
+        }
+    } else {
+        console.warn("⭐ WARNING: Button 'btn-open-project-shelf' not found in DOM!");
+    }
+    
+    const btnCloseProjectShelf = document.getElementById('btn-close-project-shelf');
+    if (btnCloseProjectShelf) {
+        if (typeof window.closeProjectShelf === 'function') {
+            btnCloseProjectShelf.addEventListener('click', window.closeProjectShelf);
+            console.log("⭐ Registered: btn-close-project-shelf");
+        } else {
+            console.warn("⭐ WARNING: closeProjectShelf function not found!");
+        }
+    } else {
+        console.warn("⭐ WARNING: Button 'btn-close-project-shelf' not found in DOM!");
+    }
+    
+    const btnExportCsv = document.getElementById('btn-export-csv');
+    if (btnExportCsv) {
+        if (typeof exportCSV === 'function') {
+            btnExportCsv.addEventListener('click', exportCSV);
+            console.log("⭐ Registered: btn-export-csv");
+        } else {
+            console.warn("⭐ WARNING: exportCSV function not found!");
+        }
+    } else {
+        console.warn("⭐ WARNING: Button 'btn-export-csv' not found in DOM!");
+    }
+    
+    const btnExportHtml = document.getElementById('btn-export-html');
+    if (btnExportHtml) {
+        if (typeof exportHTML === 'function') {
+            btnExportHtml.addEventListener('click', exportHTML);
+            console.log("⭐ Registered: btn-export-html");
+        } else {
+            console.warn("⭐ WARNING: exportHTML function not found!");
+        }
+    } else {
+        console.warn("⭐ WARNING: Button 'btn-export-html' not found in DOM!");
+    }
+    
+    const btnPreviewGame = document.getElementById('btn-preview-game');
+    if (btnPreviewGame) {
+        if (typeof previewGame === 'function') {
+            btnPreviewGame.addEventListener('click', previewGame);
+            console.log("⭐ Registered: btn-preview-game");
+        } else {
+            console.warn("⭐ WARNING: previewGame function not found!");
+        }
+    } else {
+        console.warn("⭐ WARNING: Button 'btn-preview-game' not found in DOM!");
+    }
+    
+    const fileInput = document.getElementById('fileInput');
+    if (fileInput) {
+        if (typeof handleFileLoad === 'function') {
+            fileInput.addEventListener('change', handleFileLoad);
+            console.log("⭐ Registered: fileInput");
+        } else {
+            console.warn("⭐ WARNING: handleFileLoad function not found!");
+        }
+    } else {
+        console.warn("⭐ WARNING: Input 'fileInput' not found in DOM!");
+    }
+    
+    console.log("⭐ Event listener registration completed");
+});
+
+// ==========================================================
+// loadTemplateIfNeeded: テンプレートIDからテンプレートを読み込む
+// ==========================================================
+function loadTemplateIfNeeded(id) {
+    // テンプレートIDのマッピング（本棚のID → 実際のテンプレートキー）
+    const templateMapping = {
+        "template_quiz_basic": "quiz",
+        "template_flashcard_basic": "flashcard",
+        "template_review_basic": "flashcard", // 別名
+        "quiz": "quiz", // 直接指定も対応
+        "flashcard": "flashcard",
+        "diagnosis": "diagnosis"
+    };
+    
+    const templateKey = templateMapping[id] || id;
+    
+    if (TEMPLATE_PROJECTS[templateKey]) {
+        console.log("📘 Loading template:", id, "->", templateKey);
+        const template = TEMPLATE_PROJECTS[templateKey];
+        
+        // テンプレートデータを複製
+        const gameData = cloneTemplateData(template.gameData);
+        
+        // テンプレートメタデータを追加
+        gameData.title = template.name;
+        gameData.description = template.description;
+        gameData.tags = ["template"];
+        
+        // テンプレートの設定を追加
+        if (template.settings) {
+            gameData.settings = { ...template.settings };
+        }
+        
+        // テンプレートのカテゴリを追加
+        if (template.category) {
+            gameData.category = template.category;
+        }
+        
+        // gameDataに設定
+        if (typeof window.gameData !== 'undefined') {
+            window.gameData = gameData;
+        }
+        if (typeof window.setGameData === 'function') {
+            window.setGameData(gameData);
+        }
+        
+        // selectedNodeIdを設定
+        if (typeof window.selectedNodeId !== 'undefined') {
+            window.selectedNodeId = gameData.startNode || (gameData.questions[0] ? gameData.questions[0].id : null);
+        }
+        if (typeof window.setSelectedNodeId === 'function') {
+            window.setSelectedNodeId(gameData.startNode || (gameData.questions[0] ? gameData.questions[0].id : null));
+        }
+        
+        // nodeIdCounterを計算
+        nodeIdCounter = calculateNextNodeIdCounterFromData(gameData);
+        
+        // UI復元
+        if (typeof window.restoreGameToEditorUI === 'function') {
+            window.restoreGameToEditorUI(gameData);
+        }
+        
+        // UI更新
+        if (typeof window.updateUI === 'function') {
+            window.updateUI();
+        }
+        if (typeof window.renderNodes === 'function') {
+            window.renderNodes();
+        }
+        if (typeof window.showPreview === 'function') {
+            window.showPreview();
+        }
+        
+        console.log("✅ テンプレートを読み込みました:", templateKey);
+        return true;
+    }
+    
+    return false;
+}
+
+// windowにも公開（後方互換性）
+if (typeof window !== 'undefined') {
+    window.loadTemplateIfNeeded = loadTemplateIfNeeded;
+}
+
+// ==========================================================
+// restoreGameToEditorUI: プロジェクトデータをEditor UIに復元
+// ==========================================================
+function restoreGameToEditorUI(data) {
+    console.log("🔄 restoreGameToEditorUI 開始", data);
+    
+    if (!data) {
+        console.warn("⚠️ restoreGameToEditorUI: データがありません");
+        return;
+    }
+    
+    try {
+        // -----------------------------
+        // 1. gameDataに設定（既存の変数を使用）
+        // -----------------------------
+        if (typeof window.gameData !== 'undefined') {
+            window.gameData = data;
+        }
+        
+        // state.jsのsetGameDataも使用
+        if (typeof window.setGameData === 'function') {
+            window.setGameData(data);
+        }
+        
+        // -----------------------------
+        // 2. タイトルとカテゴリ（存在する場合）
+        // -----------------------------
+        const titleInput = document.getElementById("game-title");
+        if (titleInput) {
+            titleInput.value = data.title || "";
+        }
+        
+        // カテゴリ
+        if (data.category) {
+            const categoryInput = document.getElementById("category-input");
+            if (categoryInput) {
+                categoryInput.value = data.category;
+            }
+        }
+        
+        // 設定（settings）
+        if (data.settings) {
+            // 背景色
+            const bgSelect = document.getElementById("background-select");
+            if (bgSelect && data.settings.background) {
+                bgSelect.value = data.settings.background;
+            }
+            
+            // フォント設定
+            const qFont = document.getElementById("font-question");
+            if (qFont && data.settings.questionFont) {
+                qFont.value = data.settings.questionFont;
+            }
+            
+            const cFont = document.getElementById("font-choice");
+            if (cFont && data.settings.choiceFont) {
+                cFont.value = data.settings.choiceFont;
+            }
+            
+            // 汎用フォント設定（font-select）
+            const fontSel = document.getElementById("font-select");
+            if (fontSel && data.settings.font) {
+                fontSel.value = data.settings.font;
+            }
+        }
+        
+        // -----------------------------
+        // 3. タグ復元
+        // -----------------------------
+        if (data.tags && Array.isArray(data.tags)) {
+            // 既存の変数名を検出（currentTags, gameData.tags等）
+            if (typeof window.currentTags !== 'undefined') {
+                window.currentTags = [...data.tags];
+            }
+            if (typeof window.gameData !== 'undefined') {
+                window.gameData.tags = [...data.tags];
+            }
+            if (typeof renderTagList === 'function') {
+                renderTagList();
+            } else if (typeof window.renderTagList === 'function') {
+                window.renderTagList();
+            }
+        }
+        
+        // -----------------------------
+        // 4. 質問ノード復元（自動変数名検出）
+        // -----------------------------
+        // currentNodes に直接設定（指示書準拠）
+        const questions = data.questions || [];
+        if (Array.isArray(questions)) {
+            window.currentNodes = [...questions];
+            
+            // 他の変数名も検出して設定（後方互換性）
+            const possibleNames = ["nodes", "questionNodes"];
+            for (const name of possibleNames) {
+                if (typeof window[name] !== 'undefined') {
+                    window[name] = [...window.currentNodes];
+                }
+            }
+        }
+        
+        // -----------------------------
+        // 5. UI更新
+        // -----------------------------
+        if (typeof renderNodes === 'function') {
+            renderNodes();
+        } else if (typeof window.renderNodes === 'function') {
+            window.renderNodes();
+        }
+        
+        if (typeof updateUI === 'function') {
+            updateUI();
+        } else if (typeof window.updateUI === 'function') {
+            window.updateUI();
+        }
+        
+        // -----------------------------
+        // 6. Preview 更新
+        // -----------------------------
+        if (typeof updatePreview === 'function') {
+            updatePreview();
+        } else if (typeof window.showPreview === 'function') {
+            window.showPreview();
+        }
+        
+        console.log("✅ restoreGameToEditorUI 完了");
+    } catch (e) {
+        console.error("❌ restoreGameToEditorUI エラー:", e);
+    }
+}
+
+// windowにも公開（後方互換性）
+if (typeof window !== 'undefined') {
+    window.restoreGameToEditorUI = restoreGameToEditorUI;
+}
 
 
 

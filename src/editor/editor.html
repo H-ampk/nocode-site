@@ -426,7 +426,7 @@
             if (typeof window.refreshVectorAxis === 'function') {
                 window.refreshVectorAxis();
             } else {
-                // editor.js がまだ読み込まれていない場合は、読み込み後に実行
+                    // エディタモジュールがまだ読み込まれていない場合は、読み込み後に実行
                 var checkRefresh = function() {
                     if (typeof window.refreshVectorAxis === 'function') {
                         window.refreshVectorAxis();
@@ -441,6 +441,7 @@
         // GlossaryLoader を使って直接 Glossary を読み込む（iframe 不要）
         // この関数は script タグで GlossaryLoader が読み込まれた後に実行される
         function loadGlossaryDirectly() {
+            console.log("⭐ Glossary load start");
             if (typeof GlossaryLoader === 'undefined') {
                 console.warn('[Editor] GlossaryLoader がまだ読み込まれていません。再試行します...');
                 setTimeout(loadGlossaryDirectly, 100);
@@ -449,12 +450,14 @@
             
             var projectId = localStorage.getItem('projectId') || 'default';
             console.log('[Editor] Glossaryを読み込みます (projectId: ' + projectId + ')');
+            console.log("⭐ Glossary load start (projectId: " + projectId + ")");
             
             // 3層構造のGlossaryを読み込んで統合
             Promise.all([
                 GlossaryLoader.loadProjectGlossary(projectId, { admin: true }),
                 GlossaryLoader.loadGlobalGlossary({ admin: true })
             ]).then(function(results) {
+                console.log("⭐ Glossary load success (Promise.all completed)");
                 var projectGlossary = results[0];
                 var globalGlossary = results[1];
                 
@@ -478,6 +481,7 @@
                 // window.currentGlossary に設定
                 const glossaryData = { terms: terms };
                 updateGlossaryFromData(glossaryData);
+                console.log("⭐ Glossary load success", glossaryData);
                 
                 // localStorage に保存（永続化）
                 try {
@@ -490,6 +494,7 @@
                 console.log('[Editor] Glossaryの読み込みが完了しました:', Object.keys(terms).length + ' 個の用語');
             }).catch(function(error) {
                 console.error('[Editor] Glossaryの読み込みに失敗しました:', error);
+                console.error("⭐ Glossary load failed:", error);
                 // エラーが発生しても空のGlossaryを設定して続行
                 window.currentGlossary = { terms: {} };
             });
@@ -526,20 +531,38 @@
             
             <div class="sidebar-section">
                 <h3 style="margin-bottom: 10px; font-size: 1em;">操作</h3>
-                <button class="btn" onclick="addQuestion()">+ 質問を追加</button>
-                <button class="btn" onclick="addDiagnosticQuestion()">+ 診断質問を追加</button>
-                <button class="btn" onclick="addResult()">+ 結果を追加</button>
-                <button class="btn btn-secondary" onclick="saveProject()">💾 プロジェクトを保存</button>
-                <button class="btn btn-secondary" id="saveQuizButton" onclick="saveQuiz()">💾 バージョン保存</button>
-                <button class="btn btn-secondary" onclick="loadProject()">📂 プロジェクトを読み込み</button>
-                <input type="file" id="fileInput" accept=".json" onchange="handleFileLoad(event)" style="display: none;">
+                <button class="btn" id="btn-add-question">+ 質問を追加</button>
+                <button class="btn" id="btn-add-diagnostic-question">+ 診断質問を追加</button>
+                <button class="btn" id="btn-add-result">+ 結果を追加</button>
+                <button class="btn btn-secondary" id="btn-save-project">💾 プロジェクトを保存</button>
+                <button class="btn btn-secondary" id="saveQuizButton">💾 バージョン保存</button>
+                <button class="btn btn-secondary" id="btn-open-project-shelf" onclick="location.href='../../admin/bookshelf.html'">📂 プロジェクトを読み込み</button>
+                <input type="file" id="fileInput" accept=".json" style="display: none;">
+            </div>
+            
+            <!-- プロジェクト本棚モーダル（非表示：本棚ページに統合されました） -->
+            <div id="project-shelf-modal" 
+                 style="display:none !important; visibility:hidden !important; position:fixed; top:0; left:0; right:0; bottom:0;
+                        background:rgba(0,0,0,0.5); z-index:9999;
+                        align-items:center; justify-content:center;">
+                <div style="background:#fff; width:80%; max-width:900px; padding:20px; border-radius:10px; max-height:80vh; overflow-y:auto;">
+                    <h2 style="margin-top:0; color:#2d3748;">📚 保存済みプロジェクト一覧</h2>
+
+                    <div id="project-shelf-list"
+                         style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px,1fr)); gap:15px; margin-top:15px;">
+                    </div>
+
+                    <div style="text-align:right; margin-top:20px;">
+                        <button id="btn-close-project-shelf" class="btn" style="background:#4a5568;">閉じる</button>
+                    </div>
+                </div>
             </div>
 
             <div class="sidebar-section">
                 <h3 style="margin-bottom: 10px; font-size: 1em;">エクスポート</h3>
-                <button class="btn btn-secondary" onclick="exportCSV()">📄 CSV形式でエクスポート</button>
-                <button class="btn btn-secondary" onclick="exportHTML()">🌐 HTML形式でエクスポート</button>
-                <button class="btn" onclick="previewGame()">👁️ プレビュー</button>
+                <button class="btn btn-secondary" id="btn-export-csv">📄 CSV形式でエクスポート</button>
+                <button class="btn btn-secondary" id="btn-export-html">🌐 HTML形式でエクスポート</button>
+                <button class="btn" id="btn-preview-game">👁️ プレビュー</button>
             </div>
 
             <div class="sidebar-section">
@@ -551,6 +574,11 @@
         <!-- メインエディタ -->
         <div class="main-editor">
             <div class="editor-header">
+                <div style="margin-bottom: 10px;">
+                    <button class="back-btn" onclick="location.href='../../admin/bookshelf.html'" style="background: #333; color: white; padding: 6px 12px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.9em; margin-bottom: 10px;">
+                        ← プロジェクト本棚に戻る
+                    </button>
+                </div>
                 <h1>ゲームエディタ</h1>
                 <p style="color: #718096;">質問と分岐を作成して、インタラクティブなゲームを作ろう</p>
             </div>
@@ -574,23 +602,14 @@
         </div>
     </div>
 
+    <link rel="stylesheet" href="../../public/css/editor.css" />
+    <!-- 依存関係: Config と GlossaryLoader を先に読み込む -->
     <script src="../core/config.js"></script>
     <script src="../core/GlossaryLoader.js"></script>
-    <script>
-        // GlossaryLoader の読み込み確認
-        console.log('[Editor] editor.html loaded');
-        console.log('[Editor] GlossaryLoader type:', typeof GlossaryLoader);
-        if (typeof GlossaryLoader !== 'undefined') {
-            console.log('[Editor] GlossaryLoader loaded successfully:', GlossaryLoader);
-            // GlossaryLoader が読み込まれたら即座に Glossary を読み込む
-            if (typeof loadGlossaryDirectly === 'function') {
-                loadGlossaryDirectly();
-            }
-        } else {
-            console.error('[Editor] GlossaryLoader is undefined!');
-        }
-    </script>
-    <script src="editor.js"></script>
+    <!-- メインエディタスクリプト: モジュール化されたバージョンのみ -->
+    <script type="module" src="editor_main.js"></script>
+    <!-- 初期化スクリプト: すべての初期化を統合管理（IIFEのため通常スクリプトとして読み込む） -->
+    <script src="editor_init.js"></script>
 </body>
 </html>
 

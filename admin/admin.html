@@ -14,8 +14,8 @@
     <a href="../src/editor/editor.html">🛠 クイズ編集（Editor）</a>
     <a href="../src/glossary/glossary.html">📚 用語集管理（Glossary）</a>
     <a href="project_manager.html">⚙ 公開設定・プロジェクト設定</a>
+    <a href="bookshelf.html">📚 プロジェクト本棚</a>
     <a href="analysis.html">📊 学習データ分析（Analysis）</a>
-    <a href="../projects/">📁 プロジェクト一覧</a>
     <a href="../main.html">← ホームに戻る</a>
   </div>
 
@@ -55,23 +55,23 @@
       try {
         // 注意: ブラウザから直接ディレクトリ一覧を取得することはできないため、
         // 実際の運用ではサーバー側APIが必要です
-        // ここでは latest.json の存在確認と、localStorage に保存されたバージョン履歴を表示
-        const latestPath = `../projects/${projectId}/quiz_versions/latest.json`;
-        const response = await fetch(latestPath);
+        // ここでは quiz.json の存在確認と、localStorage に保存されたバージョン履歴を表示
+        const quizPath = `../projects/${projectId}/quiz.json`;
+        const response = await fetch(quizPath);
         
         if (response.ok) {
-          const latest = await response.json();
+          const quiz = await response.json();
           ul.innerHTML = '';
           
-          // latest.json の情報を表示
+          // quiz.json の情報を表示
           const li = document.createElement('li');
           li.style.cssText = 'padding: 10px; background: #fff; margin-bottom: 5px; border-radius: 5px; border-left: 4px solid #2d7bf4;';
           li.innerHTML = `
-            <strong>latest.json</strong> (最新版)<br>
+            <strong>quiz.json</strong> (現在のクイズ)<br>
             <small style="color: #666;">
-              バージョン: ${latest.version || 'N/A'}<br>
-              作成日時: ${latest.version_date ? new Date(latest.version_date).toLocaleString('ja-JP') : 'N/A'}<br>
-              作成者: ${latest.author || 'N/A'}
+              バージョン: ${quiz.version || 'N/A'}<br>
+              作成日時: ${quiz.version_date ? new Date(quiz.version_date).toLocaleString('ja-JP') : 'N/A'}<br>
+              作成者: ${quiz.author || 'N/A'}
             </small>
           `;
           ul.appendChild(li);

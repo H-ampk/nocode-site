@@ -1,0 +1,156 @@
+{
+  "version": 2,
+  "title": "デモクイズ（文章理解と推論）",
+  "description": "短文から推論する基礎クイズ。5問構成。",
+  "tags": ["demo", "sample", "reading", "inference"],
+  "startNode": "q_1",
+  "questions": [
+    {
+      "id": "q_1",
+      "type": "question",
+      "title": "問題1",
+      "text": "『太郎は電車に乗り遅れそうだったので走った』太郎はなぜ走った？",
+      "enableGrading": true,
+      "choices": [
+        {
+          "text": "暇だった",
+          "value": 0,
+          "nextId": null,
+          "isCorrect": false
+        },
+        {
+          "text": "電車に間に合わせたかった",
+          "value": 1,
+          "nextId": null,
+          "isCorrect": true
+        },
+        {
+          "text": "誰かを追いかけた",
+          "value": 2,
+          "nextId": null,
+          "isCorrect": false
+        }
+      ],
+      "backgroundType": "color",
+      "backgroundColor": "#ffffff"
+    },
+    {
+      "id": "q_2",
+      "type": "question",
+      "title": "問題2",
+      "text": "『花子は傘を持って家を出た』何が推測できる？",
+      "enableGrading": true,
+      "choices": [
+        {
+          "text": "外は雪",
+          "value": 0,
+          "nextId": null,
+          "isCorrect": false
+        },
+        {
+          "text": "雨が降りそうだった",
+          "value": 1,
+          "nextId": null,
+          "isCorrect": true
+        },
+        {
+          "text": "風が強かった",
+          "value": 2,
+          "nextId": null,
+          "isCorrect": false
+        }
+      ],
+      "backgroundType": "color",
+      "backgroundColor": "#ffffff"
+    },
+    {
+      "id": "q_3",
+      "type": "question",
+      "title": "問題3",
+      "text": "『彼は時計を見て焦った』何が考えられる？",
+      "enableGrading": true,
+      "choices": [
+        {
+          "text": "予定の時間に遅れそう",
+          "value": 0,
+          "nextId": null,
+          "isCorrect": true
+        },
+        {
+          "text": "時計が壊れている",
+          "value": 1,
+          "nextId": null,
+          "isCorrect": false
+        },
+        {
+          "text": "電池を買いたいだけ",
+          "value": 2,
+          "nextId": null,
+          "isCorrect": false
+        }
+      ],
+      "backgroundType": "color",
+      "backgroundColor": "#ffffff"
+    },
+    {
+      "id": "q_4",
+      "type": "question",
+      "title": "問題4",
+      "text": "『店は既に閉店していた』次に起こりそうな行動は？",
+      "enableGrading": true,
+      "choices": [
+        {
+          "text": "買い物を続ける",
+          "value": 0,
+          "nextId": null,
+          "isCorrect": false
+        },
+        {
+          "text": "他の店を探す",
+          "value": 1,
+          "nextId": null,
+          "isCorrect": true
+        },
+        {
+          "text": "店に泊まる",
+          "value": 2,
+          "nextId": null,
+          "isCorrect": false
+        }
+      ],
+      "backgroundType": "color",
+      "backgroundColor": "#ffffff"
+    },
+    {
+      "id": "q_5",
+      "type": "question",
+      "title": "問題5",
+      "text": "『窓が開いていたので寒かった』原因はどれ？",
+      "enableGrading": true,
+      "choices": [
+        {
+          "text": "暖房が強すぎた",
+          "value": 0,
+          "nextId": null,
+          "isCorrect": false
+        },
+        {
+          "text": "窓が開いていた",
+          "value": 1,
+          "nextId": null,
+          "isCorrect": true
+        },
+        {
+          "text": "部屋が広かった",
+          "value": 2,
+          "nextId": null,
+          "isCorrect": false
+        }
+      ],
+      "backgroundType": "color",
+      "backgroundColor": "#ffffff"
+    }
+  ],
+  "results": []
+}
+

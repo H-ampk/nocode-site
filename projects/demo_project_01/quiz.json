@@ -1,0 +1,156 @@
+{
+  "version": 2,
+  "title": "デモクイズ（5問）",
+  "description": "学科長向けのデモ用クイズ。5問構成。",
+  "tags": ["demo", "sample", "education"],
+  "startNode": "q_1",
+  "questions": [
+    {
+      "id": "q_1",
+      "type": "question",
+      "title": "問題1",
+      "text": "HTMLの役割はどれですか？",
+      "enableGrading": true,
+      "choices": [
+        {
+          "text": "見た目のデザインを整える",
+          "value": 0,
+          "nextId": null,
+          "isCorrect": false
+        },
+        {
+          "text": "Webページの構造を定義する",
+          "value": 1,
+          "nextId": null,
+          "isCorrect": true
+        },
+        {
+          "text": "サーバーの処理を実行する",
+          "value": 2,
+          "nextId": null,
+          "isCorrect": false
+        }
+      ],
+      "backgroundType": "color",
+      "backgroundColor": "#ffffff"
+    },
+    {
+      "id": "q_2",
+      "type": "question",
+      "title": "問題2",
+      "text": "JavaScriptは何ができますか？",
+      "enableGrading": true,
+      "choices": [
+        {
+          "text": "動的な動きをつける",
+          "value": 0,
+          "nextId": null,
+          "isCorrect": true
+        },
+        {
+          "text": "OSを操作する",
+          "value": 1,
+          "nextId": null,
+          "isCorrect": false
+        },
+        {
+          "text": "PCを初期化する",
+          "value": 2,
+          "nextId": null,
+          "isCorrect": false
+        }
+      ],
+      "backgroundType": "color",
+      "backgroundColor": "#ffffff"
+    },
+    {
+      "id": "q_3",
+      "type": "question",
+      "title": "問題3",
+      "text": "CSSの目的はどれですか？",
+      "enableGrading": true,
+      "choices": [
+        {
+          "text": "サーバーにアクセスする",
+          "value": 0,
+          "nextId": null,
+          "isCorrect": false
+        },
+        {
+          "text": "Webページの見た目を装飾する",
+          "value": 1,
+          "nextId": null,
+          "isCorrect": true
+        },
+        {
+          "text": "データベース管理",
+          "value": 2,
+          "nextId": null,
+          "isCorrect": false
+        }
+      ],
+      "backgroundType": "color",
+      "backgroundColor": "#ffffff"
+    },
+    {
+      "id": "q_4",
+      "type": "question",
+      "title": "問題4",
+      "text": "JSONとは何ですか？",
+      "enableGrading": true,
+      "choices": [
+        {
+          "text": "データ記述フォーマット",
+          "value": 0,
+          "nextId": null,
+          "isCorrect": true
+        },
+        {
+          "text": "プログラミング言語",
+          "value": 1,
+          "nextId": null,
+          "isCorrect": false
+        },
+        {
+          "text": "OSの名前",
+          "value": 2,
+          "nextId": null,
+          "isCorrect": false
+        }
+      ],
+      "backgroundType": "color",
+      "backgroundColor": "#ffffff"
+    },
+    {
+      "id": "q_5",
+      "type": "question",
+      "title": "問題5",
+      "text": "Webブラウザとは何をするものですか？",
+      "enableGrading": true,
+      "choices": [
+        {
+          "text": "ネットワーク配線を管理する",
+          "value": 0,
+          "nextId": null,
+          "isCorrect": false
+        },
+        {
+          "text": "Webページを表示する",
+          "value": 1,
+          "nextId": null,
+          "isCorrect": true
+        },
+        {
+          "text": "CPUを高速化する",
+          "value": 2,
+          "nextId": null,
+          "isCorrect": false
+        }
+      ],
+      "backgroundType": "color",
+      "backgroundColor": "#ffffff"
+    }
+  ],
+  "results": []
+}
+

@@ -1167,8 +1167,14 @@
       sessions = datasetData.sessions;
     } else if (datasetData && datasetData.student_log && datasetData.student_log.sessions && Array.isArray(datasetData.student_log.sessions)) {
       sessions = datasetData.student_log.sessions;
-    } else if (datasetData && datasetData.vector_test_sessions && Array.isArray(datasetData.vector_test_sessions)) {
-      sessions = datasetData.vector_test_sessions;
+    } else if (datasetData && datasetData.vector_test_sessions) {
+      // vector_test_sessions がオブジェクトの場合、その中の sessions 配列を使用
+      if (datasetData.vector_test_sessions.sessions && Array.isArray(datasetData.vector_test_sessions.sessions)) {
+        sessions = datasetData.vector_test_sessions.sessions;
+      } else if (Array.isArray(datasetData.vector_test_sessions)) {
+        // 配列の場合も対応
+        sessions = datasetData.vector_test_sessions;
+      }
     }
     
     if (!sessions || sessions.length === 0) {
@@ -1427,10 +1433,17 @@
       return;
     }
     
-    // 既存のチャートを破棄
+    // 既存のチャートを破棄（完全にクリーンアップ）
     if (chartInstances['clusterScatter']) {
       chartInstances['clusterScatter'].destroy();
       chartInstances['clusterScatter'] = null;
+    }
+    // キャンバスの親要素（cluster-plot）のサイズを固定
+    var plotContainer = document.getElementById('cluster-plot');
+    if (plotContainer) {
+      plotContainer.style.width = '100%';
+      plotContainer.style.height = '450px';
+      plotContainer.style.overflow = 'hidden';
     }
     
     if (!features || features.length === 0) {
@@ -1488,7 +1501,16 @@
           data: { datasets: datasets },
           options: {
             responsive: true,
-            maintainAspectRatio: false,
+            maintainAspectRatio: true,
+            aspectRatio: 1.5,
+            layout: {
+              padding: {
+                top: 10,
+                right: 10,
+                bottom: 10,
+                left: 10
+              }
+            },
             scales: {
               x: { 
                 title: { display: true, text: 'Feature 1' },

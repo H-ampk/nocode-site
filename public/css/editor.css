@@ -1,0 +1,40 @@
+/* タグサジェスト */
+.tag-suggest-box {
+  position: absolute;
+  background: #1f2534;
+  color: white;
+  padding: 6px;
+  border-radius: 8px;
+  margin-top: 4px;
+  width: 180px;
+  z-index: 1000;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.suggest-item {
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin: 2px 0;
+}
+
+.suggest-item:hover {
+  background: #2f3650;
+}
+
+/* テンプレート欄を削除した際のスペース調整 */
+.template-section,
+#template-list {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* 左メニューの余白調整 */
+.sidebar {
+  padding-top: 1rem;
+}

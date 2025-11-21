@@ -1,0 +1,12 @@
+{
+  "project_id": "demo_project_02",
+  "title": "デモクイズ（計算と論理）",
+  "description": "簡単な算数・ロジカル思考クイズ。5問構成。",
+  "tags": ["demo", "sample", "math", "logic"],
+  "created_at": "2025-11-21T00:00:00.000Z",
+  "updated_at": "2025-11-21T00:00:00.000Z",
+  "version": 1,
+  "access_mode": "public",
+  "pin_code": null
+}
+

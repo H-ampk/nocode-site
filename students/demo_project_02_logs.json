@@ -1,0 +1,6291 @@
+{
+  "user_id": "demo_student_demo_project_02",
+  "sessions": [
+    {
+      "session_id": "session_1761548978_000",
+      "generated_at": "2025-10-27T16:09:38.014231Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-10-27T16:09:38.014231Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 4.05,
+          "path": [
+            "1",
+            "2",
+            "0",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": -1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-10-27T16:09:38.014231Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 2.81,
+          "path": [
+            "1",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-10-27T16:09:38.014231Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 5.19,
+          "path": [
+            "2",
+            "0",
+            "2",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-10-27T16:09:38.014231Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 6.31,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-10-27T16:09:38.014231Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.63,
+          "path": [
+            "0",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.0,
+        "analysis": -0.4,
+        "creativity": 0.2
+      },
+      "cluster_features": [
+        0.8,
+        0.1466,
+        0.3,
+        0.5,
+        0.3,
+        0.6,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 1
+    },
+    {
+      "session_id": "session_1761462578_001",
+      "generated_at": "2025-10-26T16:09:38.014330Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-10-26T16:09:38.014330Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.6,
+          "path": [
+            "1",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-10-26T16:09:38.014330Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 5.88,
+          "path": [
+            "1",
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": -1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-10-26T16:09:38.014330Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 5.32,
+          "path": [
+            "2",
+            "2",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-10-26T16:09:38.014330Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 3.88,
+          "path": [
+            "1",
+            "1",
+            "0",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-10-26T16:09:38.014330Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 4.2,
+          "path": [
+            "0",
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": -1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.2,
+        "analysis": 0.2,
+        "creativity": -0.6
+      },
+      "cluster_features": [
+        0.4,
+        0.152533,
+        0.28,
+        0.6,
+        0.6,
+        0.2,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 2
+    },
+    {
+      "session_id": "session_1761721778_002",
+      "generated_at": "2025-10-29T16:09:38.014373Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-10-29T16:09:38.014373Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.98,
+          "path": [
+            "0",
+            "2",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-10-29T16:09:38.014373Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 6.65,
+          "path": [
+            "0",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-10-29T16:09:38.014373Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 6.81,
+          "path": [
+            "2",
+            "0",
+            "1",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-10-29T16:09:38.014373Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 6.96,
+          "path": [
+            "2",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-10-29T16:09:38.014373Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 2.9,
+          "path": [
+            "0",
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": -1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.2,
+        "analysis": -0.2,
+        "creativity": 0.2
+      },
+      "cluster_features": [
+        0.8,
+        0.182,
+        0.32,
+        0.6,
+        0.4,
+        0.6,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 1
+    },
+    {
+      "session_id": "session_1762067378_003",
+      "generated_at": "2025-11-02T16:09:38.014407Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-02T16:09:38.014407Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 6.63,
+          "path": [
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-02T16:09:38.014407Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 5.57,
+          "path": [
+            "1",
+            "0",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-02T16:09:38.014407Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 4.38,
+          "path": [
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-02T16:09:38.014407Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 7.17,
+          "path": [
+            "1",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-02T16:09:38.014407Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 7.22,
+          "path": [
+            "0",
+            "1",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": 0
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": -0.6,
+        "analysis": 0.4,
+        "creativity": 0.2
+      },
+      "cluster_features": [
+        1.0,
+        0.206467,
+        0.28,
+        0.2,
+        0.7,
+        0.6,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 2
+    },
+    {
+      "session_id": "session_1761462578_004",
+      "generated_at": "2025-10-26T16:09:38.014439Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-10-26T16:09:38.014439Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 6.81,
+          "path": [
+            "2",
+            "1",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-10-26T16:09:38.014439Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 7.54,
+          "path": [
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-10-26T16:09:38.014439Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 2.4,
+          "path": [
+            "2",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-10-26T16:09:38.014439Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 5.49,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-10-26T16:09:38.014439Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.6,
+          "path": [
+            "2",
+            "2",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": 1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": -0.2,
+        "analysis": 0.4,
+        "creativity": 0.8
+      },
+      "cluster_features": [
+        1.0,
+        0.172267,
+        0.26,
+        0.4,
+        0.7,
+        0.9,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 2
+    },
+    {
+      "session_id": "session_1762844978_005",
+      "generated_at": "2025-11-11T16:09:38.014468Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-11T16:09:38.014468Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 5.91,
+          "path": [
+            "0",
+            "1",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-11T16:09:38.014468Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 4.18,
+          "path": [
+            "0",
+            "0",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-11T16:09:38.014468Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 4.36,
+          "path": [
+            "0",
+            "2",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-11T16:09:38.014468Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 7.07,
+          "path": [
+            "1",
+            "0",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-11T16:09:38.014468Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.82,
+          "path": [
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": 1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.4,
+        "analysis": 0.2,
+        "creativity": 0.8
+      },
+      "cluster_features": [
+        0.8,
+        0.1756,
+        0.32,
+        0.7,
+        0.6,
+        0.9,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 2
+    },
+    {
+      "session_id": "session_1763017778_006",
+      "generated_at": "2025-11-13T16:09:38.014501Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-13T16:09:38.014501Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 5.43,
+          "path": [
+            "2",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-13T16:09:38.014501Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 6.67,
+          "path": [
+            "0",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-13T16:09:38.014501Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 4.06,
+          "path": [
+            "1",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-13T16:09:38.014501Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 3.19,
+          "path": [
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-13T16:09:38.014501Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 7.85,
+          "path": [
+            "2",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": 1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": -0.4,
+        "analysis": -0.8,
+        "creativity": -0.4
+      },
+      "cluster_features": [
+        0.6,
+        0.181333,
+        0.22,
+        0.3,
+        0.1,
+        0.3,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 1
+    },
+    {
+      "session_id": "session_1762672178_007",
+      "generated_at": "2025-11-09T16:09:38.014529Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-09T16:09:38.014529Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.0,
+          "path": [
+            "2",
+            "1",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-09T16:09:38.014529Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 6.37,
+          "path": [
+            "1",
+            "2",
+            "0",
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-09T16:09:38.014529Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 3.49,
+          "path": [
+            "0",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-09T16:09:38.014529Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 5.29,
+          "path": [
+            "1",
+            "1",
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-09T16:09:38.014529Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 7.69,
+          "path": [
+            "0",
+            "2",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": 0
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.0,
+        "analysis": 0.2,
+        "creativity": 0.4
+      },
+      "cluster_features": [
+        0.6,
+        0.172267,
+        0.34,
+        0.5,
+        0.6,
+        0.7,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 0
+    },
+    {
+      "session_id": "session_1761548978_008",
+      "generated_at": "2025-10-27T16:09:38.014559Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-10-27T16:09:38.014559Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 2.96,
+          "path": [
+            "1",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-10-27T16:09:38.014559Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 5.77,
+          "path": [
+            "1",
+            "1",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-10-27T16:09:38.014559Z",
+          "final_answer": "1",
+          "correct": false,
+          "response_time": 7.16,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-10-27T16:09:38.014559Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 2.64,
+          "path": [
+            "1",
+            "0",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-10-27T16:09:38.014559Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 2.56,
+          "path": [
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": 0
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.0,
+        "analysis": -0.6,
+        "creativity": 0.0
+      },
+      "cluster_features": [
+        0.6,
+        0.1406,
+        0.26,
+        0.5,
+        0.2,
+        0.5,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 2
+    },
+    {
+      "session_id": "session_1763449778_009",
+      "generated_at": "2025-11-18T16:09:38.014587Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-18T16:09:38.014587Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.12,
+          "path": [
+            "1",
+            "2",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-18T16:09:38.014587Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.16,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-18T16:09:38.014587Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 4.5,
+          "path": [
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-18T16:09:38.014587Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 2.86,
+          "path": [
+            "0",
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-18T16:09:38.014587Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 7.31,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": 0
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": -0.2,
+        "analysis": -0.4,
+        "creativity": 0.2
+      },
+      "cluster_features": [
+        0.8,
+        0.139667,
+        0.18,
+        0.4,
+        0.3,
+        0.6,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 1
+    },
+    {
+      "session_id": "session_1763363378_010",
+      "generated_at": "2025-11-17T16:09:38.014619Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-17T16:09:38.014619Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 7.76,
+          "path": [
+            "2",
+            "1",
+            "0",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-17T16:09:38.014619Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 7.46,
+          "path": [
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-17T16:09:38.014619Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 2.1,
+          "path": [
+            "1",
+            "0",
+            "0",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-17T16:09:38.014619Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 2.9,
+          "path": [
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-17T16:09:38.014619Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 5.71,
+          "path": [
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 0
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.2,
+        "analysis": -0.2,
+        "creativity": -0.4
+      },
+      "cluster_features": [
+        0.8,
+        0.172867,
+        0.28,
+        0.6,
+        0.4,
+        0.3,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 1
+    },
+    {
+      "session_id": "session_1761808178_011",
+      "generated_at": "2025-10-30T16:09:38.014647Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-10-30T16:09:38.014647Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 6.25,
+          "path": [
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-10-30T16:09:38.014647Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 2.61,
+          "path": [
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-10-30T16:09:38.014647Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 6.53,
+          "path": [
+            "1",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-10-30T16:09:38.014647Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 7.01,
+          "path": [
+            "1",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-10-30T16:09:38.014647Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 6.91,
+          "path": [
+            "2",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": -1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": -0.8,
+        "analysis": 0.2,
+        "creativity": -0.2
+      },
+      "cluster_features": [
+        1.0,
+        0.1954,
+        0.24,
+        0.1,
+        0.6,
+        0.4,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 0
+    },
+    {
+      "session_id": "session_1762844978_012",
+      "generated_at": "2025-11-11T16:09:38.014678Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-11T16:09:38.014678Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 2.83,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": -1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-11T16:09:38.014678Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.29,
+          "path": [
+            "2",
+            "0",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-11T16:09:38.014678Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 6.29,
+          "path": [
+            "1",
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-11T16:09:38.014678Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 2.02,
+          "path": [
+            "2",
+            "2",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-11T16:09:38.014678Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 6.57,
+          "path": [
+            "2",
+            "0",
+            "0",
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": -0.2,
+        "analysis": -0.2,
+        "creativity": 0.0
+      },
+      "cluster_features": [
+        0.6,
+        0.14,
+        0.3,
+        0.4,
+        0.4,
+        0.5,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 0
+    },
+    {
+      "session_id": "session_1763104178_013",
+      "generated_at": "2025-11-14T16:09:38.014706Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-14T16:09:38.014706Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.64,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-14T16:09:38.014706Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.83,
+          "path": [
+            "2",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-14T16:09:38.014706Z",
+          "final_answer": "1",
+          "correct": false,
+          "response_time": 3.41,
+          "path": [
+            "1",
+            "2",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-14T16:09:38.014706Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.17,
+          "path": [
+            "2",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-14T16:09:38.014706Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 5.46,
+          "path": [
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": 0
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.0,
+        "analysis": -0.4,
+        "creativity": -0.4
+      },
+      "cluster_features": [
+        0.8,
+        0.136733,
+        0.26,
+        0.5,
+        0.3,
+        0.3,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 2
+    },
+    {
+      "session_id": "session_1761548978_014",
+      "generated_at": "2025-10-27T16:09:38.014733Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-10-27T16:09:38.014733Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 6.86,
+          "path": [
+            "0",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": -1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-10-27T16:09:38.014733Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 6.94,
+          "path": [
+            "2",
+            "2",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-10-27T16:09:38.014733Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 2.78,
+          "path": [
+            "1",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-10-27T16:09:38.014733Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 7.82,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-10-27T16:09:38.014733Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.64,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": -1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.2,
+        "analysis": 0.0,
+        "creativity": 0.0
+      },
+      "cluster_features": [
+        0.8,
+        0.186933,
+        0.2,
+        0.6,
+        0.5,
+        0.5,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 2
+    },
+    {
+      "session_id": "session_1763190578_015",
+      "generated_at": "2025-11-15T16:09:38.014882Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-15T16:09:38.014882Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 2.71,
+          "path": [
+            "1",
+            "2",
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-15T16:09:38.014882Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.02,
+          "path": [
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-15T16:09:38.014882Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 6.97,
+          "path": [
+            "2",
+            "0",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-15T16:09:38.014882Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 7.59,
+          "path": [
+            "1",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-15T16:09:38.014882Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 2.7,
+          "path": [
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": -1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": -0.2,
+        "analysis": 0.4,
+        "creativity": -0.2
+      },
+      "cluster_features": [
+        0.6,
+        0.159933,
+        0.24,
+        0.4,
+        0.7,
+        0.4,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 2
+    },
+    {
+      "session_id": "session_1761980978_016",
+      "generated_at": "2025-11-01T16:09:38.014915Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-01T16:09:38.014915Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 5.91,
+          "path": [
+            "1",
+            "0",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-01T16:09:38.014915Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.87,
+          "path": [
+            "1",
+            "1",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-01T16:09:38.014915Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 5.6,
+          "path": [
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-01T16:09:38.014915Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.71,
+          "path": [
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-01T16:09:38.014915Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 7.94,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": 1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.0,
+        "analysis": 0.6,
+        "creativity": 0.4
+      },
+      "cluster_features": [
+        1.0,
+        0.186867,
+        0.24,
+        0.5,
+        0.8,
+        0.7,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 2
+    },
+    {
+      "session_id": "session_1762412978_017",
+      "generated_at": "2025-11-06T16:09:38.014940Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-06T16:09:38.014940Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 7.88,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-06T16:09:38.014940Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 2.52,
+          "path": [
+            "2",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-06T16:09:38.014940Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 2.72,
+          "path": [
+            "0",
+            "0",
+            "0",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-06T16:09:38.014940Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 7.9,
+          "path": [
+            "1",
+            "0",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-06T16:09:38.014940Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 2.64,
+          "path": [
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": 1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.2,
+        "analysis": -0.2,
+        "creativity": 0.8
+      },
+      "cluster_features": [
+        0.4,
+        0.157733,
+        0.22,
+        0.6,
+        0.4,
+        0.9,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 1
+    },
+    {
+      "session_id": "session_1761289778_018",
+      "generated_at": "2025-10-24T16:09:38.014968Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-10-24T16:09:38.014968Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.45,
+          "path": [
+            "1",
+            "0",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-10-24T16:09:38.014968Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 6.34,
+          "path": [
+            "1",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-10-24T16:09:38.014968Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 5.9,
+          "path": [
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-10-24T16:09:38.014968Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 4.6,
+          "path": [
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-10-24T16:09:38.014968Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 7.03,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": -1,
+            "creativity": 0
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.2,
+        "analysis": 0.2,
+        "creativity": 0.8
+      },
+      "cluster_features": [
+        0.8,
+        0.1888,
+        0.2,
+        0.6,
+        0.6,
+        0.9,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 1
+    },
+    {
+      "session_id": "session_1763190578_019",
+      "generated_at": "2025-11-15T16:09:38.014996Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-15T16:09:38.014996Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.31,
+          "path": [
+            "2",
+            "2",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-15T16:09:38.014996Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 7.5,
+          "path": [
+            "1",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-15T16:09:38.014996Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 3.59,
+          "path": [
+            "0",
+            "2",
+            "0",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-15T16:09:38.014996Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 6.51,
+          "path": [
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-15T16:09:38.014996Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 4.32,
+          "path": [
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": -1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": -0.6,
+        "analysis": 0.6,
+        "creativity": -0.4
+      },
+      "cluster_features": [
+        0.8,
+        0.174867,
+        0.28,
+        0.2,
+        0.8,
+        0.3,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 0
+    },
+    {
+      "session_id": "session_1761980978_020",
+      "generated_at": "2025-11-01T16:09:38.015026Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-01T16:09:38.015026Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 6.98,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-01T16:09:38.015026Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.57,
+          "path": [
+            "0",
+            "2",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": -1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-01T16:09:38.015026Z",
+          "final_answer": "1",
+          "correct": false,
+          "response_time": 6.32,
+          "path": [
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-01T16:09:38.015026Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 7.27,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-01T16:09:38.015026Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 4.86,
+          "path": [
+            "2",
+            "1",
+            "1",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": 1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.0,
+        "analysis": 0.0,
+        "creativity": 0.4
+      },
+      "cluster_features": [
+        0.6,
+        0.2,
+        0.24,
+        0.5,
+        0.5,
+        0.7,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 1
+    },
+    {
+      "session_id": "session_1762844978_021",
+      "generated_at": "2025-11-11T16:09:38.015055Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-11T16:09:38.015055Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 5.36,
+          "path": [
+            "0",
+            "0",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-11T16:09:38.015055Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.21,
+          "path": [
+            "1",
+            "2",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-11T16:09:38.015055Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 5.35,
+          "path": [
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-11T16:09:38.015055Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 5.65,
+          "path": [
+            "0",
+            "2",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-11T16:09:38.015055Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.03,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.4,
+        "analysis": 0.2,
+        "creativity": 0.6
+      },
+      "cluster_features": [
+        1.0,
+        0.164,
+        0.28,
+        0.7,
+        0.6,
+        0.8,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 2
+    },
+    {
+      "session_id": "session_1763363378_022",
+      "generated_at": "2025-11-17T16:09:38.015093Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-17T16:09:38.015093Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 7.96,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-17T16:09:38.015093Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 5.07,
+          "path": [
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-17T16:09:38.015093Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 2.26,
+          "path": [
+            "0",
+            "1",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-17T16:09:38.015093Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 7.85,
+          "path": [
+            "0",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-17T16:09:38.015093Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 2.94,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": -1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": -0.2,
+        "analysis": -0.6,
+        "creativity": -0.2
+      },
+      "cluster_features": [
+        1.0,
+        0.173867,
+        0.2,
+        0.4,
+        0.2,
+        0.4,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 2
+    },
+    {
+      "session_id": "session_1761376178_023",
+      "generated_at": "2025-10-25T16:09:38.015118Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-10-25T16:09:38.015118Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 6.01,
+          "path": [
+            "1",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": -1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-10-25T16:09:38.015118Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.56,
+          "path": [
+            "1",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-10-25T16:09:38.015118Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 5.09,
+          "path": [
+            "1",
+            "0",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-10-25T16:09:38.015118Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 6.52,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-10-25T16:09:38.015118Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 5.5,
+          "path": [
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": 0
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.6,
+        "analysis": 0.4,
+        "creativity": -0.2
+      },
+      "cluster_features": [
+        1.0,
+        0.177867,
+        0.24,
+        0.8,
+        0.7,
+        0.4,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 0
+    },
+    {
+      "session_id": "session_1762585778_024",
+      "generated_at": "2025-11-08T16:09:38.015144Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-08T16:09:38.015144Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 7.66,
+          "path": [
+            "2",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-08T16:09:38.015144Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 2.15,
+          "path": [
+            "0",
+            "0",
+            "2",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-08T16:09:38.015144Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 3.8,
+          "path": [
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-08T16:09:38.015144Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 3.83,
+          "path": [
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-08T16:09:38.015144Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 2.77,
+          "path": [
+            "2",
+            "1",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": 0
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.4,
+        "analysis": -0.4,
+        "creativity": 0.6
+      },
+      "cluster_features": [
+        0.2,
+        0.134733,
+        0.22,
+        0.7,
+        0.3,
+        0.8,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 0
+    },
+    {
+      "session_id": "session_1762758578_025",
+      "generated_at": "2025-11-10T16:09:38.015172Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-10T16:09:38.015172Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 6.44,
+          "path": [
+            "2",
+            "2",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-10T16:09:38.015172Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 5.73,
+          "path": [
+            "0",
+            "1",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-10T16:09:38.015172Z",
+          "final_answer": "1",
+          "correct": false,
+          "response_time": 4.01,
+          "path": [
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-10T16:09:38.015172Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.49,
+          "path": [
+            "0",
+            "0",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-10T16:09:38.015172Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.98,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": 1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": -0.4,
+        "analysis": 0.0,
+        "creativity": 0.0
+      },
+      "cluster_features": [
+        0.6,
+        0.164333,
+        0.28,
+        0.3,
+        0.5,
+        0.5,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 0
+    },
+    {
+      "session_id": "session_1763104178_026",
+      "generated_at": "2025-11-14T16:09:38.015202Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-14T16:09:38.015202Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 2.23,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-14T16:09:38.015202Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.68,
+          "path": [
+            "1",
+            "1",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-14T16:09:38.015202Z",
+          "final_answer": "1",
+          "correct": false,
+          "response_time": 3.11,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-14T16:09:38.015202Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 6.59,
+          "path": [
+            "1",
+            "1",
+            "0",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-14T16:09:38.015202Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 2.85,
+          "path": [
+            "2",
+            "2",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": 0
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.0,
+        "analysis": -0.2,
+        "creativity": 0.2
+      },
+      "cluster_features": [
+        0.6,
+        0.129733,
+        0.28,
+        0.5,
+        0.4,
+        0.6,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 0
+    },
+    {
+      "session_id": "session_1761635378_027",
+      "generated_at": "2025-10-28T16:09:38.015229Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-10-28T16:09:38.015229Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.41,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-10-28T16:09:38.015229Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 5.09,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-10-28T16:09:38.015229Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 4.25,
+          "path": [
+            "0",
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-10-28T16:09:38.015229Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.84,
+          "path": [
+            "0",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-10-28T16:09:38.015229Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 2.61,
+          "path": [
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": -1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.0,
+        "analysis": 0.0,
+        "creativity": 0.0
+      },
+      "cluster_features": [
+        0.6,
+        0.134667,
+        0.16,
+        0.5,
+        0.5,
+        0.5,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 1
+    },
+    {
+      "session_id": "session_1762240178_028",
+      "generated_at": "2025-11-04T16:09:38.015254Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-04T16:09:38.015254Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 2.17,
+          "path": [
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-04T16:09:38.015254Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 7.63,
+          "path": [
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-04T16:09:38.015254Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 3.73,
+          "path": [
+            "2",
+            "0",
+            "1",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-04T16:09:38.015254Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.47,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-04T16:09:38.015254Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 6.21,
+          "path": [
+            "0",
+            "0",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.6,
+        "analysis": 0.0,
+        "creativity": 0.4
+      },
+      "cluster_features": [
+        0.8,
+        0.154733,
+        0.24,
+        0.8,
+        0.5,
+        0.7,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 0
+    },
+    {
+      "session_id": "session_1763536178_029",
+      "generated_at": "2025-11-19T16:09:38.015282Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-19T16:09:38.015282Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 5.71,
+          "path": [
+            "2",
+            "0",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-19T16:09:38.015282Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 2.29,
+          "path": [
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-19T16:09:38.015282Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 3.93,
+          "path": [
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-19T16:09:38.015282Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 5.08,
+          "path": [
+            "0",
+            "2",
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-19T16:09:38.015282Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 6.2,
+          "path": [
+            "2",
+            "2",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": 1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.4,
+        "analysis": 0.4,
+        "creativity": 0.2
+      },
+      "cluster_features": [
+        0.6,
+        0.154733,
+        0.26,
+        0.7,
+        0.7,
+        0.6,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 2
+    },
+    {
+      "session_id": "session_1761289778_030",
+      "generated_at": "2025-10-24T16:09:38.015312Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-10-24T16:09:38.015312Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.39,
+          "path": [
+            "1",
+            "2",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-10-24T16:09:38.015312Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 6.89,
+          "path": [
+            "2",
+            "0",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-10-24T16:09:38.015312Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 4.81,
+          "path": [
+            "0",
+            "2",
+            "2",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-10-24T16:09:38.015312Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 7.65,
+          "path": [
+            "1",
+            "2",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-10-24T16:09:38.015312Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 3.71,
+          "path": [
+            "1",
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": -1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": -0.2,
+        "analysis": -0.2,
+        "creativity": -0.2
+      },
+      "cluster_features": [
+        0.8,
+        0.176333,
+        0.36,
+        0.4,
+        0.4,
+        0.4,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 0
+    },
+    {
+      "session_id": "session_1763276978_031",
+      "generated_at": "2025-11-16T16:09:38.015341Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-16T16:09:38.015341Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 7.6,
+          "path": [
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-16T16:09:38.015341Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 2.82,
+          "path": [
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-16T16:09:38.015341Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 2.54,
+          "path": [
+            "2",
+            "0",
+            "1",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-16T16:09:38.015341Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.49,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-16T16:09:38.015341Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 2.9,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 0
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.0,
+        "analysis": 0.0,
+        "creativity": 0.0
+      },
+      "cluster_features": [
+        1.0,
+        0.129,
+        0.2,
+        0.5,
+        0.5,
+        0.5,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 1
+    },
+    {
+      "session_id": "session_1761894578_032",
+      "generated_at": "2025-10-31T16:09:38.015368Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-10-31T16:09:38.015368Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 4.56,
+          "path": [
+            "2",
+            "2",
+            "0",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": -1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-10-31T16:09:38.015368Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 5.04,
+          "path": [
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-10-31T16:09:38.015368Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 4.6,
+          "path": [
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-10-31T16:09:38.015368Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 2.84,
+          "path": [
+            "0",
+            "0",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-10-31T16:09:38.015368Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.19,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 0
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.2,
+        "analysis": -0.4,
+        "creativity": 0.0
+      },
+      "cluster_features": [
+        0.8,
+        0.134867,
+        0.24,
+        0.6,
+        0.3,
+        0.5,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 2
+    },
+    {
+      "session_id": "session_1763276978_033",
+      "generated_at": "2025-11-16T16:09:38.015396Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-16T16:09:38.015396Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 2.59,
+          "path": [
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-16T16:09:38.015396Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 5.06,
+          "path": [
+            "1",
+            "0",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-16T16:09:38.015396Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 2.92,
+          "path": [
+            "1",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-16T16:09:38.015396Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.32,
+          "path": [
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-16T16:09:38.015396Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 4.44,
+          "path": [
+            "2",
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": 0
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": -0.2,
+        "analysis": -0.4,
+        "creativity": 0.4
+      },
+      "cluster_features": [
+        0.8,
+        0.128867,
+        0.24,
+        0.4,
+        0.3,
+        0.7,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 1
+    },
+    {
+      "session_id": "session_1761289778_034",
+      "generated_at": "2025-10-24T16:09:38.015422Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-10-24T16:09:38.015422Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 5.04,
+          "path": [
+            "2",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-10-24T16:09:38.015422Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 5.98,
+          "path": [
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-10-24T16:09:38.015422Z",
+          "final_answer": "1",
+          "correct": false,
+          "response_time": 4.42,
+          "path": [
+            "2",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-10-24T16:09:38.015422Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 2.91,
+          "path": [
+            "1",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-10-24T16:09:38.015422Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.24,
+          "path": [
+            "2",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": -1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.2,
+        "analysis": 0.6,
+        "creativity": 0.0
+      },
+      "cluster_features": [
+        0.4,
+        0.1506,
+        0.24,
+        0.6,
+        0.8,
+        0.5,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 2
+    },
+    {
+      "session_id": "session_1763449778_035",
+      "generated_at": "2025-11-18T16:09:38.015449Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-18T16:09:38.015449Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.86,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-18T16:09:38.015449Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.27,
+          "path": [
+            "1",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-18T16:09:38.015449Z",
+          "final_answer": "1",
+          "correct": false,
+          "response_time": 7.26,
+          "path": [
+            "1",
+            "2",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": -1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-18T16:09:38.015449Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 2.09,
+          "path": [
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-18T16:09:38.015449Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.52,
+          "path": [
+            "0",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": -1,
+            "creativity": 0
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.2,
+        "analysis": -0.4,
+        "creativity": -0.4
+      },
+      "cluster_features": [
+        0.6,
+        0.146667,
+        0.24,
+        0.6,
+        0.3,
+        0.3,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 2
+    },
+    {
+      "session_id": "session_1761116978_036",
+      "generated_at": "2025-10-22T16:09:38.015478Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-10-22T16:09:38.015478Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 4.06,
+          "path": [
+            "0",
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-10-22T16:09:38.015478Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.83,
+          "path": [
+            "1",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-10-22T16:09:38.015478Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 5.02,
+          "path": [
+            "1",
+            "1",
+            "2",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": -1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-10-22T16:09:38.015478Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 7.15,
+          "path": [
+            "0",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-10-22T16:09:38.015478Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.22,
+          "path": [
+            "0",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": 0
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.0,
+        "analysis": -0.4,
+        "creativity": 0.4
+      },
+      "cluster_features": [
+        0.8,
+        0.168533,
+        0.3,
+        0.5,
+        0.3,
+        0.7,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 0
+    },
+    {
+      "session_id": "session_1762758578_037",
+      "generated_at": "2025-11-10T16:09:38.015507Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-10T16:09:38.015507Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 2.93,
+          "path": [
+            "0",
+            "1",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-10T16:09:38.015507Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.95,
+          "path": [
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-10T16:09:38.015507Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 7.98,
+          "path": [
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-10T16:09:38.015507Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 5.14,
+          "path": [
+            "0",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-10T16:09:38.015507Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.71,
+          "path": [
+            "2",
+            "0",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": 1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": -0.6,
+        "analysis": 0.4,
+        "creativity": 0.6
+      },
+      "cluster_features": [
+        1.0,
+        0.1714,
+        0.28,
+        0.2,
+        0.7,
+        0.8,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 1
+    },
+    {
+      "session_id": "session_1763276978_038",
+      "generated_at": "2025-11-16T16:09:38.015534Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-16T16:09:38.015534Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 6.64,
+          "path": [
+            "1",
+            "0",
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-16T16:09:38.015534Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 6.76,
+          "path": [
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-16T16:09:38.015534Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 2.7,
+          "path": [
+            "0",
+            "2",
+            "2",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-16T16:09:38.015534Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 2.63,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-16T16:09:38.015534Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 7.11,
+          "path": [
+            "2",
+            "2",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": -1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": -0.6,
+        "analysis": -0.2,
+        "creativity": -0.2
+      },
+      "cluster_features": [
+        0.8,
+        0.172267,
+        0.28,
+        0.2,
+        0.4,
+        0.4,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 2
+    },
+    {
+      "session_id": "session_1761808178_039",
+      "generated_at": "2025-10-30T16:09:38.015563Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-10-30T16:09:38.015563Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.37,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": -1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-10-30T16:09:38.015563Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 6.91,
+          "path": [
+            "0",
+            "2",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-10-30T16:09:38.015563Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 6.21,
+          "path": [
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-10-30T16:09:38.015563Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 2.6,
+          "path": [
+            "2",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-10-30T16:09:38.015563Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 6.96,
+          "path": [
+            "2",
+            "0",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": -1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.6,
+        "analysis": -0.2,
+        "creativity": 0.0
+      },
+      "cluster_features": [
+        1.0,
+        0.180333,
+        0.26,
+        0.8,
+        0.4,
+        0.5,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 1
+    },
+    {
+      "session_id": "session_1761548978_040",
+      "generated_at": "2025-10-27T16:09:38.015594Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-10-27T16:09:38.015594Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.33,
+          "path": [
+            "2",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-10-27T16:09:38.015594Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 5.47,
+          "path": [
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-10-27T16:09:38.015594Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 2.79,
+          "path": [
+            "2",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-10-27T16:09:38.015594Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 7.12,
+          "path": [
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-10-27T16:09:38.015594Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 4.57,
+          "path": [
+            "0",
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": 1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": -0.6,
+        "analysis": 0.2,
+        "creativity": 0.6
+      },
+      "cluster_features": [
+        0.6,
+        0.1552,
+        0.2,
+        0.2,
+        0.6,
+        0.8,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 0
+    },
+    {
+      "session_id": "session_1761721778_041",
+      "generated_at": "2025-10-29T16:09:38.015619Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-10-29T16:09:38.015619Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.38,
+          "path": [
+            "2",
+            "0",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-10-29T16:09:38.015619Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 2.32,
+          "path": [
+            "1",
+            "1",
+            "0",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-10-29T16:09:38.015619Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 7.61,
+          "path": [
+            "0",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-10-29T16:09:38.015619Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.12,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": -1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-10-29T16:09:38.015619Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 2.94,
+          "path": [
+            "0",
+            "1",
+            "2",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": -1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": -0.2,
+        "analysis": -0.2,
+        "creativity": 0.0
+      },
+      "cluster_features": [
+        0.6,
+        0.1358,
+        0.3,
+        0.4,
+        0.4,
+        0.5,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 2
+    },
+    {
+      "session_id": "session_1761376178_042",
+      "generated_at": "2025-10-25T16:09:38.015688Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-10-25T16:09:38.015688Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.98,
+          "path": [
+            "2",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-10-25T16:09:38.015688Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 4.23,
+          "path": [
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-10-25T16:09:38.015688Z",
+          "final_answer": "1",
+          "correct": false,
+          "response_time": 3.87,
+          "path": [
+            "2",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-10-25T16:09:38.015688Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 2.45,
+          "path": [
+            "1",
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-10-25T16:09:38.015688Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 6.44,
+          "path": [
+            "2",
+            "1",
+            "2",
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": 1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": -0.4,
+        "analysis": 0.2,
+        "creativity": 1.0
+      },
+      "cluster_features": [
+        0.2,
+        0.146467,
+        0.26,
+        0.3,
+        0.6,
+        1.0,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 0
+    },
+    {
+      "session_id": "session_1762412978_043",
+      "generated_at": "2025-11-06T16:09:38.015720Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-06T16:09:38.015720Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 7.43,
+          "path": [
+            "1",
+            "1",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-06T16:09:38.015720Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 6.83,
+          "path": [
+            "0",
+            "2",
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-06T16:09:38.015720Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 5.76,
+          "path": [
+            "0",
+            "0",
+            "1",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-06T16:09:38.015720Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 6.04,
+          "path": [
+            "1",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-06T16:09:38.015720Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 6.62,
+          "path": [
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": -0.2,
+        "analysis": 0.4,
+        "creativity": 0.4
+      },
+      "cluster_features": [
+        0.8,
+        0.217867,
+        0.32,
+        0.4,
+        0.7,
+        0.7,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 1
+    },
+    {
+      "session_id": "session_1762672178_044",
+      "generated_at": "2025-11-09T16:09:38.015749Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-09T16:09:38.015749Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 6.02,
+          "path": [
+            "1",
+            "2",
+            "0",
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-09T16:09:38.015749Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 6.34,
+          "path": [
+            "1",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-09T16:09:38.015749Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 7.54,
+          "path": [
+            "1",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-09T16:09:38.015749Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 2.69,
+          "path": [
+            "2",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-09T16:09:38.015749Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.08,
+          "path": [
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 0
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": -0.6,
+        "analysis": 0.2,
+        "creativity": 0.0
+      },
+      "cluster_features": [
+        0.8,
+        0.1778,
+        0.28,
+        0.2,
+        0.6,
+        0.5,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 0
+    },
+    {
+      "session_id": "session_1761462578_045",
+      "generated_at": "2025-10-26T16:09:38.015777Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-10-26T16:09:38.015777Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 2.92,
+          "path": [
+            "2",
+            "1",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-10-26T16:09:38.015777Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.39,
+          "path": [
+            "2",
+            "2",
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-10-26T16:09:38.015777Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 6.47,
+          "path": [
+            "1",
+            "1",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-10-26T16:09:38.015777Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 4.11,
+          "path": [
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-10-26T16:09:38.015777Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.49,
+          "path": [
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 1,
+            "creativity": 0
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.4,
+        "analysis": 0.4,
+        "creativity": 0.0
+      },
+      "cluster_features": [
+        0.8,
+        0.1492,
+        0.28,
+        0.7,
+        0.7,
+        0.5,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 0
+    },
+    {
+      "session_id": "session_1761808178_046",
+      "generated_at": "2025-10-30T16:09:38.015805Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-10-30T16:09:38.015805Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.96,
+          "path": [
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-10-30T16:09:38.015805Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 7.5,
+          "path": [
+            "1",
+            "0",
+            "0",
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-10-30T16:09:38.015805Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 7.31,
+          "path": [
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-10-30T16:09:38.015805Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 6.76,
+          "path": [
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-10-30T16:09:38.015805Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 6.23,
+          "path": [
+            "2",
+            "1",
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": -0.2,
+        "analysis": -0.2,
+        "creativity": 0.2
+      },
+      "cluster_features": [
+        0.8,
+        0.211733,
+        0.26,
+        0.4,
+        0.4,
+        0.6,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 1
+    },
+    {
+      "session_id": "session_1763449778_047",
+      "generated_at": "2025-11-18T16:09:38.015833Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-18T16:09:38.015833Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 7.56,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-18T16:09:38.015833Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 5.91,
+          "path": [
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-18T16:09:38.015833Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 4.69,
+          "path": [
+            "0",
+            "1",
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": -1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-18T16:09:38.015833Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.28,
+          "path": [
+            "0",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-18T16:09:38.015833Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 5.47,
+          "path": [
+            "0",
+            "1",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": -1,
+            "creativity": 0
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.0,
+        "analysis": -0.2,
+        "creativity": 0.0
+      },
+      "cluster_features": [
+        0.8,
+        0.1794,
+        0.22,
+        0.5,
+        0.4,
+        0.5,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 1
+    },
+    {
+      "session_id": "session_1763017778_048",
+      "generated_at": "2025-11-13T16:09:38.015861Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-13T16:09:38.015861Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.84,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-13T16:09:38.015861Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 4.36,
+          "path": [
+            "2",
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-13T16:09:38.015861Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 2.47,
+          "path": [
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 1,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-13T16:09:38.015861Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 3.16,
+          "path": [
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 0,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-13T16:09:38.015861Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.55,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 0
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": 0.0,
+        "analysis": 0.0,
+        "creativity": 0.8
+      },
+      "cluster_features": [
+        0.6,
+        0.115867,
+        0.12,
+        0.5,
+        0.5,
+        0.9,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 0
+    },
+    {
+      "session_id": "session_1762931378_049",
+      "generated_at": "2025-11-12T16:09:38.015887Z",
+      "quiz_version": "demo_v1",
+      "logs": [
+        {
+          "questionId": "q_1",
+          "timestamp": "2025-11-12T16:09:38.015887Z",
+          "final_answer": "2",
+          "correct": false,
+          "response_time": 2.52,
+          "path": [
+            "2"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_2",
+          "timestamp": "2025-11-12T16:09:38.015887Z",
+          "final_answer": "1",
+          "correct": true,
+          "response_time": 3.28,
+          "path": [
+            "1"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": -1,
+            "creativity": 1
+          }
+        },
+        {
+          "questionId": "q_3",
+          "timestamp": "2025-11-12T16:09:38.015887Z",
+          "final_answer": "0",
+          "correct": true,
+          "response_time": 5.28,
+          "path": [
+            "2",
+            "0",
+            "2",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": 0
+          }
+        },
+        {
+          "questionId": "q_4",
+          "timestamp": "2025-11-12T16:09:38.015887Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 3.78,
+          "path": [
+            "1",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": -1,
+            "analysis": 1,
+            "creativity": -1
+          }
+        },
+        {
+          "questionId": "q_5",
+          "timestamp": "2025-11-12T16:09:38.015887Z",
+          "final_answer": "0",
+          "correct": false,
+          "response_time": 7.26,
+          "path": [
+            "1",
+            "2",
+            "0"
+          ],
+          "conceptTags": [
+            "demo"
+          ],
+          "glossaryShown": [],
+          "vector": {
+            "logic": 0,
+            "analysis": 0,
+            "creativity": -1
+          }
+        }
+      ],
+      "vector_summary": {
+        "logic": -0.4,
+        "analysis": -0.2,
+        "creativity": 0.0
+      },
+      "cluster_features": [
+        0.4,
+        0.147467,
+        0.22,
+        0.3,
+        0.4,
+        0.5,
+        0.0,
+        0.1
+      ],
+      "cluster_ground_truth": 0
+    }
+  ]
+}

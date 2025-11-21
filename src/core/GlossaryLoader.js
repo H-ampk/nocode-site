@@ -333,7 +333,7 @@
   }
 
   /**
-   * latest.json から quiz vectors を読み込む
+   * quiz.json から quiz vectors を読み込む
    * @param {string} projectId - プロジェクトID（デフォルト: 'default'）
    * @param {Object} opts - オプション（admin: true で相対パスを調整）
    * @returns {Promise<Object>} glossary_vector オブジェクト
@@ -342,7 +342,7 @@
     projectId = projectId || 'default';
     var admin = opts && opts.admin;
     var base = getBasePath(admin);
-    var path = base + 'projects/' + projectId + '/quiz_versions/latest.json';
+    var path = base + 'projects/' + projectId + '/quiz.json';
     
     return fetch(path, { cache: 'no-store' })
       .then(function (response) {

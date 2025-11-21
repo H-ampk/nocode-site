@@ -29,7 +29,18 @@
             このアプリケーションは、複数の質問に答えることで診断結果を表示するインタラクティブなWebアプリケーションです。
             選択肢に応じて結果が変わり、画像やリンクも表示できます。
         </div>
-        <div class="features">
+        
+        <h1 style="margin-top: 40px; margin-bottom: 20px;">📁 利用可能な教材一覧</h1>
+        
+        <!-- プロジェクト一覧（カード表示） -->
+        <div id="project-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-top: 20px; margin-bottom: 30px;"></div>
+        
+        <!-- JSONインポート -->
+        <hr style="margin: 30px 0; border: none; border-top: 2px solid #e2e8f0;" />
+        <h3 style="margin-bottom: 15px; color: #2d3748;">📥 プロジェクトをインポート</h3>
+        <input type="file" id="import-project" accept=".json" style="padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1em; cursor: pointer; background: white;" />
+        
+        <div class="features" style="margin-top: 40px;">
             <div class="feature-card"><h3>📝 選択式質問</h3><p>複数の質問から選択して回答できます。</p></div>
             <div class="feature-card"><h3>🎯 診断結果表示</h3><p>回答内容に基づいて診断結果を表示します。</p></div>
             <div class="feature-card"><h3>🖼️ 画像・リンク対応</h3><p>結果に画像や外部リンクを含められます。</p></div>

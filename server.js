@@ -211,6 +211,101 @@ app.post('/analyze/reaction-time', express.json(), (req, res) => {
   }
 });
 
+// 新規プロジェクト作成API
+app.post("/admin-api/create-project", (req, res) => {
+  const { folder, title, desc, tags } = req.body;
+
+  if (!folder || !title) {
+    return res.status(400).json({ error: "folder と title は必須です" });
+  }
+
+  const projectsBase = path.join(__dirname, "projects");
+  const dir = path.join(projectsBase, folder);
+
+  // 既に同名フォルダがあるかチェック
+  if (fs.existsSync(dir)) {
+    return res.status(400).json({ error: "既に同名フォルダがあります: " + folder });
+  }
+
+  try {
+    // ディレクトリを作成
+    fs.mkdirSync(dir, { recursive: true });
+
+    // project.json を作成
+    fs.writeFileSync(
+      path.join(dir, "project.json"),
+      JSON.stringify({
+        project_id: folder,
+        title: title,
+        description: desc || "",
+        tags: tags || [],
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        version: 1,
+        access_mode: "public",
+        pin_code: null
+      }, null, 2) + "\n"
+    );
+
+    // quiz.json（空）を作成
+    fs.writeFileSync(
+      path.join(dir, "quiz.json"),
+      JSON.stringify({
+        version: 1,
+        startNode: null,
+        questions: [],
+        results: []
+      }, null, 2) + "\n"
+    );
+
+    // editor.json（空）を作成
+    fs.writeFileSync(
+      path.join(dir, "editor.json"),
+      JSON.stringify({}, null, 2) + "\n"
+    );
+
+    // glossary.json（空）を作成
+    fs.writeFileSync(
+      path.join(dir, "glossary.json"),
+      JSON.stringify({ terms: {} }, null, 2) + "\n"
+    );
+
+    console.log("✅ プロジェクトを作成しました:", folder);
+    res.json({ ok: true, folder });
+  } catch (error) {
+    console.error("❌ プロジェクト作成エラー:", error);
+    res.status(500).json({ error: "プロジェクトの作成に失敗しました: " + error.message });
+  }
+});
+
+// index.json を再生成するAPI
+app.get("/admin-api/generate-index", (req, res) => {
+  try {
+    const projectsBase = path.join(__dirname, "projects");
+    const all = fs.readdirSync(projectsBase).filter(name => {
+      const full = path.join(projectsBase, name);
+      return fs.statSync(full).isDirectory();
+    });
+    const filtered = all.filter(n => !n.startsWith("_"));
+    
+    // index.json の形式: { projects: [{ id: "folder_name" }] }
+    const indexData = {
+      projects: filtered.map(id => ({ id }))
+    };
+    
+    fs.writeFileSync(
+      path.join(projectsBase, "index.json"),
+      JSON.stringify(indexData, null, 2) + "\n"
+    );
+    
+    console.log("✅ projects/index.json を再生成しました:", filtered.length, "件");
+    res.json({ ok: true, list: filtered });
+  } catch (error) {
+    console.error("❌ index.json 生成エラー:", error);
+    res.status(500).json({ error: "index.json の生成に失敗しました: " + error.message });
+  }
+});
+
 // ルートパス
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'main.html'));

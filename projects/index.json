@@ -1,0 +1,26 @@
+{
+  "projects": [
+    {
+      "id": "default"
+    },
+    {
+      "id": "demo_project_01"
+    },
+    {
+      "id": "demo_project_02"
+    },
+    {
+      "id": "demo_project_03"
+    },
+    {
+      "id": "dummy_project"
+    },
+    {
+      "id": "sample_project"
+    },
+    {
+      "id": "vector_test"
+    }
+  ]
+}
+

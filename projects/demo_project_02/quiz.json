@@ -1,0 +1,156 @@
+{
+  "version": 2,
+  "title": "デモクイズ（計算と論理）",
+  "description": "簡単な算数・ロジカル思考クイズ。5問構成。",
+  "tags": ["demo", "sample", "math", "logic"],
+  "startNode": "q_1",
+  "questions": [
+    {
+      "id": "q_1",
+      "type": "question",
+      "title": "問題1",
+      "text": "3 + 4 = ?",
+      "enableGrading": true,
+      "choices": [
+        {
+          "text": "5",
+          "value": 0,
+          "nextId": null,
+          "isCorrect": false
+        },
+        {
+          "text": "7",
+          "value": 1,
+          "nextId": null,
+          "isCorrect": true
+        },
+        {
+          "text": "8",
+          "value": 2,
+          "nextId": null,
+          "isCorrect": false
+        }
+      ],
+      "backgroundType": "color",
+      "backgroundColor": "#ffffff"
+    },
+    {
+      "id": "q_2",
+      "type": "question",
+      "title": "問題2",
+      "text": "次の中で偶数はどれ？",
+      "enableGrading": true,
+      "choices": [
+        {
+          "text": "5",
+          "value": 0,
+          "nextId": null,
+          "isCorrect": false
+        },
+        {
+          "text": "8",
+          "value": 1,
+          "nextId": null,
+          "isCorrect": true
+        },
+        {
+          "text": "9",
+          "value": 2,
+          "nextId": null,
+          "isCorrect": false
+        }
+      ],
+      "backgroundType": "color",
+      "backgroundColor": "#ffffff"
+    },
+    {
+      "id": "q_3",
+      "type": "question",
+      "title": "問題3",
+      "text": "論理問題：『AはBより大きい。BはCより大きい。』正しい結論は？",
+      "enableGrading": true,
+      "choices": [
+        {
+          "text": "A > C",
+          "value": 0,
+          "nextId": null,
+          "isCorrect": true
+        },
+        {
+          "text": "C > A",
+          "value": 1,
+          "nextId": null,
+          "isCorrect": false
+        },
+        {
+          "text": "B > A",
+          "value": 2,
+          "nextId": null,
+          "isCorrect": false
+        }
+      ],
+      "backgroundType": "color",
+      "backgroundColor": "#ffffff"
+    },
+    {
+      "id": "q_4",
+      "type": "question",
+      "title": "問題4",
+      "text": "次の図形の辺の数：三角形は？",
+      "enableGrading": true,
+      "choices": [
+        {
+          "text": "2",
+          "value": 0,
+          "nextId": null,
+          "isCorrect": false
+        },
+        {
+          "text": "3",
+          "value": 1,
+          "nextId": null,
+          "isCorrect": true
+        },
+        {
+          "text": "4",
+          "value": 2,
+          "nextId": null,
+          "isCorrect": false
+        }
+      ],
+      "backgroundType": "color",
+      "backgroundColor": "#ffffff"
+    },
+    {
+      "id": "q_5",
+      "type": "question",
+      "title": "問題5",
+      "text": "『もし雨なら傘を持つ』この文の意味として最も正しいのは？",
+      "enableGrading": true,
+      "choices": [
+        {
+          "text": "雨でなくても傘を持つ",
+          "value": 0,
+          "nextId": null,
+          "isCorrect": false
+        },
+        {
+          "text": "雨のときに傘を持つ",
+          "value": 1,
+          "nextId": null,
+          "isCorrect": true
+        },
+        {
+          "text": "必ず傘を持つ義務",
+          "value": 2,
+          "nextId": null,
+          "isCorrect": false
+        }
+      ],
+      "backgroundType": "color",
+      "backgroundColor": "#ffffff"
+    }
+  ],
+  "results": []
+}
+

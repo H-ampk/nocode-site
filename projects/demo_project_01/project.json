@@ -1,0 +1,12 @@
+{
+  "project_id": "demo_project_01",
+  "title": "デモクイズ（5問）",
+  "description": "学科長向けのデモ用クイズ。5問構成。",
+  "tags": ["demo", "sample", "education"],
+  "created_at": "2025-11-21T00:00:00.000Z",
+  "updated_at": "2025-11-21T00:00:00.000Z",
+  "version": 1,
+  "access_mode": "public",
+  "pin_code": null
+}
+
