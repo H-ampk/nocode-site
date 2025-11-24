@@ -2,7 +2,7 @@
 """
 students フォルダ内の JSON ファイルから index.json を自動生成（Python版）
 
-実行方法:
+実行方法:ffahj
 python scripts/regenerate_index.py
 """
 
