@@ -148,6 +148,9 @@
     download: downloadProjectJson,
     normalize: normalize
   };
+  
+  // 理解階層定義
+  global.MASTERY_LEVELS = ["識別", "説明", "適用", "区別", "転移", "構造化"];
 })(window);
 
 

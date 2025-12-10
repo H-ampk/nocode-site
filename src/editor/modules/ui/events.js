@@ -7,6 +7,8 @@ import { addQuestion, addDiagnosticQuestion, addResult } from '../actions/nodes.
 import { saveProjectAs, handleFileLoad } from '../project/save.js';
 import { openProjectShelf, closeProjectShelf } from './shelf.js';
 import { exportCSV, exportHTML, previewGame } from '../project/export.js';
+import { generateAndSaveConceptGraph } from '../project/concept_graph.js';
+import { syncGlossaryAndGraph } from '../project/glossary_sync.js';
 
 // saveQuiz 関数は後で実装
 let saveQuiz = null;
@@ -63,6 +65,24 @@ export function bindAllEvents() {
         }
     } else {
         console.warn("⭐ WARNING: Button 'saveQuizButton' not found in DOM!");
+    }
+    
+    // Concept Graph生成
+    const btnGenerateConceptGraph = document.getElementById('btn-generate-concept-graph');
+    if (btnGenerateConceptGraph) {
+        btnGenerateConceptGraph.addEventListener('click', generateAndSaveConceptGraph);
+        console.log("⭐ Registered: btn-generate-concept-graph");
+    } else {
+        console.warn("⭐ WARNING: Button 'btn-generate-concept-graph' not found in DOM!");
+    }
+    
+    // Glossary / ConceptGraph 同期
+    const btnSyncGlossaryGraph = document.getElementById('btn-sync-glossary-graph');
+    if (btnSyncGlossaryGraph) {
+        btnSyncGlossaryGraph.addEventListener('click', syncGlossaryAndGraph);
+        console.log("⭐ Registered: btn-sync-glossary-graph");
+    } else {
+        console.warn("⭐ WARNING: Button 'btn-sync-glossary-graph' not found in DOM!");
     }
     
     // プロジェクト読み込み

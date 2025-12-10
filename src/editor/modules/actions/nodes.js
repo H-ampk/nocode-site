@@ -4,14 +4,25 @@
 
 import { getGameData, setGameData, incrementNodeIdCounter, setSelectedNodeId } from '../core/state.js';
 
+// measure の初期値（v2.0仕様）
+const defaultMeasure = {
+    "識別": 0,
+    "説明": 0,
+    "適用": 0,
+    "区別": 0,
+    "転移": 0,
+    "構造化": 0
+};
+
 /**
- * 質問ノードを追加
+ * 質問ノードを追加（v2.0仕様）
  */
 export function addQuestion() {
-    console.log("⭐ addQuestion called");
+    console.log("⭐ addQuestion called (v2.0)");
     try {
         const gameData = getGameData();
         const questionId = `q_${incrementNodeIdCounter()}`;
+        const now = new Date().toISOString();
         const question = {
             id: questionId,
             type: 'question',
@@ -31,9 +42,28 @@ export function addQuestion() {
             choiceButtonColor: '#667eea',
             choiceButtonTextColor: '#ffffff',
             enableGrading: false,
+            // v2.0: measure オブジェクト
+            measure: { ...defaultMeasure },
+            // v2.0: meta 情報
+            meta: {
+                difficulty: "medium",
+                rt_expected: 1500,
+                created_at: now,
+                updated_at: now
+            },
             choices: [
-                { text: '選択肢1', value: 0, nextId: null, isCorrect: false },
-                { text: '選択肢2', value: 1, nextId: null, isCorrect: false }
+                { 
+                    id: "c" + Math.random().toString(36).slice(2),
+                    text: '選択肢1', 
+                    tags: [],  // v2.0
+                    is_correct: false 
+                },
+                { 
+                    id: "c" + Math.random().toString(36).slice(2),
+                    text: '選択肢2', 
+                    tags: [],  // v2.0
+                    is_correct: false 
+                }
             ]
         };
         
@@ -52,7 +82,7 @@ export function addQuestion() {
         if (typeof window.selectNode === 'function') {
             window.selectNode(questionId);
         }
-        console.log("⭐ addQuestion: Question added successfully");
+        console.log("⭐ addQuestion: Question added successfully (v2.0)");
     } catch (e) {
         console.error("⭐ addQuestion: Error adding question:", e);
         alert("質問の追加中にエラーが発生しました。");

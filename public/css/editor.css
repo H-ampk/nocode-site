@@ -1,16 +1,214 @@
+/* =====================================================================
+   White Scandinavian Intelligence (WSI) Theme
+   — 北欧ミニマルデザイン —
+   ===================================================================== */
+:root {
+  --bg-main: #F4F5F3;
+  --bg-sidebar: #ECEDEA;
+  --bg-card: #FFFFFF;
+  --border: #D6D6D6;
+  --accent: #3F5F4F;
+  --accent-hover: #4A6F5C;
+  --text-main: #2E3E34;
+
+  /* measure colors */
+  --m-identify: #B5CDE0;
+  --m-explain: #A5C8B5;
+  --m-apply: #D8C29A;
+  --m-differentiate: #D7A3A3;
+  --m-transfer: #C0ADD8;
+  --m-structure: #B8C3A0;
+}
+
+body {
+  background: var(--bg-main);
+  font-family: "Inter", "Noto Sans JP", sans-serif;
+  color: var(--text-main);
+}
+
+/* =====================================================================
+   レイアウト構造（北欧3カラム）
+   ===================================================================== */
+#layout {
+  display: flex;
+  height: 100vh;
+}
+
+#sidebar {
+  width: 280px;
+  background: #ECEDEA;
+  border-right: 1px solid #D6D6D6;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+#sidebar h2 {
+  margin-bottom: 20px;
+  font-size: 1.3em;
+  border-bottom: 2px solid #4a5568;
+  padding-bottom: 10px;
+  color: var(--text-main, #2E3E34);
+}
+
+#editor-main {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+}
+
+#preview-pane {
+  width: 420px;
+  background: #fff;
+  border-left: 1px solid #D6D6D6;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* 後方互換性のため .sidebar もサポート */
+.sidebar {
+  width: 280px;
+  background: var(--bg-sidebar, #ECEDEA);
+  border-right: 1px solid var(--border, #D6D6D6);
+  padding: 20px;
+}
+
+.sidebar-item {
+  padding: 12px 16px;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+}
+
+.sidebar-item.active {
+  border-left: 3px solid var(--accent);
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* ------------------  カード  ------------------ */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;   /* ←直線寄り角丸 */
+  padding: 20px;
+  box-shadow: none;     /* ←影なし */
+  margin-bottom: 20px;
+}
+
+/* ------------------ ボタン ------------------ */
+button, .btn {
+  background: var(--accent);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-family: "Inter", "Noto Sans JP", sans-serif;
+  transition: background 0.2s;
+}
+button:hover, .btn:hover {
+  background: var(--accent-hover);
+}
+
+.btn-secondary {
+  background: var(--bg-sidebar);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+}
+
+.btn-danger {
+  background: #D7A3A3;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: #C89393;
+}
+
+/* ------------------ 選択肢カード ------------------ */
+.choice-card {
+  position: relative;
+  border: 1px solid #D6D6D6;
+  border-radius: 6px;
+  padding: 16px;
+  background: #fff;
+  margin-bottom: 12px;
+}
+
+.choice-measure-tag {
+  position: absolute;
+  top: 0; right: 0;
+  width: 50px;
+  height: 6px;
+  border-radius: 0 6px 0 6px;
+}
+
+.choice-measure {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50px;
+  height: 6px;
+  border-radius: 0 6px 0 6px;
+}
+
+.measure-identify { background: #B5CDE0; }
+.measure-explain { background: #A5C8B5; }
+.measure-apply { background: #D8C29A; }
+.measure-differentiate { background: #D7A3A3; }
+.measure-transfer { background: #C0ADD8; }
+.measure-structure { background: #B8C3A0; }
+
+/* 既存のmeasureタグスタイルも北欧テーマに合わせて更新 */
+.measure-tag.m識別 {
+  background-color: var(--m-identify);
+  color: #2E3E34;
+}
+
+.measure-tag.m説明 {
+  background-color: var(--m-explain);
+  color: #2E3E34;
+}
+
+.measure-tag.m適用 {
+  background-color: var(--m-apply);
+  color: #2E3E34;
+}
+
+.measure-tag.m区別 {
+  background-color: var(--m-differentiate);
+  color: #2E3E34;
+}
+
+.measure-tag.m転移 {
+  background-color: var(--m-transfer);
+  color: #2E3E34;
+}
+
+.measure-tag.m構造化 {
+  background-color: var(--m-structure);
+  color: #2E3E34;
+}
+
+/* ------------------ プレビューエリア ------------------ */
+#preview-pane, .preview-panel {
+  background: #fff;
+  border-left: 1px solid var(--border);
+  padding: 20px;
+}
+
 /* タグサジェスト */
 .tag-suggest-box {
   position: absolute;
-  background: #1f2534;
-  color: white;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-main);
   padding: 6px;
-  border-radius: 8px;
+  border-radius: 6px;
   margin-top: 4px;
   width: 180px;
   z-index: 1000;
   max-height: 200px;
   overflow-y: auto;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  box-shadow: none;
 }
 
 .suggest-item {
@@ -37,4 +235,184 @@
 /* 左メニューの余白調整 */
 .sidebar {
   padding-top: 1rem;
+}
+
+/* 理解階層measureの色付け */
+.measure-tag {
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-right: 4px;
+  margin-bottom: 4px;
+  font-size: 12px;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.2s;
+}
+
+.measure-tag:hover {
+  opacity: 0.8;
+}
+
+.measure-tag input[type="checkbox"] {
+  margin: 0;
+  cursor: pointer;
+}
+
+.measure-tag.m識別 {
+  background-color: #ff6b6b;
+}
+
+.measure-tag.m説明 {
+  background-color: #feca57;
+}
+
+.measure-tag.m適用 {
+  background-color: #48dbfb;
+}
+
+.measure-tag.m区別 {
+  background-color: #1dd1a1;
+}
+
+.measure-tag.m転移 {
+  background-color: #5f27cd;
+}
+
+.measure-tag.m構造化 {
+  background-color: #c8d6e5;
+  color: #000;
+}
+
+/* 選択肢のドラッグハンドル */
+.drag-handle {
+  cursor: move;
+  color: #718096;
+  font-size: 18px;
+  padding: 4px 8px;
+  user-select: none;
+}
+
+.drag-handle:hover {
+  color: #2d3748;
+}
+
+.choice-item {
+  position: relative;
+}
+
+.choice-item.dragging {
+  opacity: 0.5;
+}
+
+/* 統合選択肢カードUI */
+.choices-container {
+  margin-top: 15px;
+}
+
+.choice-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  background: #fff;
+  transition: box-shadow 0.2s;
+}
+
+.choice-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.choice-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 10px;
+}
+
+.choice-handle {
+  cursor: grab;
+  font-size: 20px;
+  padding-right: 8px;
+  color: #718096;
+  user-select: none;
+}
+
+.choice-handle:active {
+  cursor: grabbing;
+}
+
+.choice-handle:hover {
+  color: #2d3748;
+}
+
+.choice-card .choice-text {
+  flex: 1;
+  padding: 8px;
+  border: 2px solid #e2e8f0;
+  border-radius: 5px;
+  font-size: 1em;
+  margin: 0;
+}
+
+.choice-card .choice-text:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.choice-card .mt-2 {
+  margin-top: 12px;
+}
+
+.choice-card label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 10px;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.choice-card label:hover {
+  background: #f0f0f0;
+}
+
+.choice-card .choice-misconception {
+  width: 100%;
+  padding: 8px;
+  border: 2px solid #e2e8f0;
+  border-radius: 5px;
+  font-size: 0.95em;
+  margin-top: 6px;
+}
+
+.choice-card .choice-misconception:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.choice-card .delete-choice-btn {
+  padding: 8px 15px;
+  background: #e53e3e;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+
+.choice-card .delete-choice-btn:hover {
+  background: #c53030;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
 }

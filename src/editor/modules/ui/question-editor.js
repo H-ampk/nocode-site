@@ -77,12 +77,31 @@ export function showQuestionEditor(question) {
         </div>
         
         <div class="form-group" style="border-top: 2px solid #e2e8f0; padding-top: 20px; margin-top: 20px;">
-            <h2 style="color: #2d3748; margin-bottom: 10px; font-size: 1.2rem;">🧩 理解分析（ベクトル設定）</h2>
-            <p style="color: #718096; font-size: 0.9em; margin-bottom: 15px;">この質問が生徒の理解傾向に与える影響を設定します。Glossaryから評価軸を自動取得します。</p>
-            <div id="vectorSettingArea"></div>
-            <div style="margin-top: 15px; padding: 10px; background: #f0f0f0; border-radius: 8px; font-size: 0.9em; color: #555;">
-                <strong>詳細表示（JSON）:</strong>
-                <pre id="vectorSettingJson" style="margin-top: 8px; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 4px; font-size: 0.85em; max-height: 200px; overflow-y: auto;"></pre>
+            <h2 style="color: #2d3748; margin-bottom: 10px; font-size: 1.2rem;">📊 理解階層設定</h2>
+            <p style="color: #718096; font-size: 0.9em; margin-bottom: 15px;">この問題で測定する理解階層を選択してください</p>
+            <div id="masteryLevelSettingArea" style="margin-bottom: 20px;">
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 15px;">
+                    ${(window.MASTERY_LEVELS || ["識別", "説明", "適用", "区別", "転移", "構造化"]).map(level => {
+                        const checked = Array.isArray(question.measure) && question.measure.includes(level) ? 'checked' : '';
+                        return `
+                            <label style="display: flex; align-items: center; gap: 8px; padding: 10px 15px; background: #f7fafc; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: all 0.2s; user-select: none;">
+                                <input type="checkbox" 
+                                       value="${escapeHtml(level)}" 
+                                       ${checked}
+                                       onchange="updateMasteryLevels('${question.id}', this)"
+                                       style="width: 18px; height: 18px; cursor: pointer;">
+                                <span style="font-weight: 600; color: #2d3748;">${escapeHtml(level)}</span>
+                            </label>
+                        `;
+                    }).join('')}
+                </div>
+            </div>
+            <div id="choiceMasterySettings" style="margin-top: 25px;">
+                <h3 style="color: #2d3748; margin-bottom: 15px; font-size: 1.1rem;">選択肢ごとの設定</h3>
+                <div id="choiceMasteryList"></div>
+            </div>
+            <div style="margin-top: 15px; padding: 12px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px; font-size: 0.9em; color: #856404;">
+                <strong>注意:</strong> 誤概念タグがある場合、その選択肢を選んだ学習者は「区別」階層のスコアが減算されます。
             </div>
         </div>
         
@@ -268,8 +287,10 @@ export function showQuestionEditor(question) {
         
         <div class="form-group">
             <label>選択肢</label>
-            <div id="choicesList" class="choices-list"></div>
-            <button class="btn" onclick="addChoice('${question.id}')" style="margin-top: 10px;">+ 選択肢を追加</button>
+            <div id="choicesContainer" class="choices-container"></div>
+            <button id="addChoiceBtn" class="btn btn-primary" style="margin-top: 10px;" onclick="addChoice('${question.id}')">
+                ＋ 選択肢を追加
+            </button>
         </div>
         
         <div class="form-group">
@@ -277,8 +298,11 @@ export function showQuestionEditor(question) {
         </div>
     `;
     
-    // 選択肢を表示
-    if (typeof window.updateChoicesList === 'function') {
+    // 選択肢を表示（統合カードUI）
+    if (typeof window.renderChoices === 'function') {
+        window.renderChoices(question);
+    } else if (typeof window.updateChoicesList === 'function') {
+        // フォールバック: 既存の関数を使用
         window.updateChoicesList(question);
     }
     
@@ -322,11 +346,10 @@ export function showQuestionEditor(question) {
         setGameData(gd);
     }
     
-    // 理解分析（ベクトル設定）UIを表示
+    // 理解階層設定UIを初期化
     setTimeout(function() {
-        if (typeof window.renderVectorSettingsForQuestion === 'function') {
-            window.renderVectorSettingsForQuestion(question);
-        }
+        updateMasteryLevelsUI(question);
+        updateChoiceMasteryList(question);
     }, 150);
     
     // 背景タイプの変更時に表示を切り替える
@@ -360,7 +383,144 @@ export function showQuestionEditor(question) {
     }, 100);
 }
 
+/**
+ * 理解階層チェックボックスの状態を更新
+ */
+function updateMasteryLevels(questionId, checkbox) {
+    const gameData = getGameData();
+    const question = gameData.questions.find(q => q.id === questionId);
+    if (!question) return;
+    
+    if (!Array.isArray(question.measure)) {
+        question.measure = [];
+    }
+    
+    const level = checkbox.value;
+    if (checkbox.checked) {
+        if (!question.measure.includes(level)) {
+            question.measure.push(level);
+        }
+    } else {
+        question.measure = question.measure.filter(l => l !== level);
+    }
+    
+    setGameData(gameData);
+    updateChoiceMasteryList(question);
+}
+
+/**
+ * 理解階層設定UIを更新
+ */
+function updateMasteryLevelsUI(question) {
+    const area = document.getElementById('masteryLevelSettingArea');
+    if (!area) return;
+    
+    const masteryLevels = window.MASTERY_LEVELS || ["識別", "説明", "適用", "区別", "転移", "構造化"];
+    const currentMeasures = Array.isArray(question.measure) ? question.measure : [];
+    
+    const checkboxes = area.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(cb => {
+        cb.checked = currentMeasures.includes(cb.value);
+    });
+}
+
+/**
+ * 選択肢ごとの理解階層設定UIを更新
+ */
+function updateChoiceMasteryList(question) {
+    const container = document.getElementById('choiceMasteryList');
+    if (!container) return;
+    
+    if (!Array.isArray(question.choices) || question.choices.length === 0) {
+        container.innerHTML = '<div style="padding: 10px; background: #edf2f7; border-radius: 8px; color: #718096;">まず選択肢を追加してください。</div>';
+        return;
+    }
+    
+    const html = question.choices.map((choice, index) => {
+        // 選択肢IDを生成（既存のid、value、またはインデックスベース）
+        let choiceId = choice.id || choice.value;
+        if (!choiceId) {
+            choiceId = `choice_${index}`;
+            choice.id = choiceId;
+        } else if (!choice.id) {
+            // valueがあるがidがない場合は、idを設定
+            choice.id = choiceId;
+        }
+        const isCorrect = choice.correct === true;
+        const misconception = choice.misconception || '';
+        
+        return `
+            <div style="margin-bottom: 15px; padding: 15px; background: #f7fafc; border: 2px solid #e2e8f0; border-radius: 8px;">
+                <div style="font-weight: 600; margin-bottom: 10px; color: #2d3748;">選択肢 ${index + 1}: ${escapeHtml(choice.text || choiceId)}</div>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" 
+                               ${isCorrect ? 'checked' : ''}
+                               onchange="updateChoiceCorrect('${question.id}', '${choiceId}', this.checked)"
+                               style="width: 18px; height: 18px; cursor: pointer;">
+                        <span style="font-weight: 600; color: #2d3748;">正解</span>
+                    </label>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #2d3748;">誤概念タグ（任意）:</label>
+                        <input type="text" 
+                               value="${escapeHtml(misconception)}"
+                               placeholder="例: 交絡因子"
+                               onchange="updateChoiceMisconception('${question.id}', '${choiceId}', this.value)"
+                               style="width: 100%; padding: 8px; border: 2px solid #e2e8f0; border-radius: 5px; font-size: 0.95em;">
+                        <small style="color: #718096; font-size: 0.85em;">この選択肢が表す誤概念を入力してください</small>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    container.innerHTML = html;
+}
+
+/**
+ * 選択肢の正解フラグを更新
+ */
+function updateChoiceCorrect(questionId, choiceId, isCorrect) {
+    const gameData = getGameData();
+    const question = gameData.questions.find(q => q.id === questionId);
+    if (!question || !Array.isArray(question.choices)) return;
+    
+    const choice = question.choices.find(c => {
+        const cId = c.id || c.value || `choice_${question.choices.indexOf(c)}`;
+        return cId === choiceId;
+    });
+    if (choice) {
+        choice.correct = isCorrect;
+        setGameData(gameData);
+        // UIを更新
+        updateChoiceMasteryList(question);
+    }
+}
+
+/**
+ * 選択肢の誤概念タグを更新
+ */
+function updateChoiceMisconception(questionId, choiceId, misconception) {
+    const gameData = getGameData();
+    const question = gameData.questions.find(q => q.id === questionId);
+    if (!question || !Array.isArray(question.choices)) return;
+    
+    const choice = question.choices.find(c => {
+        const cId = c.id || c.value || `choice_${question.choices.indexOf(c)}`;
+        return cId === choiceId;
+    });
+    if (choice) {
+        choice.misconception = misconception.trim() || null;
+        setGameData(gameData);
+    }
+}
+
 // 後方互換性のため window にも公開
 if (typeof window !== 'undefined') {
     window.showQuestionEditor = showQuestionEditor;
+    window.updateMasteryLevels = updateMasteryLevels;
+    window.updateChoiceCorrect = updateChoiceCorrect;
+    window.updateChoiceMisconception = updateChoiceMisconception;
+    window.updateChoiceMasteryList = updateChoiceMasteryList;
+    window.updateMasteryLevelsUI = updateMasteryLevelsUI;
 }

@@ -181,11 +181,17 @@
                 const globalGlossary = results[1];
                 
                 // GlossaryLoader.mergeGlossaries を使って統合
+                // mergeGlossaries は termId をキーとするオブジェクトを返す
                 const merged = GlossaryLoader.mergeGlossaries([globalGlossary, projectGlossary]);
                 
                 // terms をオブジェクト形式に変換
+                // merged 自体が terms オブジェクト（termId をキーとする）
                 let terms = {};
-                if (merged.terms) {
+                if (merged && typeof merged === 'object') {
+                    // merged が既に termId をキーとするオブジェクトの場合
+                    terms = merged;
+                } else if (merged && merged.terms) {
+                    // 互換性: merged.terms が存在する場合
                     if (Array.isArray(merged.terms)) {
                         merged.terms.forEach(function(term) {
                             if (term && term.id) {
@@ -228,15 +234,99 @@
      */
     async function loadGameData(projectId) {
         console.log("⭐ loadGameData:", projectId);
+        
+        // Zero-Project Mode: タイムスタンプが含まれるID（新規作成プロジェクト）の場合はファイル読み込みをスキップ
+        // 形式: {base}_{timestamp} (例: new_project_20251209143025)
+        const isZeroProject = projectId && /_\d{14}$/.test(projectId);
+        if (isZeroProject) {
+            console.log("⭐ Zero-Project Mode: localStorageから読み込みます");
+            const stored = window.localStorage.getItem(`project_${projectId}`);
+            if (stored) {
+                try {
+                    const data = JSON.parse(stored);
+                    window.gameData = data;
+                    if (window.Editor && typeof window.Editor.setGameData === 'function') {
+                        window.Editor.setGameData(window.gameData);
+                    }
+                    console.log("✨ Zero-Project Mode: gameData loaded from localStorage");
+                    return window.gameData;
+                } catch (e) {
+                    console.warn("⭐ Zero-Project Mode: localStorageからの読み込みに失敗", e);
+                }
+            } else {
+                // localStorageにない場合は新規作成
+                window.gameData = {
+                    title: projectId.split('_').slice(0, -1).join('_') || "新規プロジェクト",
+                    questions: [],
+                    results: [],
+                    startNode: null,
+                    tags: [],
+                    category: '',
+                    thumbnail: null
+                };
+                if (window.Editor && typeof window.Editor.setGameData === 'function') {
+                    window.Editor.setGameData(window.gameData);
+                }
+                console.log("✨ Zero-Project Mode: 新規gameDataを作成しました");
+                return window.gameData;
+            }
+        }
+        
         const base = `../../projects/${projectId}`;
         
         try {
-            // project.json を読み込む
-            const projectRes = await fetch(`${base}/project.json`);
-            if (!projectRes.ok) {
-                throw new Error(`project.json not found: ${projectRes.status}`);
+            // project.json を読み込む（存在しない場合は fallback）
+            let projectJson = {};
+            try {
+                const projectRes = await fetch(`${base}/project.json`).catch(() => {
+                    console.warn("[State] project.json 不在 → Zero-Project モードを継続します");
+                    return {
+                        ok: false,
+                        json: async () => {
+                            const stored = window.localStorage.getItem(`project_${window.projectId}`);
+                            if (stored) return JSON.parse(stored);
+
+                            return {
+                                title: window.projectId || "新規プロジェクト",
+                                questions: [],
+                                glossary: {},
+                                results: []
+                            };
+                        }
+                    };
+                });
+                
+                if (projectRes && projectRes.ok) {
+                    projectJson = await projectRes.json();
+                } else {
+                    // fallback データを使用（localStorageから取得を試みる）
+                    const stored = window.localStorage.getItem(`project_${window.projectId}`);
+                    if (stored) {
+                        projectJson = JSON.parse(stored);
+                    } else {
+                        projectJson = {
+                            title: "新規プロジェクト",
+                            questions: [],
+                            glossary: {},
+                            results: []
+                        };
+                    }
+                }
+            } catch (fetchError) {
+                console.warn("[State] project.json の読み込みに失敗しました:", fetchError.message);
+                // localStorageから取得を試みる
+                const stored = window.localStorage.getItem(`project_${window.projectId}`);
+                if (stored) {
+                    projectJson = JSON.parse(stored);
+                } else {
+                    projectJson = {
+                        title: "新規プロジェクト",
+                        questions: [],
+                        glossary: {},
+                        results: []
+                    };
+                }
             }
-            const projectJson = await projectRes.json();
             console.log("⭐ project.json loaded:", projectJson);
             
             // quiz.json を読み込む（存在しない場合は fallback）
@@ -320,7 +410,11 @@
         const projectId = params.get("project_id") || params.get("projectId");
         
         // window.projectId にも設定（editor_main.js から参照可能にする）
-        if (projectId) {
+        // editor_main.js で既に設定されている場合はそれを使用
+        if (!projectId && window.projectId) {
+            projectId = window.projectId;
+            console.log("🟦 editor_init: projectId (from window) =", projectId);
+        } else if (projectId) {
             window.projectId = projectId;
             console.log("🟦 editor_init: project_id =", projectId);
         } else {

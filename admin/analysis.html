@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>学習データ分析ダッシュボード</title>
   <link rel="stylesheet" href="../public/css/main.css" />
+  <link rel="stylesheet" href="../public/css/analysis.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="../src/admin/pin.js" defer></script>
   <script>window.addEventListener('DOMContentLoaded',function(){ if(window.AdminAuth) AdminAuth.init({admin:true}); });</script>
@@ -149,276 +150,9 @@
       color: #666;
       font-style: italic;
     }
-    .dashboard {
+    /* ダッシュボード表示制御（analysis.cssで詳細スタイル定義） */
+    .dashboard-dark {
       display: none;
-    }
-    .dashboard.active {
-      display: block;
-    }
-    .tabs {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-      border-bottom: 2px solid #ddd;
-    }
-    .tab {
-      padding: 0.75rem 1.5rem;
-      background: #f0f0f0;
-      border: none;
-      border-radius: 8px 8px 0 0;
-      cursor: pointer;
-      font-size: 1rem;
-      color: #666;
-      transition: all 0.2s;
-    }
-    .tab:hover {
-      background: #e0e0e0;
-    }
-    .tab.active {
-      background: white;
-      color: #333;
-      border-bottom: 2px solid white;
-      margin-bottom: -2px;
-      font-weight: 600;
-    }
-    .tab-content {
-      display: none;
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      margin-bottom: 2rem;
-    }
-    .tab-content.active {
-      display: block;
-    }
-    .tab-content h3 {
-      margin-top: 0;
-      color: #333;
-      border-bottom: 2px solid #eee;
-      padding-bottom: 0.5rem;
-    }
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin: 1.5rem 0;
-    }
-    .stat-card {
-      background: #f9f9f9;
-      padding: 1.5rem;
-      border-radius: 8px;
-      text-align: center;
-    }
-    .stat-card .label {
-      font-size: 0.9rem;
-      color: #666;
-      margin-bottom: 0.5rem;
-    }
-    .stat-card .value {
-      font-size: 2rem;
-      font-weight: bold;
-      color: #333;
-    }
-    .chart-container {
-      position: relative;
-      height: 400px;
-      margin: 2rem 0;
-    }
-    .chart-container.small {
-      height: 300px;
-    }
-    .table-container {
-      overflow-x: auto;
-      margin: 1.5rem 0;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.95rem;
-    }
-    th, td {
-      padding: 0.75rem;
-      text-align: left;
-      border-bottom: 1px solid #eee;
-    }
-    th {
-      background: #f9f9f9;
-      font-weight: 600;
-      color: #333;
-    }
-    tr:hover {
-      background: #f9f9f9;
-    }
-    .path-pattern {
-      font-family: monospace;
-      background: #f0f0f0;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-    }
-    .warning {
-      color: #d32f2f;
-      padding: 1rem;
-      background: #ffebee;
-      border-radius: 4px;
-      margin: 1rem 0;
-    }
-    .success {
-      color: #2e7d32;
-      padding: 1rem;
-      background: #e8f5e9;
-      border-radius: 4px;
-      margin: 1rem 0;
-    }
-    .analysis-btn {
-      margin-top: 12px;
-      padding: 10px 20px;
-      background: #2196F3;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background 0.2s;
-    }
-    .analysis-btn:hover {
-      background: #1976D2;
-    }
-    #analysis-banner {
-      background: #4CAF50;
-      color: white;
-      padding: 12px 20px;
-      font-size: 16px;
-      font-weight: bold;
-      text-align: center;
-      cursor: pointer;
-      border-radius: 4px;
-      margin-top: 1rem;
-      margin-bottom: 1rem;
-    }
-    #analysis-banner.hidden {
-      display: none;
-    }
-    #analysis-open {
-      text-decoration: underline;
-    }
-    #analysis-result-area {
-      margin-top: 20px;
-    }
-    /* 学術レポート形式のスタイル */
-    .report-card {
-      padding: 20px;
-      border-radius: 8px;
-      background: #fff;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      border-left: 4px solid #2196F3;
-    }
-    .report-card h3 {
-      margin-top: 0;
-      margin-bottom: 15px;
-      color: #2c3e50;
-      font-size: 1.3rem;
-      font-weight: 600;
-      border-bottom: 2px solid #e0e0e0;
-      padding-bottom: 8px;
-    }
-    .report-number {
-      font-size: 1.8rem;
-      color: #2c3e50;
-      font-weight: 700;
-      margin: 10px 0;
-      text-align: center;
-    }
-    .report-rt-block {
-      margin: 15px 0;
-    }
-    .report-rt-block .report-number {
-      font-size: 1.8rem;
-      font-weight: bold;
-      color: #2c3e50;
-    }
-    .report-number-large {
-      font-size: 2.5rem;
-    }
-    .report-stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 15px;
-      margin: 15px 0;
-    }
-    .report-stat-item {
-      text-align: center;
-      padding: 10px;
-      background: #f5f5f5;
-      border-radius: 6px;
-    }
-    .report-stat-label {
-      font-size: 0.9rem;
-      color: #666;
-      margin-bottom: 5px;
-    }
-    .report-stat-value {
-      font-size: 1.8rem;
-      color: #2c3e50;
-      font-weight: 600;
-    }
-    .report-comment {
-      margin-top: 15px;
-      padding: 12px;
-      background: #f9f9f9;
-      border-left: 3px solid #4CAF50;
-      border-radius: 4px;
-      font-size: 0.95rem;
-      color: #555;
-      line-height: 1.6;
-    }
-    .report-notes {
-      padding: 15px;
-      background: #fff3cd;
-      border: 1px solid #ffc107;
-      border-radius: 6px;
-      margin-top: 15px;
-    }
-    .report-notes h4 {
-      margin-top: 0;
-      color: #856404;
-      font-size: 1.1rem;
-      margin-bottom: 10px;
-    }
-    .report-notes p {
-      margin: 0;
-      color: #856404;
-      line-height: 1.6;
-    }
-    /* 反応時間フィッティングセクション */
-    .analysis-section {
-      padding: 16px;
-      margin-top: 20px;
-      background: #fafafa;
-      border-radius: 10px;
-      border: 1px solid #e0e0e0;
-    }
-    .analysis-section h3 {
-      margin-top: 0;
-      color: #333;
-      border-bottom: 2px solid #ddd;
-      padding-bottom: 8px;
-    }
-    .analysis-result {
-      margin-bottom: 12px;
-      font-size: 1.1em;
-      line-height: 1.6;
-      color: #555;
-      padding: 12px;
-      background: #fff;
-      border-radius: 6px;
-      border-left: 4px solid #2196F3;
-    }
-    #rt-fitting-chart {
-      max-height: 400px;
     }
   </style>
 </head>
@@ -437,7 +171,6 @@
         <label style="display: block; margin-bottom: 5px; font-weight: 600;">プロジェクト:</label>
         <select id="versionProjectSelect" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; min-width: 200px;">
           <option value="default">default</option>
-          <option value="vector_test">vector_test</option>
         </select>
       </div>
       <div>
@@ -500,232 +233,108 @@
     </div>
   </div>
 
-  <div id="dashboard" class="dashboard">
-    <div class="tabs">
-      <button class="tab active" data-tab="overall">全体概要</button>
-      <button class="tab" data-tab="questions">問題別分析</button>
-      <button class="tab" data-tab="confusions">概念混同分析</button>
-      <button class="tab" data-tab="response-time">反応時間プロファイル</button>
-      <button class="tab" data-tab="paths">迷いパターン分析</button>
-      <button class="tab" data-tab="glossary">Glossary 提示履歴</button>
-      <button class="tab" data-tab="vector">ベクトル分析</button>
-      <button class="tab" data-tab="analysis-run">📊 分析実行</button>
-      <button class="tab" data-tab="cluster-diff-improve">🧠 クラスタリング・Diff・改善度</button>
-    </div>
+  <!-- 理解階層分析ダッシュボード -->
+  <div id="dashboard" class="dashboard-dark" style="display: none;">
+    <!-- 上段カード -->
+    <div class="kpi-row">
+      <div class="kpi-card" id="total-answers-card">
+        <h4>総回答数</h4>
+        <div class="kpi-value" id="kpi-total-answers">-</div>
+      </div>
 
-    <div id="tab-overall" class="tab-content active">
-      <h3>全体概要</h3>
-      <div id="overall-stats"></div>
-    </div>
+      <div class="kpi-card" id="accuracy-card">
+        <h4>平均正答率 / 理解度</h4>
+        <div class="kpi-value" id="kpi-accuracy">-</div>
+      </div>
 
-    <div id="tab-questions" class="tab-content">
-      <h3>問題別分析</h3>
-      <div id="question-stats"></div>
-    </div>
-
-    <div id="tab-confusions" class="tab-content">
-      <h3>概念混同分析（conceptTag）</h3>
-      <div id="confusion-stats"></div>
-    </div>
-
-    <div id="tab-response-time" class="tab-content">
-      <h3>反応時間プロファイル集計</h3>
-      <div id="response-time-stats"></div>
-    </div>
-
-    <div id="tab-paths" class="tab-content">
-      <h3>迷いパターン（path）分析</h3>
-      <div id="path-stats"></div>
-    </div>
-
-    <div id="tab-glossary" class="tab-content">
-      <h3>Glossary 提示履歴の集計</h3>
-      <div id="glossary-stats"></div>
-    </div>
-
-    <div id="tab-vector" class="tab-content">
-      <h3>理解ベクトル分析</h3>
-      <div id="vector-analysis">
-        <div class="metric-box" style="background: #f9f9f9; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #2196F3;">
-          <strong style="display: block; margin-bottom: 0.5rem; color: #333;">理想構造との一致度（cosine similarity）</strong>
-          <div id="vector-similarity" style="font-size: 2rem; font-weight: bold; color: #2196F3;">--%</div>
-        </div>
-
-        <h4 style="margin-top: 2rem; color: #333; border-bottom: 2px solid #eee; padding-bottom: 0.5rem;">学習者の平均ベクトル</h4>
-        <ul id="vector-axis-list" style="list-style: none; padding: 0; margin: 1rem 0;"></ul>
+      <div class="kpi-card" id="weakest-level-card">
+        <h4>最も弱い理解階層</h4>
+        <div class="kpi-value" id="kpi-weakest-level">-</div>
       </div>
     </div>
 
-    <div id="tab-analysis-run" class="tab-content">
-      <h3>📊 Julia を用いた学習データ詳細分析</h3>
-
-      <p>生徒データを選択し、Julia によるバックエグザクト解析を実行します。</p>
-
-      <label>生徒データ：</label>
-      <select id="analysis-student-file"></select>
-
-      <button id="run-analysis-btn" class="analysis-btn">
-        📊 このデータを分析する
-      </button>
-
-      <div id="analysis-banner" class="hidden">
-        📊 分析が完了しました — <span id="analysis-open">結果を見る</span>
+    <!-- 中段チャート -->
+    <div class="chart-row">
+      <div class="chart-box">
+        <h4>理解階層の分布</h4>
+        <canvas id="masteryPie"></canvas>
       </div>
 
-      <div id="analysis-result-area" style="margin-top:20px;"></div>
+      <div class="chart-box">
+        <h4>概念別の理解スコア</h4>
+        <canvas id="conceptBar"></canvas>
+      </div>
+
+      <div class="chart-box">
+        <h4>誤概念ランキング</h4>
+        <canvas id="misconceptionBar"></canvas>
+      </div>
     </div>
 
-    <div id="tab-cluster-diff-improve" class="tab-content">
-      <h3>🧠 クラスタリング・Diff・改善度分析</h3>
+    <!-- 下段：弱点と推薦問題 -->
+    <div class="chart-row">
+      <div class="chart-box">
+        <h4>弱い理解階層（TOP3）</h4>
+        <canvas id="weakLevelsBar"></canvas>
+      </div>
 
-      <!-- クラスタリング分析セクション -->
-      <section id="clusterAnalysisSection" style="margin-top: 30px; padding: 20px; background: #f9f9f9; border-radius: 8px; margin-bottom: 30px;">
-        <h2>🧠 クラスタリング分析（Julia）</h2>
-        <p style="color: #666; margin-bottom: 15px;">
-          生徒ログをクラスタリング分析して、学習パターンを可視化します。
-        </p>
-        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-          <button id="runClusterBtn" style="padding: 10px 20px; background: #2d7bf4; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1em;">
-            🧠 クラスタリング分析を実行
-          </button>
-          <button id="loadClusterResultBtn" style="padding: 10px 20px; background: #48bb78; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1em;">
-            📊 最新結果を読み込む
-          </button>
-        </div>
-        <div id="clusterImageContainer" style="margin-top: 20px;"></div>
-        <div id="clusterDetailContainer" style="margin-top: 20px; padding: 15px; background: white; border-radius: 6px;"></div>
-      </section>
+      <div class="chart-box" id="recommendation-box">
+        <h4>おすすめ問題リスト</h4>
+        <ul id="recommendation-list"></ul>
+      </div>
+    </div>
 
-      <!-- クラスタ分析セクション（フロントエンド） -->
-      <section id="clusterAnalysisFrontendSection" style="margin-top: 30px; padding: 20px; background: #f0f8ff; border-radius: 8px; margin-bottom: 30px;">
-        <h2>📊 クラスタ分析（フロントエンド）</h2>
-        <p style="color: #666; margin-bottom: 15px;">
-          データセットから cluster_features を抽出して、フロントエンドでクラスタリング分析を実行します。
-        </p>
-        <div style="margin-top: 20px;">
-          <h3 style="margin-bottom: 10px; color: #333;">散布図（2D可視化）</h3>
-          <div id="cluster-plot" style="width: 100%; height: 450px; border: 1px solid #ddd; border-radius: 6px; background: white; position: relative;">
-            <canvas id="clusterScatter" style="max-width: 100%; height: 100%;"></canvas>
-          </div>
-        </div>
-        <div style="margin-top: 30px;">
-          <h3 style="margin-bottom: 10px; color: #333;">クラスタ一覧</h3>
-          <div id="clusterTable" style="margin-top: 10px; padding: 15px; background: white; border-radius: 6px; overflow-x: auto;"></div>
-        </div>
-        <div style="margin-top: 30px;">
-          <h3 style="margin-bottom: 10px; color: #333;">デバッグ情報</h3>
-          <pre id="clusterDebug" style="padding: 15px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 6px; overflow-x: auto; font-size: 0.9em; max-height: 300px; overflow-y: auto;"></pre>
-        </div>
-      </section>
+    <!-- 誤概念 × 理解階層のクロス集計ヒートマップ -->
+    <div class="chart-row">
+      <div class="chart-box" style="flex: 2;">
+        <h4>誤概念 × 理解階層（クロス集計）</h4>
+        <canvas id="misconceptionMasteryHeat"></canvas>
+      </div>
+    </div>
 
-      <!-- バージョン差分比較セクション -->
-      <section id="diffAnalysisSection" style="margin-top: 30px; padding: 20px; background: #f9f9f9; border-radius: 8px; margin-bottom: 30px;">
-        <h2>🔍 バージョン差分比較（Diff）</h2>
-        <p style="color: #666; margin-bottom: 15px;">
-          2つのバージョンを比較して、変更内容を確認します。
-        </p>
-        <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 20px; flex-wrap: wrap;">
-          <div>
-            <label style="display: block; margin-bottom: 5px; font-weight: 600;">旧バージョン:</label>
-            <select id="diffOld" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; min-width: 200px;"></select>
-          </div>
-          <div>
-            <label style="display: block; margin-bottom: 5px; font-weight: 600;">新バージョン:</label>
-            <select id="diffNew" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; min-width: 200px;"></select>
-          </div>
-          <div style="align-self: flex-end;">
-            <button id="runDiffBtn" style="padding: 10px 20px; background: #2d7bf4; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1em;">
-              🔍 比較する
-            </button>
-          </div>
-        </div>
-        <div id="diffResult" style="margin-top: 20px; padding: 15px; background: white; border-radius: 6px; overflow-x: auto;"></div>
-      </section>
+    <!-- 反応時間関連の可視化 -->
+    <div class="chart-row">
+      <div class="chart-box">
+        <h4>反応時間の分布（Response Time）</h4>
+        <canvas id="rtHistogram"></canvas>
+      </div>
 
-      <!-- バージョン別の改善度分析セクション -->
-      <section id="versionImproveSection" style="margin-top: 30px; padding: 20px; background: #f9f9f9; border-radius: 8px; margin-bottom: 30px;">
-        <h2>📈 バージョン別の改善度分析</h2>
-        <p style="color: #666; margin-bottom: 15px;">
-          バージョンごとの学習データを比較して、改善度を可視化します。
-        </p>
-        <button id="runImproveBtn" style="padding: 10px 20px; background: #2d7bf4; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1em; margin-bottom: 20px;">
-          📈 改善度を計算
-        </button>
-        <div id="improveChart" style="margin-top: 20px; padding: 15px; background: white; border-radius: 6px;"></div>
-      </section>
+      <div class="chart-box">
+        <h4>理解階層 × 反応コスト（Heatmap）</h4>
+        <canvas id="rtMasteryHeat"></canvas>
+      </div>
+    </div>
+
+    <!-- 迷いトポロジーと安定度の可視化 -->
+    <div class="chart-row">
+      <div class="chart-box">
+        <h4>迷いトポロジー（Confusion Topology）</h4>
+        <canvas id="confusionTopo"></canvas>
+      </div>
+
+      <div class="chart-box">
+        <h4>安定度（Stability Index）</h4>
+        <canvas id="stabilityChart"></canvas>
+      </div>
     </div>
   </div>
 
-  <!-- 反応時間フィッティングセクション -->
-  <section id="rt-fitting-section" class="analysis-section" style="display:none;">
-    <h3>⏱ 反応時間フィッティング（指数分布＋正規分布）</h3>
-    <div id="rt-fitting-result" class="analysis-result"></div>
-    <canvas id="rt-fitting-chart"></canvas>
-  </section>
-
   <!-- ============================================
-       スクリプト読み込み順序（絶対に変更禁止）
+       スクリプト読み込み順序
        ============================================
-       1. config.js
-       2. GlossaryLoader.js
-       3. dataset_loader.js
-       4. vector_math.js
-       5. analysis.js（1回のみ）
-       6. main script（この中で AnalysisDashboard を使う）
+       1. analysis.js（理解階層分析）
+       2. recommendation.js（問題推薦）
+       3. analysis.js（ダッシュボード描画）
   -->
-  <script src="../src/core/config.js"></script>
-  <script src="../src/core/GlossaryLoader.js"></script>
+  <script src="../src/player/analysis.js"></script>
+  <script src="../src/player/recommendation.js"></script>
   <script src="../src/admin/dataset_loader.js"></script>
-  <script src="../src/utils/vector_math.js"></script>
   <script src="../src/admin/analysis.js"></script>
-  <script type="text/javascript">
-    // 読み込み確認（デバッグ用）
-    if (typeof window.AnalysisDashboard === 'undefined') {
-      console.error('❌ AnalysisDashboard の読み込みに失敗しました');
-    } else {
-      console.log('✅ AnalysisDashboard が正常に読み込まれました:', Object.keys(window.AnalysisDashboard));
-    }
-    
-    if (typeof window.DatasetLoader === 'undefined') {
-      console.error('❌ DatasetLoader の読み込みに失敗しました');
-    } else {
-      console.log('✅ DatasetLoader が正常に読み込まれました');
-    }
-    
-    if (typeof window.VectorMath === 'undefined') {
-      console.error('❌ VectorMath の読み込みに失敗しました');
-    } else {
-      console.log('✅ VectorMath が正常に読み込まれました');
-    }
-  </script>
   <script>
     var currentDataset = null;
+    var currentLogs = null; // 現在のログデータを保持
 
-    // タブ切り替え
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', function() {
-        const tabId = this.getAttribute('data-tab');
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        this.classList.add('active');
-        document.getElementById('tab-' + tabId).classList.add('active');
-        
-        // ベクトル分析タブが選択された場合、ベクトル分析を再実行
-        if (tabId === 'vector' && currentDataset) {
-          // 現在のログデータを再取得してベクトル分析を実行
-          // （既に読み込まれているデータを使用）
-          const dashboard = document.getElementById('dashboard');
-          if (dashboard && dashboard.classList.contains('active')) {
-            // 既存のログデータを使用してベクトル分析を実行
-            // この処理は loadAndAnalyze で既に実行されているため、ここでは不要
-            // ただし、タブが切り替わった時に再描画する場合は以下を有効化
-            // DatasetLoader.loadProject('default').then(function(project) {
-            //   // ログデータを再取得する必要がある場合はここで処理
-            // });
-          }
-        }
-      });
-    });
+    // タブ切り替えは削除（新しいダッシュボードはタブ不要）
 
     // データセット一覧を読み込む
     function loadDatasetList() {
@@ -893,20 +502,20 @@
             // ダッシュボードを表示
             const dashboardEl = document.getElementById('dashboard');
             if (dashboardEl) {
-              dashboardEl.classList.add('active');
+              dashboardEl.style.display = 'block';
             }
             
-            // 全セッション合算で分析を実行
-            window.AnalysisDashboard.analyze(logsAll, projectData);
-            
-            // クラスタリング分析を実行（data.raw または data.sessions に cluster_features がある場合）
-            if (data.sessions && data.sessions.length > 0) {
-              // data.sessions を使用（標準形）
-              window.AnalysisDashboard.renderClusterAnalysis({ sessions: data.sessions }, projectData.project_id || 'default');
-            } else if (data.raw && (data.raw.sessions || data.raw.vector_test_sessions)) {
-              // data.raw を使用（後方互換性）
-              window.AnalysisDashboard.renderClusterAnalysis(data.raw, projectData.project_id || 'default');
+            // 新しい理解階層分析ダッシュボードを表示
+            if (window.AnalysisDashboard && window.AnalysisDashboard.renderMasteryDashboard) {
+              window.AnalysisDashboard.renderMasteryDashboard(logsAll, projectData);
+            } else {
+              // フォールバック: 既存の分析を実行
+              window.AnalysisDashboard.analyze(logsAll, projectData);
             }
+            
+            // ログデータを保持
+            currentLogs = logsAll;
+            window.currentLogs = logsAll;
           } else {
             // 通常のログ形式（単一セッション）
             var datasetName = data.raw && data.raw.dataset_name ? data.raw.dataset_name : dataset.dataset_name;
@@ -924,16 +533,20 @@
             // ダッシュボードを表示
             const dashboardEl2 = document.getElementById('dashboard');
             if (dashboardEl2) {
-              dashboardEl2.classList.add('active');
+              dashboardEl2.style.display = 'block';
             }
             
-            // 分析を実行（projectDataを含める）
-            window.AnalysisDashboard.analyze(logs, projectData);
-            
-            // クラスタリング分析を実行（data.raw に cluster_features がある場合）
-            if (data.raw && (data.raw.sessions || data.raw.vector_test_sessions || data.raw.student_log)) {
-              window.AnalysisDashboard.renderClusterAnalysis(data.raw, projectData.project_id || 'default');
+            // 新しい理解階層分析ダッシュボードを表示
+            if (window.AnalysisDashboard && window.AnalysisDashboard.renderMasteryDashboard) {
+              window.AnalysisDashboard.renderMasteryDashboard(logs, projectData);
+            } else {
+              // フォールバック: 既存の分析を実行
+              window.AnalysisDashboard.analyze(logs, projectData);
             }
+            
+            // ログデータを保持
+            currentLogs = logs;
+            window.currentLogs = logs;
           }
         })
         .catch(function(error) {
@@ -1100,7 +713,9 @@
       
       if (session && session.logs) {
         const projectData = window.currentProjectData || {};
-        if (window.AnalysisDashboard) {
+        if (window.AnalysisDashboard && window.AnalysisDashboard.renderMasteryDashboard) {
+          window.AnalysisDashboard.renderMasteryDashboard(session.logs, projectData);
+        } else if (window.AnalysisDashboard) {
           window.AnalysisDashboard.analyze(session.logs, projectData);
         }
       }
@@ -1119,7 +734,11 @@
       
       const logsAll = window.AnalysisDashboard.mergeAllSessions(window.currentStudentData);
       const projectData = window.currentProjectData || {};
-      window.AnalysisDashboard.analyze(logsAll, projectData);
+      if (window.AnalysisDashboard.renderMasteryDashboard) {
+        window.AnalysisDashboard.renderMasteryDashboard(logsAll, projectData);
+      } else {
+        window.AnalysisDashboard.analyze(logsAll, projectData);
+      }
       });
     }
 
@@ -1216,13 +835,9 @@
           const quizData = await quizResponse.json();
           const versionData = await versionResponse.json();
           
-          // JSON diff を計算（quizDataとversionDataを比較）
-          if (window.AnalysisDashboard && window.AnalysisDashboard.computeJSONDiff) {
-            const diff = window.AnalysisDashboard.computeJSONDiff(quizData, versionData);
-            window.AnalysisDashboard.renderJSONDiff(diff, 'diffContainer');
-          } else {
-            throw new Error('AnalysisDashboard が利用できません');
-          }
+          // JSON diff を計算（簡易版）
+          const diff = diffJSON(quizData, versionData);
+          renderDiffTable(diff);
         } catch (error) {
           console.error('Failed to load version diff:', error);
           if (diffContainer) {
@@ -1232,92 +847,6 @@
         }
         });
       }
-    }
-    // クラスタリング分析ボタンのイベント（既存のクラスタリング分析セクション用、重複登録を防ぐ）
-    if (!window._clusterAnalysisBtnListenerAdded) {
-      window._clusterAnalysisBtnListenerAdded = true;
-      const clusterAnalysisBtn = document.getElementById('clusterAnalysisBtn');
-      if (clusterAnalysisBtn) {
-        clusterAnalysisBtn.addEventListener('click', function() {
-          if (!window.AnalysisDashboard) {
-            alert('AnalysisDashboard が読み込まれていません。ページをリロードしてください。');
-            return;
-          }
-          if (window.currentStudentData && window.currentStudentData.sessions) {
-            const logsAll = window.AnalysisDashboard.mergeAllSessions(window.currentStudentData);
-            window.AnalysisDashboard.runClusterAnalysis(logsAll);
-          } else if (window.currentLogs && Array.isArray(window.currentLogs)) {
-            window.AnalysisDashboard.runClusterAnalysis(window.currentLogs);
-          } else {
-            alert('ログデータが読み込まれていません。先にデータセットを選択してください。');
-          }
-        });
-      }
-    }
-
-    //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    // クラスタリング分析（Julia、重複登録を防ぐ）
-    //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    if (!window._runClusterBtnListenerAdded) {
-      window._runClusterBtnListenerAdded = true;
-      const runClusterBtn = document.getElementById('runClusterBtn');
-      if (runClusterBtn) {
-        runClusterBtn.addEventListener('click', function() {
-          if (!window.AnalysisDashboard) {
-            alert('AnalysisDashboard が読み込まれていません。ページをリロードしてください。');
-            return;
-          }
-          if (window.currentStudentData && window.currentStudentData.sessions) {
-            const logsAll = window.AnalysisDashboard.mergeAllSessions(window.currentStudentData);
-            window.AnalysisDashboard.runClusterAnalysis(logsAll);
-          } else if (window.currentLogs && Array.isArray(window.currentLogs)) {
-            window.AnalysisDashboard.runClusterAnalysis(window.currentLogs);
-          } else {
-            alert('ログデータが読み込まれていません。先にデータセットを選択してください。');
-          }
-        });
-      }
-    }
-
-    const loadClusterResultBtn = document.getElementById('loadClusterResultBtn');
-    if (loadClusterResultBtn) {
-      loadClusterResultBtn.addEventListener('click', async function() {
-        const container = document.getElementById('clusterImageContainer');
-        const detail = document.getElementById('clusterDetailContainer');
-        
-        container.innerHTML = '<p style="color: #666;">読み込み中...</p>';
-        detail.innerHTML = '<p style="color: #666;">読み込み中...</p>';
-        
-        try {
-          // クラスタリング結果の画像を読み込む
-          const imagePath = '../../analysis/student_clusters_2d.png';
-          container.innerHTML = `
-            <h4>クラスタリング結果（2D散布図）</h4>
-            <img src="${imagePath}" style="max-width: 100%; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" 
-                 onerror="this.parentElement.innerHTML='<p style=\\'color: #e53e3e;\\'>画像が見つかりません。Juliaスクリプトを実行してください。</p>'">
-          `;
-          
-          // クラスタ情報を表示（JSONファイルがあれば読み込む）
-          try {
-            const clusterDataPath = '../../analysis/student_logs_clustered.csv';
-            const response = await fetch(clusterDataPath);
-            if (response.ok) {
-              detail.innerHTML = `
-                <h4>クラスタリング結果データ</h4>
-                <p style="color: #666;">CSVファイルが生成されました: student_logs_clustered.csv</p>
-                <p style="color: #666;">各ログに cluster_label が付与されています。</p>
-              `;
-            } else {
-              detail.innerHTML = '<p style="color: #999;">クラスタリング結果データはまだ生成されていません。</p>';
-            }
-          } catch (e) {
-            detail.innerHTML = '<p style="color: #999;">クラスタリング結果データはまだ生成されていません。</p>';
-          }
-        } catch (error) {
-          console.error('Failed to load cluster result:', error);
-          container.innerHTML = '<p style="color: #e53e3e;">結果の読み込みに失敗しました。</p>';
-        }
-      });
     }
 
     //━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1714,6 +1243,7 @@
         container.innerHTML = html;
       }
     }
+
   </script>
 </body>
 </html>

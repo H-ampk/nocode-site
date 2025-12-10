@@ -100,3 +100,129 @@
   margin-bottom: 15px;
 }
 
+/* =====================================================================
+   White Scandinavian Intelligence (WSI) Theme - Modal
+   — 北欧ミニマルデザイン —
+   ===================================================================== */
+/* --- モーダル共通 --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  width: 420px;
+  background: #FFFFFF;
+  padding: 28px;
+  border: 1px solid #D6D6D6;
+  border-radius: 10px;
+  box-shadow: none;
+  color: #2E3E34;
+  font-family: "Inter", "Noto Sans JP", sans-serif;
+}
+
+.modal h2 {
+  margin: 0 0 20px 0;
+  font-size: 1.5em;
+  font-weight: 600;
+  color: #2E3E34;
+}
+
+.modal label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #2E3E34;
+}
+
+.modal input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #D6D6D6;
+  border-radius: 6px;
+  margin-top: 6px;
+  font-size: 15px;
+  background: #FFFFFF;
+  font-family: "Inter", "Noto Sans JP", sans-serif;
+  box-sizing: border-box;
+}
+
+.modal input:focus {
+  outline: none;
+  border-color: #3F5F4F;
+}
+
+.modal .btn-primary {
+  background: #3F5F4F;
+  color: white;
+  border-radius: 6px;
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+  font-family: "Inter", "Noto Sans JP", sans-serif;
+}
+
+.modal .btn-primary:hover {
+  background: #4A6F5C;
+}
+
+.modal .btn-secondary {
+  background: #ECEDEA;
+  color: #2E3E34;
+  border-radius: 6px;
+  padding: 8px 16px;
+  border: none;
+  margin-right: 8px;
+  cursor: pointer;
+  font-family: "Inter", "Noto Sans JP", sans-serif;
+}
+
+.modal .btn-secondary:hover {
+  background: #E0E1DE;
+}
+
+/* プロジェクト一覧（北欧スタイル） */
+.project-list {
+  margin-top: 20px;
+}
+
+.project-card {
+  background: #fff;
+  border: 1px solid #D6D6D6;
+  border-radius: 6px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.project-card h4 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2E3E34;
+  margin: 0;
+}
+
+.open-btn {
+  background: #3F5F4F;
+  border-radius: 6px;
+  padding: 8px 16px;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.open-btn:hover {
+  background: #4A6F5C;
+}
+

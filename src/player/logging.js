@@ -19,12 +19,16 @@
   var questionStartTime = null;
   var quizLogs = []; // 複数問題のログを蓄積
 
+  // 質問開始時刻を保存（ミリ秒単位）
+  var questionStartTimeMs = null;
+
   /**
    * 問題の表示開始を記録
    * @param {string} questionId - 問題ID
    */
   function startQuestion(questionId) {
     questionStartTime = performance.now() / 1000; // 秒単位
+    questionStartTimeMs = Date.now(); // ミリ秒単位（logAnswer用）
     currentLog = {
       questionId: questionId,
       timestamp: null,
@@ -34,6 +38,13 @@
       response_time: null,
       path: []
     };
+  }
+
+  /**
+   * 質問開始時刻を記録（logAnswer用）
+   */
+  function startQuestionTimer() {
+    questionStartTimeMs = Date.now();
   }
 
   /**
@@ -118,12 +129,43 @@
   }
 
   /**
+   * 回答ログ保存（analysis.js用の形式）
+   * @param {Object} question - 問題オブジェクト（id, concept プロパティを持つ）
+   * @param {Object} selected - 選択された選択肢（id, correct, misconception, measure プロパティを持つ）
+   * @returns {Object} ログエントリ
+   */
+  function logAnswer(question, selected) {
+    const end = Date.now();
+    const responseTime = questionStartTimeMs ? (end - questionStartTimeMs) : null;
+
+    // 反応コスト（後で analysis.js が再計算するので暫定で保持）
+    const responseCost = responseTime != null ? Math.log(1 + responseTime) : null;
+
+    return {
+      questionId: question.id,
+      timestamp: end,
+      question: { concept: question.concept || "その他" },
+
+      selected: {
+        id: selected.id,
+        correct: selected.correct,
+        misconception: selected.misconception || null,
+        measure: selected.measure || []
+      },
+
+      response_time_ms: responseTime,
+      response_cost: responseCost
+    };
+  }
+
+  /**
    * ログをクリア
    */
   function clearLogs() {
     quizLogs = [];
     currentLog = null;
     questionStartTime = null;
+    questionStartTimeMs = null;
   }
 
   /**
@@ -152,9 +194,11 @@
   // グローバルに公開
   global.QuizLogging = {
     startQuestion: startQuestion,
+    startQuestionTimer: startQuestionTimer,
     recordClick: recordClick,
     recordHover: recordHover,
     finalizeAnswer: finalizeAnswer,
+    logAnswer: logAnswer,
     getCurrentLog: getCurrentLog,
     getAllLogs: getAllLogs,
     clearLogs: clearLogs,

@@ -581,6 +581,94 @@
     return explanation;
   }
 
+  /**
+   * 理解階層ベースの問題推薦
+   * @param {Object} masteryProfile - 現在の理解階層プロファイル
+   * @param {Array} questions - 利用可能な問題の配列
+   * @returns {Object|null} 推薦される問題オブジェクト
+   */
+  function recommendNextQuestion(masteryProfile, questions) {
+    if (!masteryProfile || !questions || questions.length === 0) {
+      return null;
+    }
+
+    // 理解階層の定義
+    var MASTERY_LEVELS = window.MASTERY_LEVELS || ['識別', '説明', '適用', '区別', '転移', '構造化'];
+
+    // 最もスコアが低い理解階層を特定
+    var weakestLevel = null;
+    var minScore = Infinity;
+
+    MASTERY_LEVELS.forEach(function(level) {
+      var score = masteryProfile[level] || 0;
+      if (score < minScore) {
+        minScore = score;
+        weakestLevel = level;
+      }
+    });
+
+    if (!weakestLevel) {
+      return null;
+    }
+
+    // その理解階層を測定する問題を優先推薦
+    var candidateQuestions = questions.filter(function(q) {
+      if (!q || !Array.isArray(q.measure)) {
+        return false;
+      }
+      return q.measure.indexOf(weakestLevel) !== -1;
+    });
+
+    // 候補が見つからない場合は、すべての問題からランダムに選択
+    if (candidateQuestions.length === 0) {
+      candidateQuestions = questions;
+    }
+
+    // 候補の中からランダムに1つ選択
+    var randomIndex = Math.floor(Math.random() * candidateQuestions.length);
+    return candidateQuestions[randomIndex] || null;
+  }
+
+  /**
+   * 弱い理解階層に対応する問題を推薦（選択肢レベルのmeasureを使用）
+   * @param {Array} allQuestions - すべての問題の配列
+   * @param {Array} weakLevels - 弱い理解階層の配列（例: ['識別', '説明']）
+   * @returns {Array} 推薦問題の文字列配列（例: ['【識別】 問題1', '【説明】 問題2']）
+   */
+  function recommendQuestions(allQuestions, weakLevels) {
+    if (!allQuestions || !Array.isArray(allQuestions) || allQuestions.length === 0) {
+      return [];
+    }
+
+    if (!weakLevels || !Array.isArray(weakLevels) || weakLevels.length === 0) {
+      return [];
+    }
+
+    var result = [];
+
+    weakLevels.forEach(function(level) {
+      // その階層を測定する選択肢を持つ問題をフィルタ（選択肢レベルのmeasureを使用）
+      var matched = allQuestions.filter(function(q) {
+        if (!q || !Array.isArray(q.options) && !Array.isArray(q.choices)) {
+          return false;
+        }
+        // options または choices のいずれかを使用
+        var options = q.options || q.choices || [];
+        return options.some(function(opt) {
+          return Array.isArray(opt.measure) && opt.measure.indexOf(level) !== -1;
+        });
+      });
+
+      // 最大5件まで追加
+      matched.slice(0, 5).forEach(function(q) {
+        var questionText = q.text || q.question || q.title || q.id || '問題';
+        result.push('【' + level + '】 ' + questionText);
+      });
+    });
+
+    return result;
+  }
+
   // グローバルに公開
   global.GlossaryRecommendation = {
     setGlossary: setGlossary,
@@ -592,7 +680,9 @@
     analyzePath: analyzePath,
     classifyByResponseTime: classifyByResponseTime,
     calculateTagMatchScore: calculateTagMatchScore,
-    determineTermDepth: determineTermDepth
+    determineTermDepth: determineTermDepth,
+    recommendNextQuestion: recommendNextQuestion,
+    recommendQuestions: recommendQuestions
   };
 
 })(window);

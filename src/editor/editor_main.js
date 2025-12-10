@@ -76,9 +76,15 @@ document.addEventListener('DOMContentLoaded', function() {
     bindAllEvents();
     
     // プロジェクト読み込み（URLパラメータ）
-    // project_id と projectId の両方に対応
+    // project_id, projectId, project のすべてに対応
     const params = new URLSearchParams(window.location.search);
-    let projectId = params.get("project_id") || params.get("projectId");
+    let projectId = params.get("project") || params.get("project_id") || params.get("projectId");
+    
+    // getProjectId関数を定義（他のスクリプトからも使用可能に）
+    window.getProjectId = function() {
+        const p = new URLSearchParams(window.location.search);
+        return p.get("project") || p.get("project_id") || p.get("projectId");
+    };
     
     // window.projectId からも取得（editor_init.js が設定した場合）
     if (!projectId && window.projectId) {
@@ -86,10 +92,35 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log("🟩 editor_main.js: projectId (from window) =", projectId);
     }
     
-    // projectId を window に設定（他のスクリプトから参照可能にする）
-    if (projectId) {
-        window.projectId = projectId;
+    // Zero-Project Mode -------------------------
+    if (!projectId) {
+        // プロジェクト名の入力ダイアログ
+        const name = prompt("新規プロジェクトの名前を入力してください（空欄可）", "");
+        const base = name?.trim() || "new_project";
+
+        // ID を付加
+        const timestamp = new Date().toISOString().replace(/[-:T.]/g,"").slice(0,14);
+        projectId = `${base}_${timestamp}`;
+
+        console.warn(`[Editor] Zero-Project Modeで新規作成: ${projectId}`);
+
+        // 空データを保存
+        try {
+            window.localStorage.setItem("project_id", projectId);
+            window.localStorage.setItem(`project_${projectId}`, JSON.stringify({
+                title: base,
+                questions: [],
+                glossary: {},
+                results: [],
+                created_at: timestamp
+            }));
+        } catch (e) {
+            console.warn("[Editor] localStorage への保存に失敗しました:", e);
+        }
     }
+
+    // projectId を window に設定（他のスクリプトから参照可能にする）
+    window.projectId = projectId;
     
     if (projectId && typeof window.loadProjectFromId === 'function') {
         console.log("📁 Editor: auto-loading project:", projectId);

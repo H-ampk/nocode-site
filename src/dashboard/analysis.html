@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>学習データ分析ダッシュボード</title>
+  <link rel="stylesheet" href="../public/css/main.css" />
+  <link rel="stylesheet" href="analysis.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <h1>📊 学習データ分析ダッシュボード</h1>
+
+  <!-- タブメニュー -->
+  <div class="tab-menu">
+    <button class="tab-button active" data-tab="overview">全体概要</button>
+    <button class="tab-button" data-tab="cluster">クラスタ分析</button>
+    <button class="tab-button" data-tab="timeline">タイムライン</button>
+    <!-- AI診断タブ -->
+    <button class="tab-button" data-tab="ai">AI診断</button>
+    <!-- tabs-end -->
+  </div>
+
+  <!-- タブパネル -->
+  <div class="tab-panels">
+    <div id="tab-overview" class="tab-panel">
+      <h2>全体概要</h2>
+      <p>全体概要の内容がここに表示されます。</p>
+    </div>
+
+    <div id="tab-cluster" class="tab-panel" style="display:none;">
+      <h2>クラスタ分析</h2>
+      <p>クラスタ分析の内容がここに表示されます。</p>
+    </div>
+
+    <div id="tab-timeline" class="tab-panel" style="display:none;">
+      <h2>タイムライン</h2>
+      <p>タイムラインの内容がここに表示されます。</p>
+    </div>
+
+    <div id="tab-ai" class="tab-panel" style="display:none;">
+      <h2>AI診断（理解構造）</h2>
+      <button id="btn-run-ai-diagnosis" class="btn">AI診断を実行</button>
+
+      <div id="ai-diagnosis-result" class="ai-box">
+        <!-- AI診断結果がここに表示 -->
+      </div>
+    </div>
+    <!-- tab-panels-end -->
+  </div>
+
+  <!-- 概念ミスパターン解析セクション -->
+  <section id="section-concept-mispattern" class="tab-panel" style="margin-top: 2rem; display: none;">
+    <h2>概念ミスパターン解析</h2>
+    <button id="btn-run-concept-mispattern" class="btn">実行</button>
+    <div id="conceptmap-container" style="width:100%;height:500px;border:1px solid #ddd;border-radius:8px;margin-top:1rem;"></div>
+  </section>
+
+  <!-- 迷いマップ（RT × 誤答トポロジー）セクション -->
+  <section id="section-rtmap" class="tab-panel" style="margin-top: 2rem; display: none;">
+    <h2>迷いマップ（RT × 誤答トポロジー）</h2>
+    <button id="btn-run-rtmap" class="btn">実行</button>
+    <div id="rtmap-container" style="width:100%;height:500px;border:1px solid #ddd;border-radius:8px;margin-top:1rem;"></div>
+  </section>
+
+  <script type="module" src="analysis.js"></script>
+</body>
+</html>
+

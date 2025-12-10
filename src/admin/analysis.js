@@ -73,309 +73,7 @@
     });
   }
 
-  /**
-   * 全体統計を計算
-   * @param {Array} logs - ログの配列
-   * @returns {Object} 統計データ
-   */
-  function computeOverallStats(logs) {
-    if (!logs || logs.length === 0) {
-      return {
-        totalAnswers: 0,
-        correctRate: 0,
-        averageResponseTime: 0,
-        thinkingTypeDistribution: { instant: 0, searching: 0, deliberate: 0 }
-      };
-    }
-
-    var totalAnswers = logs.length;
-    var correctCount = logs.filter(function(log) { return log.correct === true; }).length;
-    var correctRate = (correctCount / totalAnswers) * 100;
-
-    var totalResponseTime = logs.reduce(function(sum, log) {
-      return sum + (log.response_time || 0);
-    }, 0);
-    var averageResponseTime = totalResponseTime / totalAnswers;
-
-    // 思考タイプの分類（デフォルト閾値: instant=3, deliberate=15）
-    var instantThreshold = 3;
-    var deliberateThreshold = 15;
-    var thinkingTypeDistribution = {
-      instant: 0,
-      searching: 0,
-      deliberate: 0
-    };
-
-    logs.forEach(function(log) {
-      var rt = log.response_time || 0;
-      if (rt <= instantThreshold) {
-        thinkingTypeDistribution.instant++;
-      } else if (rt < deliberateThreshold) {
-        thinkingTypeDistribution.searching++;
-      } else {
-        thinkingTypeDistribution.deliberate++;
-      }
-    });
-
-    return {
-      totalAnswers: totalAnswers,
-      correctRate: correctRate,
-      averageResponseTime: averageResponseTime,
-      thinkingTypeDistribution: thinkingTypeDistribution
-    };
-  }
-
-  /**
-   * 問題別統計を計算
-   * @param {Array} logs - ログの配列
-   * @returns {Object} 問題IDをキーとする統計データ
-   */
-  function computePerQuestionStats(logs) {
-    var questionStats = {};
-
-    logs.forEach(function(log) {
-      var questionId = log.questionId || 'unknown';
-      
-      if (!questionStats[questionId]) {
-        questionStats[questionId] = {
-          questionId: questionId,
-          totalAnswers: 0,
-          correctCount: 0,
-          correctRate: 0,
-          averageResponseTime: 0,
-          responseTimes: [],
-          wrongAnswers: {},
-          clickCounts: []
-        };
-      }
-
-      var stats = questionStats[questionId];
-      stats.totalAnswers++;
-      if (log.correct === true) {
-        stats.correctCount++;
-      }
-      stats.responseTimes.push(log.response_time || 0);
-      
-      // 誤答の記録
-      if (log.correct === false && log.final_answer) {
-        var wrongAnswer = log.final_answer;
-        stats.wrongAnswers[wrongAnswer] = (stats.wrongAnswers[wrongAnswer] || 0) + 1;
-      }
-
-      // クリック回数
-      var clickCount = (log.clicks && log.clicks.length) || 1;
-      stats.clickCounts.push(clickCount);
-    });
-
-    // 正答率と平均反応時間を計算
-    Object.keys(questionStats).forEach(function(questionId) {
-      var stats = questionStats[questionId];
-      stats.correctRate = (stats.correctCount / stats.totalAnswers) * 100;
-      
-      var totalRt = stats.responseTimes.reduce(function(sum, rt) { return sum + rt; }, 0);
-      stats.averageResponseTime = totalRt / stats.responseTimes.length;
-    });
-
-    return questionStats;
-  }
-
-  /**
-   * 概念混同分析（conceptTag）
-   * 注意: 現在のログにはconceptTagが直接含まれていないため、
-   * 誤答の選択肢IDから推測する。将来、ログにtagsやconceptTagが含まれる場合はそれを使用
-   * @param {Array} logs - ログの配列
-   * @returns {Object} 混同分析データ
-   */
-  function computeConceptConfusions(logs) {
-    var wrongAnswerTags = {};
-    var confusionPairs = {};
-
-    logs.filter(function(log) { return log.correct === false; }).forEach(function(log) {
-      var wrongAnswer = log.final_answer;
-      
-      // 誤答選択肢IDをタグとして扱う（将来、tagsやconceptTagがあればそれを使用）
-      if (wrongAnswer) {
-        wrongAnswerTags[wrongAnswer] = (wrongAnswerTags[wrongAnswer] || 0) + 1;
-      }
-
-      // pathから混同パターンを推測（A→B→Aのような往復パターン）
-      var path = log.path || [];
-      if (path.length >= 2) {
-        for (var i = 0; i < path.length - 1; i++) {
-          var from = path[i];
-          var to = path[i + 1];
-          var pairKey = from + '→' + to;
-          confusionPairs[pairKey] = (confusionPairs[pairKey] || 0) + 1;
-        }
-      }
-    });
-
-    // タグランキング
-    var tagRanking = Object.keys(wrongAnswerTags)
-      .map(function(tag) {
-        return { tag: tag, count: wrongAnswerTags[tag] };
-      })
-      .sort(function(a, b) { return b.count - a.count; });
-
-    // 混同ペアランキング
-    var pairRanking = Object.keys(confusionPairs)
-      .map(function(pair) {
-        return { pair: pair, count: confusionPairs[pair] };
-      })
-      .sort(function(a, b) { return b.count - a.count; });
-
-    return {
-      wrongAnswerTagCounts: wrongAnswerTags,
-      tagRanking: tagRanking,
-      confusionPairs: confusionPairs,
-      pairRanking: pairRanking
-    };
-  }
-
-  /**
-   * 反応時間プロファイル集計
-   * @param {Array} logs - ログの配列
-   * @returns {Object} 反応時間統計データ
-   */
-  function computeResponseTimeProfile(logs) {
-    var responseTimes = logs.map(function(log) { return log.response_time || 0; }).filter(function(rt) { return rt >= 0; });
-    
-    if (responseTimes.length === 0) {
-      return {
-        histogram: [],
-        mode: 0,
-        median: 0,
-        max: 0,
-        min: 0
-      };
-    }
-
-    // ヒストグラム用のビンを作成（0-50秒を1秒刻みで）
-    var bins = {};
-    var maxBin = 50;
-    for (var i = 0; i <= maxBin; i++) {
-      bins[i] = 0;
-    }
-
-    responseTimes.forEach(function(rt) {
-      var bin = Math.floor(Math.min(rt, maxBin));
-      bins[bin] = (bins[bin] || 0) + 1;
-    });
-
-    var histogram = Object.keys(bins).map(function(key) {
-      return { time: parseInt(key), count: bins[key] };
-    });
-
-    // 最頻値（モード）
-    var sortedBins = Object.keys(bins).map(function(key) {
-      return { time: parseInt(key), count: bins[key] };
-    }).sort(function(a, b) { return b.count - a.count; });
-    var mode = sortedBins[0] ? sortedBins[0].time : 0;
-
-    // 中央値
-    var sortedTimes = responseTimes.slice().sort(function(a, b) { return a - b; });
-    var median = sortedTimes.length % 2 === 0
-      ? (sortedTimes[sortedTimes.length / 2 - 1] + sortedTimes[sortedTimes.length / 2]) / 2
-      : sortedTimes[Math.floor(sortedTimes.length / 2)];
-
-    // 最大値・最小値
-    var max = Math.max.apply(null, responseTimes);
-    var min = Math.min.apply(null, responseTimes);
-
-    return {
-      histogram: histogram,
-      mode: mode,
-      median: median,
-      max: max,
-      min: min
-    };
-  }
-
-  /**
-   * 迷いパターン（path）分析
-   * @param {Array} logs - ログの配列
-   * @returns {Object} パス分析データ
-   */
-  function computePathPatterns(logs) {
-    var pathPatterns = {};
-    var stepCounts = [];
-
-    logs.forEach(function(log) {
-      var path = log.path || [];
-      var pathString = path.join('→') || '(なし)';
-      
-      pathPatterns[pathString] = (pathPatterns[pathString] || 0) + 1;
-      stepCounts.push(path.length);
-    });
-
-    // パターンランキング
-    var patternRanking = Object.keys(pathPatterns)
-      .map(function(pattern) {
-        return { pattern: pattern, count: pathPatterns[pattern], steps: pattern.split('→').length };
-      })
-      .sort(function(a, b) { return b.count - a.count; });
-
-    // 平均ステップ数
-    var averageSteps = stepCounts.length > 0
-      ? stepCounts.reduce(function(sum, count) { return sum + count; }, 0) / stepCounts.length
-      : 0;
-
-    return {
-      pathPatterns: pathPatterns,
-      patternRanking: patternRanking,
-      stepCounts: stepCounts,
-      averageSteps: averageSteps
-    };
-  }
-
-  /**
-   * Glossary提示履歴の集計
-   * 注意: 現在のログにはglossary提示情報が含まれていない場合がある。
-   * 将来、log.recommended_termsやlog.glossary_termsがあればそれを使用
-   * @param {Array} logs - ログの配列
-   * @returns {Object} Glossary使用統計データ
-   */
-  function computeGlossaryUsage(logs) {
-    var termFrequency = {};
-    var thinkingTypeTerms = {
-      instant: {},
-      searching: {},
-      deliberate: {}
-    };
-
-    logs.forEach(function(log) {
-      // recommended_termsがあれば使用（将来の拡張用）
-      var recommendedTerms = log.recommended_terms || log.glossary_terms || [];
-      
-      if (recommendedTerms.length === 0) {
-        return;
-      }
-
-      // 思考タイプを判定
-      var rt = log.response_time || 0;
-      var thinkingType = rt <= 3 ? 'instant' : (rt < 15 ? 'searching' : 'deliberate');
-
-      recommendedTerms.forEach(function(term) {
-        var termId = term.termId || term.id || term.word || term.name || 'unknown';
-        
-        termFrequency[termId] = (termFrequency[termId] || 0) + 1;
-        thinkingTypeTerms[thinkingType][termId] = (thinkingTypeTerms[thinkingType][termId] || 0) + 1;
-      });
-    });
-
-    // 頻度ランキング
-    var termRanking = Object.keys(termFrequency)
-      .map(function(termId) {
-        return { termId: termId, count: termFrequency[termId] };
-      })
-      .sort(function(a, b) { return b.count - a.count; });
-
-    return {
-      termFrequency: termFrequency,
-      thinkingTypeTerms: thinkingTypeTerms,
-      termRanking: termRanking
-    };
-  }
+  // 古い分析関数は削除済み（理解階層ダッシュボードのみ使用）
 
   /**
    * 全セッションを合算する
@@ -396,434 +94,167 @@
   }
 
   /**
-   * ベクトル平均計算
+   * 理解階層プロファイルを計算
    * @param {Array} logs - ログの配列
-   * @returns {Object} ベクトル統計データ（軸ごとの平均値）
+   * @returns {Object} 理解階層プロファイル（学習者ごと）
    */
-  function computeVectorStats(logs) {
+  function computeMasteryProfiles(logs) {
     if (!logs || logs.length === 0) {
       return {};
     }
     
-    var sum = {};
-    var count = 0;
-    
-    logs.forEach(function(item) {
-      if (!item.vector || typeof item.vector !== 'object') {
-        return;
+    var profiles = {};
+    var MASTERY_LEVELS = window.MASTERY_LEVELS || ['識別', '説明', '適用', '区別', '転移', '構造化'];
+
+    logs.forEach(function(log) {
+      var studentId = log.student_id || log.user_id || 'unknown';
+      if (!profiles[studentId]) {
+        profiles[studentId] = {};
+        MASTERY_LEVELS.forEach(function(level) {
+          profiles[studentId][level] = 0;
+        });
       }
-      
-      for (var axis in item.vector) {
-        if (item.vector.hasOwnProperty(axis)) {
-          sum[axis] = (sum[axis] || 0) + (Number(item.vector[axis]) || 0);
-        }
-      }
-      count++;
-    });
-    
-    var avg = {};
-    if (count > 0) {
-      for (var axisKey in sum) {
-        if (sum.hasOwnProperty(axisKey)) {
-          avg[axisKey] = sum[axisKey] / count;
-        }
-      }
-    }
-    
-    return avg;
-  }
 
-  /**
-   * 全体統計をレンダリング
-   */
-  function renderOverallStats(stats) {
-    var container = document.getElementById('overall-stats');
-    if (!container) return;
-
-    var html = '<div class="stats-grid">';
-    html += '<div class="stat-card"><div class="label">総回答数</div><div class="value">' + stats.totalAnswers + '</div></div>';
-    html += '<div class="stat-card"><div class="label">正答率</div><div class="value">' + stats.correctRate.toFixed(1) + '%</div></div>';
-    html += '<div class="stat-card"><div class="label">平均反応時間</div><div class="value">' + stats.averageResponseTime.toFixed(1) + '秒</div></div>';
-    html += '</div>';
-
-    html += '<h4>思考タイプ分布</h4>';
-    html += '<div class="chart-container small"><canvas id="chart-thinking-type"></canvas></div>';
-
-    container.innerHTML = html;
-
-    // 円グラフを描画
-    var ctx = document.getElementById('chart-thinking-type');
-    if (ctx && window.Chart) {
-      if (chartInstances['thinking-type']) {
-        chartInstances['thinking-type'].destroy();
-      }
-      chartInstances['thinking-type'] = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['直感（instant）', '探索的（searching）', '熟慮（deliberate）'],
-          datasets: [{
-            data: [
-              stats.thinkingTypeDistribution.instant,
-              stats.thinkingTypeDistribution.searching,
-              stats.thinkingTypeDistribution.deliberate
-            ],
-            backgroundColor: ['#4CAF50', '#2196F3', '#FF9800']
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'bottom' }
-          }
-        }
-      });
-    }
-  }
-
-  /**
-   * 問題別統計をレンダリング
-   */
-  function renderQuestionStats(stats) {
-    var container = document.getElementById('question-stats');
-    if (!container) return;
-
-    var questionIds = Object.keys(stats).sort();
-    
-    if (questionIds.length === 0) {
-      container.innerHTML = '<p>問題データがありません。</p>';
-      return;
-    }
-
-    var html = '<div class="chart-container"><canvas id="chart-question-correct-rate"></canvas></div>';
-    html += '<div class="table-container"><table><thead><tr><th>問題ID</th><th>回答数</th><th>正答率</th><th>平均反応時間</th><th>よく選ばれた誤答</th></tr></thead><tbody>';
-
-    questionIds.forEach(function(questionId) {
-      var stat = stats[questionId];
-      var wrongAnswersText = Object.keys(stat.wrongAnswers)
-        .map(function(wrong) {
-          return wrong + ' (' + stat.wrongAnswers[wrong] + '回)';
-        })
-        .join(', ') || '-';
-      
-      html += '<tr>';
-      html += '<td>' + escapeHtml(questionId) + '</td>';
-      html += '<td>' + stat.totalAnswers + '</td>';
-      html += '<td>' + stat.correctRate.toFixed(1) + '%</td>';
-      html += '<td>' + stat.averageResponseTime.toFixed(1) + '秒</td>';
-      html += '<td>' + escapeHtml(wrongAnswersText) + '</td>';
-      html += '</tr>';
-    });
-
-    html += '</tbody></table></div>';
-
-    container.innerHTML = html;
-
-    // 正答率の棒グラフ
-    var ctx = document.getElementById('chart-question-correct-rate');
-    if (ctx && window.Chart) {
-      if (chartInstances['question-correct-rate']) {
-        chartInstances['question-correct-rate'].destroy();
-      }
-      chartInstances['question-correct-rate'] = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: questionIds,
-          datasets: [{
-            label: '正答率 (%)',
-            data: questionIds.map(function(id) { return stats[id].correctRate; }),
-            backgroundColor: '#2196F3'
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: { beginAtZero: true, max: 100 }
-          },
-          plugins: {
-            legend: { display: false }
-          }
-        }
-      });
-    }
-  }
-
-  /**
-   * 概念混同分析をレンダリング
-   */
-  function renderConfusionStats(stats) {
-    var container = document.getElementById('confusion-stats');
-    if (!container) return;
-
-    var html = '<h4>誤答タグランキング（誤答選択肢ID）</h4>';
-    if (stats.tagRanking.length > 0) {
-      html += '<div class="chart-container small"><canvas id="chart-wrong-tags"></canvas></div>';
-      html += '<div class="table-container"><table><thead><tr><th>選択肢ID</th><th>誤答回数</th></tr></thead><tbody>';
-      
-      stats.tagRanking.slice(0, 10).forEach(function(item) {
-        html += '<tr><td>' + escapeHtml(item.tag) + '</td><td>' + item.count + '</td></tr>';
-      });
-      
-      html += '</tbody></table></div>';
-    } else {
-      html += '<p>誤答データがありません。</p>';
-    }
-
-    html += '<h4>混同ペアランキング（選択肢遷移パターン）</h4>';
-    if (stats.pairRanking.length > 0) {
-      html += '<div class="table-container"><table><thead><tr><th>遷移パターン</th><th>出現回数</th></tr></thead><tbody>';
-      
-      stats.pairRanking.slice(0, 15).forEach(function(item) {
-        html += '<tr><td><span class="path-pattern">' + escapeHtml(item.pair) + '</span></td><td>' + item.count + '</td></tr>';
-      });
-      
-      html += '</tbody></table></div>';
-    } else {
-      html += '<p>混同パターンデータがありません。</p>';
-    }
-
-    container.innerHTML = html;
-
-    // 誤答タグランキングのバーグラフ
-    if (stats.tagRanking.length > 0) {
-      var ctx = document.getElementById('chart-wrong-tags');
-      if (ctx && window.Chart) {
-        if (chartInstances['wrong-tags']) {
-          chartInstances['wrong-tags'].destroy();
-        }
-        var topTags = stats.tagRanking.slice(0, 10);
-        chartInstances['wrong-tags'] = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: topTags.map(function(item) { return item.tag; }),
-            datasets: [{
-              label: '誤答回数',
-              data: topTags.map(function(item) { return item.count; }),
-              backgroundColor: '#F44336'
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            indexAxis: 'y',
-            plugins: {
-              legend: { display: false }
-            }
+      // ログに理解階層プロファイルが含まれている場合
+      if (log.mastery_profile && typeof log.mastery_profile === 'object') {
+        MASTERY_LEVELS.forEach(function(level) {
+          if (log.mastery_profile.hasOwnProperty(level)) {
+            profiles[studentId][level] = (profiles[studentId][level] || 0) + log.mastery_profile[level];
           }
         });
       }
-    }
+    });
+
+    return profiles;
   }
 
-  /**
-   * 反応時間統計をレンダリング
-   */
-  function renderResponseTimeStats(stats) {
-    var container = document.getElementById('response-time-stats');
-    if (!container) return;
-
-    var html = '<div class="stats-grid">';
-    html += '<div class="stat-card"><div class="label">最頻値（モード）</div><div class="value">' + stats.mode + '秒</div></div>';
-    html += '<div class="stat-card"><div class="label">中央値</div><div class="value">' + stats.median.toFixed(1) + '秒</div></div>';
-    html += '<div class="stat-card"><div class="label">最大値</div><div class="value">' + stats.max.toFixed(1) + '秒</div></div>';
-    html += '<div class="stat-card"><div class="label">最小値</div><div class="value">' + stats.min.toFixed(1) + '秒</div></div>';
-    html += '</div>';
-
-    html += '<h4>反応時間の分布</h4>';
-    html += '<div class="chart-container"><canvas id="chart-response-time"></canvas></div>';
-
-    container.innerHTML = html;
-
-    // ヒストグラム
-    var ctx = document.getElementById('chart-response-time');
-    if (ctx && window.Chart) {
-      if (chartInstances['response-time']) {
-        chartInstances['response-time'].destroy();
-      }
-      chartInstances['response-time'] = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: stats.histogram.map(function(bin) { return bin.time + '秒'; }),
-          datasets: [{
-            label: '回答数',
-            data: stats.histogram.map(function(bin) { return bin.count; }),
-            backgroundColor: '#9C27B0'
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false }
-          },
-          scales: {
-            x: { title: { display: true, text: '反応時間（秒）' } },
-            y: { beginAtZero: true, title: { display: true, text: '回答数' } }
-          }
-        }
-      });
-    }
-  }
+  // 古いレンダリング関数は削除済み（理解階層ダッシュボードのみ使用）
 
   /**
-   * パス統計をレンダリング
-   */
-  function renderPathStats(stats) {
-    var container = document.getElementById('path-stats');
-    if (!container) return;
-
-    var html = '<div class="stats-grid">';
-    html += '<div class="stat-card"><div class="label">平均迷いステップ数</div><div class="value">' + stats.averageSteps.toFixed(1) + '</div></div>';
-    html += '</div>';
-
-    html += '<h4>よく見られる迷いパターン</h4>';
-    if (stats.patternRanking.length > 0) {
-      html += '<div class="table-container"><table><thead><tr><th>パターン</th><th>ステップ数</th><th>出現回数</th></tr></thead><tbody>';
-      
-      stats.patternRanking.slice(0, 20).forEach(function(item) {
-        html += '<tr>';
-        html += '<td><span class="path-pattern">' + escapeHtml(item.pattern) + '</span></td>';
-        html += '<td>' + item.steps + '</td>';
-        html += '<td>' + item.count + '</td>';
-        html += '</tr>';
-      });
-      
-      html += '</tbody></table></div>';
-    } else {
-      html += '<p>パスデータがありません。</p>';
-    }
-
-    container.innerHTML = html;
-  }
-
-  /**
-   * Glossary使用統計をレンダリング
-   */
-  function renderGlossaryStats(stats) {
-    var container = document.getElementById('glossary-stats');
-    if (!container) return;
-
-    if (stats.termRanking.length === 0) {
-      container.innerHTML = '<p>Glossary提示履歴が見つかりませんでした。<br>現在のログ形式には、Glossary提示情報が含まれていない可能性があります。</p>';
-      return;
-    }
-
-    var html = '<h4>提示された用語の頻度</h4>';
-    html += '<div class="table-container"><table><thead><tr><th>用語ID</th><th>提示回数</th></tr></thead><tbody>';
-    
-    stats.termRanking.forEach(function(item) {
-      html += '<tr><td>' + escapeHtml(item.termId) + '</td><td>' + item.count + '</td></tr>';
-    });
-    
-    html += '</tbody></table></div>';
-
-    html += '<h4>思考タイプ別の用語提示頻度</h4>';
-    html += '<div class="table-container"><table><thead><tr><th>思考タイプ</th><th>用語ID</th><th>提示回数</th></tr></thead><tbody>';
-    
-    ['instant', 'searching', 'deliberate'].forEach(function(thinkingType) {
-      var terms = stats.thinkingTypeTerms[thinkingType];
-      var termIds = Object.keys(terms).sort(function(a, b) { return terms[b] - terms[a]; });
-      if (termIds.length > 0) {
-        termIds.forEach(function(termId) {
-          html += '<tr>';
-          html += '<td>' + escapeHtml(thinkingType) + '</td>';
-          html += '<td>' + escapeHtml(termId) + '</td>';
-          html += '<td>' + terms[termId] + '</td>';
-          html += '</tr>';
-        });
-      }
-    });
-    
-    html += '</tbody></table></div>';
-
-    container.innerHTML = html;
-  }
-
-  /**
-   * ベクトル統計をレンダリング（computeVectorStats を使用）
-   * @param {Object} projectData - プロジェクト設定（valuesを含む）
-   * @param {Array} logs - ログの配列
-   */
-  function renderVectorStats(projectData, logs) {
-    // VectorMath を使用（ES module 禁止、IIFE + window 形式）
-    if (!window.VectorMath || !window.VectorMath.cosineSimilarity) {
-      console.warn('VectorMath が読み込まれていません');
-      return;
-    }
-
-    var container = document.getElementById('vector-analysis');
-    if (!container) return;
-
-    // computeVectorStats を使用してベクトル統計を計算
-    var avg = computeVectorStats(logs);
-
-    // 理想ベクトルと実績ベクトルを比較
-    var idealValues = projectData.values || {};
-
-    // 軸を統一（理想ベクトルと実績ベクトルの両方に存在する軸のみ）
-    var allAxes = {};
-    Object.keys(idealValues).forEach(function(axis) {
-      allAxes[axis] = true;
-    });
-    Object.keys(avg).forEach(function(axis) {
-      allAxes[axis] = true;
-    });
-
-    var axisList = Object.keys(allAxes).sort();
-    var idealArr = axisList.map(function(axis) {
-      return idealValues[axis] || 0;
-    });
-    var actualArr = axisList.map(function(axis) {
-      return avg[axis] || 0;
-    });
-
-    // コサイン類似度を計算（vector_math.js を使用）
-    var similarity = 0;
-    if (idealArr.length > 0 && actualArr.length > 0) {
-      var cosineSimilarity = window.VectorMath.cosineSimilarity;
-      similarity = cosineSimilarity(idealArr, actualArr) * 100;
-    }
-
-    // UI 反映
-    var similarityEl = document.getElementById('vector-similarity');
-    if (similarityEl) {
-      similarityEl.textContent = similarity.toFixed(1) + '%';
-    }
-
-    var ul = document.getElementById('vector-axis-list');
-    if (ul) {
-      ul.innerHTML = '';
-      
-      // 軸ごとにリストアイテムを生成
-      axisList.forEach(function(axis) {
-        var value = avg[axis] || 0;
-        var li = document.createElement('li');
-        li.style.padding = '0.5rem';
-        li.style.marginBottom = '0.5rem';
-        li.style.background = '#f9f9f9';
-        li.style.borderRadius = '4px';
-        li.textContent = axis + ': ' + value.toFixed(2);
-        ul.appendChild(li);
-      });
-
-      if (axisList.length === 0) {
-        var emptyLi = document.createElement('li');
-        emptyLi.style.padding = '0.5rem';
-        emptyLi.style.color = '#666';
-        emptyLi.textContent = 'ベクトルデータがありません。ログに vector フィールドが含まれているか確認してください。';
-        ul.appendChild(emptyLi);
-      }
-    }
-  }
-
-  /**
-   * すべての統計を計算してレンダリング
+   * 理解階層分析ダッシュボードをレンダリング
    * @param {Array} logs - ログの配列
    * @param {Object} projectData - プロジェクト設定（オプション）
    */
-  function renderAll(logs, projectData) {
-    // すべてのチャートを破棄
+  function renderMasteryDashboard(logs, projectData) {
+    if (!logs || logs.length === 0) {
+      console.warn('ログデータがありません');
+      return;
+    }
+
+    // Analysis.js を使用して理解階層プロファイルを計算
+    if (!window.Analysis || !window.Analysis.analyzeResponses) {
+      console.error('Analysis.js が読み込まれていません');
+      return;
+    }
+
+    // ログを理解階層分析用の形式に変換
+    var analysisLog = logs.map(function(log) {
+      // ログから question と selected を抽出
+      var question = log.question || {};
+      var selected = log.selected || {};
+      
+      // ログに question_id がある場合、プロジェクトデータから問題を取得
+      if (!question.id && log.question_id && projectData && projectData.questions) {
+        var foundQuestion = projectData.questions.find(function(q) {
+          return q.id === log.question_id;
+        });
+        if (foundQuestion) {
+          question = foundQuestion;
+        }
+      }
+      
+      // 選択肢から correct、misconception、measure を取得（選択肢レベルのmeasureを使用）
+      if (log.final_answer && question.choices) {
+        var choice = question.choices.find(function(c) {
+          var choiceId = c.id || c.value || ('c' + question.choices.indexOf(c));
+          return choiceId === log.final_answer || String(c.value) === String(log.final_answer);
+        });
+        if (choice) {
+          selected.correct = choice.correct === true || choice.isCorrect === true;
+          selected.misconception = choice.misconception || null;
+          // 選択肢レベルのmeasureを取得
+          if (Array.isArray(choice.measure)) {
+            selected.measure = choice.measure;
+          }
+        }
+      } else if (typeof log.correct === 'boolean') {
+        // ログに直接 correct が含まれている場合
+        selected.correct = log.correct;
+        selected.misconception = log.misconception || null;
+        // ログに直接 measure が含まれている場合
+        if (Array.isArray(log.measure)) {
+          selected.measure = log.measure;
+        }
+      }
+
+      return {
+        question: question,
+        selected: selected
+      };
+    });
+
+    // 理解階層プロファイルを計算
+    var mastery = window.Analysis.analyzeResponses(analysisLog);
+
+    // ダッシュボードデータを計算
+    var dashboardData = window.Analysis.computeDashboardData(analysisLog, mastery);
+
+    // 推薦問題を取得
+    if (window.GlossaryRecommendation && window.GlossaryRecommendation.recommendQuestions) {
+      // プロジェクトから問題一覧を取得
+      var questions = [];
+      if (projectData && projectData.questions) {
+        questions = projectData.questions;
+      } else if (window.currentProjectData && window.currentProjectData.questions) {
+        questions = window.currentProjectData.questions;
+      }
+
+      if (questions.length > 0 && dashboardData.weakLevels && dashboardData.weakLevels.length > 0) {
+        // 弱い理解階層に対応する問題を推薦
+        dashboardData.recommendations = window.GlossaryRecommendation.recommendQuestions(
+          questions,
+          dashboardData.weakLevels
+        );
+      }
+    }
+
+    // KPIを更新
+    updateKPI(dashboardData);
+
+    // チャートを描画
+    drawCharts(dashboardData);
+
+    // 推薦問題リストを表示
+    listRecommendations(dashboardData);
+  }
+
+  /**
+   * KPIを更新
+   * @param {Object} dashboardData - ダッシュボードデータ
+   */
+  function updateKPI(dashboardData) {
+    var totalAnswersEl = document.getElementById('kpi-total-answers');
+    var accuracyEl = document.getElementById('kpi-accuracy');
+    var weakestLevelEl = document.getElementById('kpi-weakest-level');
+
+    if (totalAnswersEl) {
+      totalAnswersEl.textContent = dashboardData.totalAnswers || 0;
+    }
+    if (accuracyEl) {
+      var accuracyPercent = (dashboardData.accuracy * 100).toFixed(1);
+      accuracyEl.textContent = accuracyPercent + '%';
+    }
+    if (weakestLevelEl) {
+      weakestLevelEl.textContent = dashboardData.weakestLevel || '-';
+    }
+  }
+
+  /**
+   * チャートを描画
+   * @param {Object} d - ダッシュボードデータ（computeDashboardData の出力）
+   */
+  function drawCharts(d) {
+    // 既存のチャートインスタンスを破棄
     Object.keys(chartInstances).forEach(function(key) {
       if (chartInstances[key]) {
         chartInstances[key].destroy();
@@ -831,49 +262,536 @@
     });
     chartInstances = {};
 
-    // window.currentLogs をセット（analysis-run タブなどで使用）
-    window.currentLogs = logs;
-
-    // 統計を計算
-    var overallStats = computeOverallStats(logs);
-    var questionStats = computePerQuestionStats(logs);
-    var confusionStats = computeConceptConfusions(logs);
-    var responseTimeStats = computeResponseTimeProfile(logs);
-    var pathStats = computePathPatterns(logs);
-    var glossaryStats = computeGlossaryUsage(logs);
-
-    // レンダリング
-    renderOverallStats(overallStats);
-    renderQuestionStats(questionStats);
-    renderConfusionStats(confusionStats);
-    renderResponseTimeStats(responseTimeStats);
-    renderPathStats(pathStats);
-    renderGlossaryStats(glossaryStats);
-    
-    // 反応時間フィッティング分析を実行
-    var responseTimes = logs.map(function(log) { return log.response_time || 0; }).filter(function(rt) { return rt > 0 && rt != null; });
-    if (responseTimes.length > 0) {
-      runRTFitting(responseTimes);
-    }
-    
-    // ベクトル統計をレンダリング（projectDataがある場合）
-    if (projectData) {
-      renderVectorStats(projectData, logs);
-    } else {
-      // projectDataがない場合はデフォルトプロジェクトを読み込む
-      if (window.DatasetLoader && window.DatasetLoader.loadProject) {
-        window.DatasetLoader.loadProject('default')
-          .then(function(project) {
-            renderVectorStats(project, logs);
-          })
-          .catch(function(error) {
-            console.warn('プロジェクト設定の読み込みに失敗しました:', error);
-            renderVectorStats({}, logs);
-          });
-      } else {
-        renderVectorStats({}, logs);
+    // 理解階層の分布（円グラフ）
+    if (d.masteryPieData && d.masteryPieData.labels.length > 0) {
+      var masteryPieCtx = document.getElementById('masteryPie');
+      if (masteryPieCtx && window.Chart) {
+        chartInstances['masteryPie'] = new Chart(masteryPieCtx, {
+          type: 'doughnut',
+          data: d.masteryPieData,
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  color: '#fff'
+                }
+              }
+            }
+          }
+        });
       }
     }
+
+    // 概念別の理解スコア（棒グラフ）
+    var conceptBarCtx = document.getElementById('conceptBar');
+    if (conceptBarCtx && window.Chart && d.conceptBarData) {
+      chartInstances['conceptBar'] = new Chart(conceptBarCtx, {
+        type: 'bar',
+        data: d.conceptBarData,
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: '#fff'
+              },
+              grid: {
+                color: '#3a3a3a'
+              }
+            },
+            x: {
+              ticks: {
+                color: '#fff'
+              },
+              grid: {
+                color: '#3a3a3a'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+    }
+
+    // 誤概念ランキング（棒グラフ）
+    var misconceptionBarCtx = document.getElementById('misconceptionBar');
+    if (misconceptionBarCtx && window.Chart && d.misconceptionBarData) {
+      chartInstances['misconceptionBar'] = new Chart(misconceptionBarCtx, {
+        type: 'bar',
+        data: d.misconceptionBarData,
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          indexAxis: 'y',
+          scales: {
+            x: {
+              beginAtZero: true,
+              ticks: {
+                color: '#fff'
+              },
+              grid: {
+                color: '#3a3a3a'
+              }
+            },
+            y: {
+              ticks: {
+                color: '#fff'
+              },
+              grid: {
+                color: '#3a3a3a'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+    }
+
+    // 弱い理解階層TOP3（棒グラフ）
+    var weakLevelsBarCtx = document.getElementById('weakLevelsBar');
+    if (weakLevelsBarCtx && window.Chart && d.weakLevelsBarData) {
+      chartInstances['weakLevelsBar'] = new Chart(weakLevelsBarCtx, {
+        type: 'bar',
+        data: d.weakLevelsBarData,
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: '#fff'
+              },
+              grid: {
+                color: '#3a3a3a'
+              }
+            },
+            x: {
+              ticks: {
+                color: '#fff'
+              },
+              grid: {
+                color: '#3a3a3a'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+    }
+
+    // 誤概念 × 理解階層のクロス集計ヒートマップ（グループ化された棒グラフで実装）
+    var misconceptionMasteryHeatCtx = document.getElementById('misconceptionMasteryHeat');
+    if (misconceptionMasteryHeatCtx && window.Chart && d.misconceptionMastery && d.misconceptionMastery.labels.length > 0) {
+      chartInstances['misconceptionMasteryHeat'] = new Chart(misconceptionMasteryHeatCtx, {
+        type: 'bar',
+        data: {
+          labels: d.misconceptionMastery.labels,
+          datasets: d.misconceptionMastery.datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          scales: {
+            x: {
+              stacked: false,
+              ticks: {
+                color: '#fff'
+              },
+              grid: {
+                color: '#3a3a3a'
+              }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: '#fff'
+              },
+              grid: {
+                color: '#3a3a3a'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: '#fff',
+                usePointStyle: true,
+                padding: 15
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.dataset.label + ': ' + context.parsed.y + '回';
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // 反応時間関連の可視化
+    drawRTCharts(d);
+
+    // 迷いトポロジーと安定度の可視化
+    if (d.confusionTopology && Object.keys(d.confusionTopology).length > 0) {
+      drawConfusionTopology(d.confusionTopology);
+    }
+    if (d.stability) {
+      drawStabilityChart(d.stability);
+    }
+  }
+
+  /**
+   * 反応時間関連のチャートを描画
+   * @param {Object} d - ダッシュボードデータ
+   */
+  function drawRTCharts(d) {
+    // 反応時間の分布（ヒストグラム）
+    var rtHistogramCtx = document.getElementById('rtHistogram');
+    if (rtHistogramCtx && window.Chart && d.rtByLevel && d.rtByLevel.labels && d.rtByLevel.labels.length > 0) {
+      chartInstances['rtHistogram'] = new Chart(rtHistogramCtx, {
+        type: 'bar',
+        data: {
+          labels: d.rtByLevel.labels,
+          datasets: [{
+            label: '反応コスト（平均）',
+            data: d.rtByLevel.means,
+            backgroundColor: '#48dbfb'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          scales: {
+            x: {
+              ticks: {
+                color: '#fff'
+              },
+              grid: {
+                color: '#3a3a3a'
+              }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: '#fff'
+              },
+              grid: {
+                color: '#3a3a3a'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return '反応コスト: ' + context.parsed.y.toFixed(3);
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // 理解階層 × 反応コスト（ヒートマップ風の棒グラフ）
+    var rtMasteryHeatCtx = document.getElementById('rtMasteryHeat');
+    if (rtMasteryHeatCtx && window.Chart && d.rtByLevel && d.rtByLevel.labels && d.rtByLevel.labels.length > 0) {
+      // ヒートマップ風の色付け用データを作成
+      var heatData = d.rtByLevel.labels.map(function(label, i) {
+        var mean = d.rtByLevel.means[i];
+        // 正規化された値を色の強度に変換
+        var intensity = Math.min(1, Math.abs(mean) / 2);
+        return {
+          x: i,
+          y: 0,
+          v: mean,
+          intensity: intensity
+        };
+      });
+
+      chartInstances['rtMasteryHeat'] = new Chart(rtMasteryHeatCtx, {
+        type: 'bar',
+        data: {
+          labels: d.rtByLevel.labels,
+          datasets: [{
+            label: '反応コスト',
+            data: d.rtByLevel.means,
+            backgroundColor: function(context) {
+              var dataIndex = context.dataIndex;
+              var value = d.rtByLevel.means[dataIndex];
+              var intensity = Math.min(1, Math.abs(value) / 2);
+              // 正の値は青、負の値は赤で表示
+              if (value >= 0) {
+                return 'rgba(72, 219, 251, ' + intensity + ')';
+              } else {
+                return 'rgba(255, 107, 107, ' + intensity + ')';
+              }
+            },
+            borderColor: function(context) {
+              var dataIndex = context.dataIndex;
+              var value = d.rtByLevel.means[dataIndex];
+              var intensity = Math.min(1, Math.abs(value) / 2);
+              if (value >= 0) {
+                return 'rgba(72, 219, 251, ' + (intensity + 0.2) + ')';
+              } else {
+                return 'rgba(255, 107, 107, ' + (intensity + 0.2) + ')';
+              }
+            },
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          indexAxis: 'y',
+          scales: {
+            x: {
+              beginAtZero: true,
+              ticks: {
+                color: '#fff'
+              },
+              grid: {
+                color: '#3a3a3a'
+              }
+            },
+            y: {
+              ticks: {
+                color: '#fff'
+              },
+              grid: {
+                color: '#3a3a3a'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  var label = d.rtByLevel.labels[context.dataIndex];
+                  var value = context.parsed.x;
+                  return label + ': ' + value.toFixed(3);
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+  }
+
+  /**
+   * 迷いトポロジーのチャートを描画
+   * @param {Object} topology - 迷いトポロジーのデータ
+   */
+  function drawConfusionTopology(topology) {
+    var confusionTopoCtx = document.getElementById('confusionTopo');
+    if (!confusionTopoCtx || !window.Chart) {
+      return;
+    }
+
+    var labels = Object.keys(topology);
+    if (labels.length === 0) {
+      return;
+    }
+
+    var vorticity = labels.map(function(k) {
+      return topology[k].vorticity || 0;
+    });
+    var turbulence = labels.map(function(k) {
+      return topology[k].turbulence || 0;
+    });
+
+    chartInstances['confusionTopo'] = new Chart(confusionTopoCtx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: '渦（vorticity）',
+            data: vorticity,
+            backgroundColor: '#ff7675'
+          },
+          {
+            label: '乱流（turbulence）',
+            data: turbulence,
+            backgroundColor: '#74b9ff'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+          x: {
+            ticks: {
+              color: '#fff'
+            },
+            grid: {
+              color: '#3a3a3a'
+            }
+          },
+          y: {
+            beginAtZero: true,
+            ticks: {
+              color: '#fff'
+            },
+            grid: {
+              color: '#3a3a3a'
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: {
+              color: '#fff'
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return context.dataset.label + ': ' + context.parsed.y.toFixed(2);
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  /**
+   * 安定度のチャートを描画
+   * @param {Object} stab - 安定度のデータ
+   */
+  function drawStabilityChart(stab) {
+    var stabilityChartCtx = document.getElementById('stabilityChart');
+    if (!stabilityChartCtx || !window.Chart) {
+      return;
+    }
+
+    if (!stab || typeof stab.stability_index !== 'number') {
+      return;
+    }
+
+    chartInstances['stabilityChart'] = new Chart(stabilityChartCtx, {
+      type: 'bar',
+      data: {
+        labels: ['安定度（1=最高）'],
+        datasets: [{
+          label: 'stability_index',
+          data: [stab.stability_index],
+          backgroundColor: '#55efc4'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        indexAxis: 'y',
+        scales: {
+          x: {
+            beginAtZero: true,
+            max: 1,
+            ticks: {
+              color: '#fff',
+              callback: function(value) {
+                return value.toFixed(2);
+              }
+            },
+            grid: {
+              color: '#3a3a3a'
+            }
+          },
+          y: {
+            ticks: {
+              color: '#fff'
+            },
+            grid: {
+              color: '#3a3a3a'
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return '安定度: ' + context.parsed.x.toFixed(3) + ' (分散: ' + (stab.variance || 0).toFixed(2) + ')';
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  /**
+   * 推薦問題リストを表示
+   * @param {Object} dashboardData - ダッシュボードデータ
+   */
+  function listRecommendations(dashboardData) {
+    var ul = document.getElementById('recommendation-list');
+    if (!ul) return;
+
+    ul.innerHTML = '';
+
+    if (!dashboardData.recommendations || dashboardData.recommendations.length === 0) {
+      var li = document.createElement('li');
+      li.textContent = '推薦問題はありません';
+      li.style.opacity = '0.5';
+      li.style.padding = '12px 15px';
+      li.style.background = '#333';
+      li.style.borderLeft = '4px solid #666';
+      li.style.borderRadius = '6px';
+      ul.appendChild(li);
+      return;
+    }
+
+    dashboardData.recommendations.forEach(function(item, index) {
+      var li = document.createElement('li');
+      li.textContent = (index + 1) + '. ' + item;
+      li.style.padding = '12px 15px';
+      li.style.marginBottom = '8px';
+      li.style.background = '#333';
+      li.style.borderLeft = '4px solid #2196F3';
+      li.style.borderRadius = '6px';
+      li.style.transition = 'background 0.2s';
+      li.addEventListener('mouseenter', function() {
+        this.style.background = '#3a3a3a';
+      });
+      li.addEventListener('mouseleave', function() {
+        this.style.background = '#333';
+      });
+      ul.appendChild(li);
+    });
   }
 
   /**
@@ -1103,221 +1021,15 @@
       console.warn('ログデータが空です');
       return;
     }
-    // window.currentLogs をセット（analysis-run タブなどで使用）
+    // window.currentLogs をセット
     window.currentLogs = logs;
-    renderAll(logs, projectData);
+    
+    // 理解階層分析ダッシュボードを表示
+    renderMasteryDashboard(logs, projectData);
   }
 
-  /**
-   * すべての統計を計算してレンダリング（projectData対応版）
-   * @param {Array} logs - ログの配列
-   * @param {Object} projectData - プロジェクト設定（オプション）
-   */
-  function renderAllWithProject(logs, projectData) {
-    renderAll(logs, projectData);
-    
-    // renderAll 内で既に renderVectorStats が呼ばれるため、ここでは不要
-    // （重複を避ける）
-  }
+  // 古い分析関数、クラスタリング関数は削除済み（理解階層ダッシュボードのみ使用）
 
-  /**
-   * クラスタリング分析を実行（Juliaスクリプトへの指示）
-   * @param {Array} logs - ログの配列
-   */
-  function runClusterAnalysis(logs) {
-    if (!logs || logs.length === 0) {
-      alert('クラスタリング分析にはログデータが必要です');
-      return;
-    }
-    
-    // ログデータをCSV形式に変換
-    const csv = convertLogsToCSV(logs);
-    
-    // CSVをダウンロード
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'student_logs.csv';
-    a.click();
-    URL.revokeObjectURL(url);
-    
-    alert('クラスタリング分析用のCSVファイルをダウンロードしました。\n\n次のコマンドでJulia分析を実行してください:\njulia analysis/cluster_main.jl');
-  }
-
-  /**
-   * A+B統合版クラスタリング分析システム
-   * A: Julia の cluster_output.json / cluster_scatter.png を読み込んで UI 表示
-   * B: 存在しない場合は JS fallback で k-means を自動実行
-   * @param {Object} datasetData - データセットデータ（sessions または student_log を含む）
-   * @param {string} projectId - プロジェクトID（オプション、デフォルト: 'default'）
-   */
-  function renderClusterAnalysis(datasetData, projectId) {
-    projectId = projectId || 'default';
-    console.log('[ClusterAnalysis] Starting cluster analysis...', datasetData);
-    console.log('Cluster analysis executed');
-    
-    // cluster_features を抽出
-    var clusterFeatures = [];
-    var sessionInfo = [];
-    
-    // sessions または student_log.sessions から cluster_features を抽出
-    var sessions = null;
-    if (datasetData && datasetData.sessions && Array.isArray(datasetData.sessions)) {
-      sessions = datasetData.sessions;
-    } else if (datasetData && datasetData.student_log && datasetData.student_log.sessions && Array.isArray(datasetData.student_log.sessions)) {
-      sessions = datasetData.student_log.sessions;
-    } else if (datasetData && datasetData.vector_test_sessions) {
-      // vector_test_sessions がオブジェクトの場合、その中の sessions 配列を使用
-      if (datasetData.vector_test_sessions.sessions && Array.isArray(datasetData.vector_test_sessions.sessions)) {
-        sessions = datasetData.vector_test_sessions.sessions;
-      } else if (Array.isArray(datasetData.vector_test_sessions)) {
-        // 配列の場合も対応
-        sessions = datasetData.vector_test_sessions;
-      }
-    }
-    
-    if (!sessions || sessions.length === 0) {
-      console.warn('[ClusterAnalysis] No sessions found with cluster_features');
-      var debugEl = document.getElementById('clusterDebug');
-      if (debugEl) {
-        debugEl.textContent = 'エラー: cluster_features を含むセッションデータが見つかりませんでした。';
-      }
-      return;
-    }
-    
-    // cluster_features を抽出
-    sessions.forEach(function(session) {
-      if (session.cluster_features && Array.isArray(session.cluster_features)) {
-        clusterFeatures.push(session.cluster_features);
-        sessionInfo.push({
-          session_id: session.session_id || 'unknown',
-          user_id: session.user_id || 'unknown',
-          correct_rate: session.correct_rate || 0,
-          avg_reaction_time: session.avg_reaction_time || 0,
-          avg_path_length: session.avg_path_length || 0,
-          cluster_ground_truth: session.cluster_ground_truth || null
-        });
-      }
-    });
-    
-    if (clusterFeatures.length === 0) {
-      console.warn('[ClusterAnalysis] No cluster_features found in sessions');
-      var debugEl2 = document.getElementById('clusterDebug');
-      if (debugEl2) {
-        debugEl2.textContent = 'エラー: cluster_features が見つかりませんでした。';
-      }
-      return;
-    }
-    
-    console.log('[ClusterAnalysis] Extracted', clusterFeatures.length, 'sessions with cluster_features');
-    
-    // === A: Julia 出力を優先的に読み込む ===
-    var juliaOutputPath = '../../analysis/cluster_output.json';
-    var juliaImagePath = '../../analysis/cluster_scatter.png';
-    
-    Promise.all([
-      fetch(juliaOutputPath).then(function(res) { return res.ok ? res.json() : null; }).catch(function() { return null; }),
-      fetch(juliaImagePath).then(function(res) { return res.ok ? juliaImagePath : null; }).catch(function() { return null; })
-    ]).then(function(results) {
-      var juliaOutput = results[0];
-      var juliaImage = results[1];
-      
-      if (juliaOutput && juliaOutput.results) {
-        // Julia 出力がある場合は優先使用
-        console.log('[ClusterAnalysis] Using Julia output');
-        renderClusterAnalysisWithJuliaOutput(juliaOutput, juliaImage, sessionInfo, clusterFeatures);
-    } else {
-        // === B: JS fallback で k-means を実行 ===
-        console.log('[ClusterAnalysis] Julia output not found, using JS fallback');
-        renderClusterAnalysisWithJSFallback(clusterFeatures, sessionInfo);
-      }
-    }).catch(function(error) {
-      console.error('[ClusterAnalysis] Error loading Julia output:', error);
-      // エラー時も JS fallback を実行
-      renderClusterAnalysisWithJSFallback(clusterFeatures, sessionInfo);
-    });
-  }
-
-  /**
-   * Julia 出力を使用してクラスタリング分析結果を表示
-   * @param {Object} juliaOutput - Julia の cluster_output.json の内容
-   * @param {string} juliaImage - Julia の cluster_scatter.png のパス
-   * @param {Array} sessionInfo - セッション情報の配列
-   * @param {Array} clusterFeatures - クラスタ特徴量の配列（オプション、散布図描画用）
-   */
-  function renderClusterAnalysisWithJuliaOutput(juliaOutput, juliaImage, sessionInfo, clusterFeatures) {
-    var results = juliaOutput.results || [];
-    var clusterStats = juliaOutput.cluster_stats || [];
-    
-    // セッションID から sessionInfo をマッピング
-    var sessionMap = {};
-    sessionInfo.forEach(function(info) {
-      sessionMap[info.session_id] = info;
-    });
-    
-    // クラスタラベルを取得
-    var labels = results.map(function(r) { return r.assigned_cluster || 0; });
-    
-    // 散布図を描画（Julia画像があれば使用、なければChart.jsで描画）
-    if (juliaImage) {
-      var scatterEl = document.getElementById('clusterScatter');
-      if (scatterEl) {
-        scatterEl.innerHTML = '<img src="' + juliaImage + '" style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 8px;">';
-      }
-    } else if (clusterFeatures && clusterFeatures.length > 0) {
-      // Chart.js で散布図を描画（clusterFeatures が利用可能な場合）
-      renderClusterScatter(clusterFeatures, labels, sessionInfo);
-      } else {
-      console.warn('[ClusterAnalysis] clusterFeatures not available, skipping scatter plot');
-    }
-    
-    // クラスタテーブルを表示
-    renderClusterTableWithJuliaOutput(results, sessionMap, clusterStats);
-    
-    // デバッグ情報
-    var debugEl = document.getElementById('clusterDebug');
-    if (debugEl) {
-      debugEl.textContent = JSON.stringify({
-        source: 'Julia',
-        total_sessions: juliaOutput.total_sessions || 0,
-        k: juliaOutput.k || 3,
-        feature_dimension: juliaOutput.feature_dimension || 0,
-        cluster_stats: clusterStats
-      }, null, 2);
-    }
-  }
-
-  /**
-   * JS fallback で k-means クラスタリングを実行
-   * @param {Array} clusterFeatures - クラスタ特徴量の配列
-   * @param {Array} sessionInfo - セッション情報の配列
-   */
-  function renderClusterAnalysisWithJSFallback(clusterFeatures, sessionInfo) {
-    console.log('[ClusterAnalysis] Running JS k-means fallback');
-    
-    // 簡易 k-means を実行（k=3）
-    var k = 3;
-    var labels = simpleKMeans(clusterFeatures, k);
-    
-    // 散布図を描画
-    renderClusterScatter(clusterFeatures, labels, sessionInfo);
-    
-    // クラスタテーブルを表示
-    renderClusterTable(labels, sessionInfo);
-    
-    // デバッグ情報
-    var debugEl = document.getElementById('clusterDebug');
-    if (debugEl) {
-      debugEl.textContent = JSON.stringify({
-        source: 'JS Fallback',
-        total_sessions: clusterFeatures.length,
-        k: k,
-        feature_dimension: clusterFeatures.length > 0 ? clusterFeatures[0].length : 0,
-        labels: labels
-      }, null, 2);
-    }
-  }
 
   /**
    * 簡易 k-means クラスタリング（フロントエンド実装）
@@ -1706,13 +1418,8 @@
     return csv;
   }
 
-  /**
-   * JSON diff を計算（再帰的）
-   * @param {*} oldObj - 旧オブジェクト
-   * @param {*} newObj - 新オブジェクト
-   * @param {string} path - 現在のパス（再帰用）
-   * @returns {Object} diff オブジェクト
-   */
+  // 古いJSON diff関数は削除済み（理解階層ダッシュボードのみ使用）
+  // クイズバージョン差分表示機能は admin/analysis.html のインラインスクリプトで実装
   function computeJSONDiff(oldObj, newObj, path) {
     path = path || '';
     var diff = {};
@@ -1911,34 +1618,1639 @@
     global.AnalysisDashboard = {};
   }
   
-  // 既存のプロパティをマージ（重複を避ける）
+  // 古い因子分析関数は削除済み（理解階層ダッシュボードのみ使用）
+  // 以下の関数は使用されていませんが、admin/analysis.htmlで参照される可能性があるため残しています
+  function runFactorAnalysis(logs) {
+    if (!logs || !Array.isArray(logs) || logs.length === 0) {
+      alert('ログデータがありません。先にデータセットを選択してください。');
+      return;
+    }
+
+    if (typeof window.FactorAnalysis === 'undefined') {
+      alert('因子分析モジュールが読み込まれていません。factor_analysis.js を確認してください。');
+      return;
+    }
+
+    try {
+      // 因子分析を実行
+      const result = window.FactorAnalysis.run(logs);
+      
+      // プロジェクトIDを取得して結果に保存
+      const projectId = localStorage.getItem('projectId') || 'default';
+      result.projectId = projectId;
+      
+      // 因子ラベルを読み込んで結果に保存
+      result.factorLabels = loadFactorLabels(projectId);
+      
+      // グローバル変数に保存（後でラベル更新時に使用）
+      window.currentFactorAnalysisResult = result;
+      window.currentFactorScores = result.factor_scores; // クラスタリング用に保存
+      
+      // 結果を表示
+      renderFactorAnalysisResult(result);
+    } catch (error) {
+      console.error('Factor analysis error:', error);
+      alert('因子分析の実行中にエラーが発生しました: ' + error.message);
+    }
+  }
+
+  /**
+   * 因子ラベルを読み込む（同期版：localStorageから）
+   * @param {string} projectId - プロジェクトID（デフォルト: 'default'）
+   * @returns {Object} 因子ラベルオブジェクト { F1: "ラベル1", F2: "ラベル2", ... }
+   */
+  function loadFactorLabels(projectId) {
+    projectId = projectId || 'default';
+    const labels = {};
+
+    // localStorageから読み込み
+    try {
+      const localStorageKey = 'factor_labels_' + projectId;
+      const saved = localStorage.getItem(localStorageKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        Object.assign(labels, parsed);
+      }
+    } catch (e) {
+      console.warn('Failed to load factor labels from localStorage:', e);
+    }
+
+    // プロジェクトファイルから読み込み（非同期、後で適用）
+    // ファイルからの読み込みは非同期なので、後から適用される
+    loadFactorLabelsFromFile(projectId).then(function(fileLabels) {
+      if (fileLabels && Object.keys(fileLabels).length > 0) {
+        // ファイルからのラベルをlocalStorageに保存
+        try {
+          const localStorageKey = 'factor_labels_' + projectId;
+          localStorage.setItem(localStorageKey, JSON.stringify(fileLabels));
+          
+          // 現在表示中の因子分析結果があれば、ラベルを更新
+          const container = document.getElementById('factor-analysis-result');
+          if (container && container.innerHTML) {
+            // 因子ラベル入力欄を更新
+            Object.keys(fileLabels).forEach(function(factorKey) {
+              const input = document.getElementById('factor-label-' + factorKey);
+              if (input) {
+                input.value = fileLabels[factorKey];
+              }
+            });
+            
+            // 表のヘッダーを更新（グローバル変数から結果を取得）
+            if (window.currentFactorAnalysisResult) {
+              window.currentFactorAnalysisResult.factorLabels = fileLabels;
+              updateFactorTableHeaders(window.currentFactorAnalysisResult, fileLabels);
+            }
+          }
+        } catch (e) {
+          console.warn('Failed to save factor labels to localStorage:', e);
+        }
+      }
+    }).catch(function(error) {
+      console.warn('Failed to load factor labels from file:', error);
+    });
+
+    return labels;
+  }
+
+  /**
+   * プロジェクトファイルから因子ラベルを読み込む
+   * @param {string} projectId - プロジェクトID
+   * @returns {Promise<Object>} 因子ラベルオブジェクト
+   */
+  function loadFactorLabelsFromFile(projectId) {
+    return new Promise(function(resolve, reject) {
+      const path = '../../projects/' + projectId + '/analysis_labels.json';
+      fetch(path)
+        .then(function(response) {
+          if (!response.ok) {
+            resolve({}); // ファイルが存在しない場合は空オブジェクト
+            return;
+          }
+          return response.json();
+        })
+        .then(function(data) {
+          if (data && typeof data === 'object') {
+            resolve(data);
+          } else {
+            resolve({});
+          }
+        })
+        .catch(function(error) {
+          resolve({}); // エラー時も空オブジェクトを返す
+        });
+    });
+  }
+
+  /**
+   * 因子ラベルを保存する
+   * @param {Object} labels - 因子ラベルオブジェクト { F1: "ラベル1", F2: "ラベル2", ... }
+   * @param {string} projectId - プロジェクトID（デフォルト: 'default'）
+   */
+  function saveFactorLabels(labels, projectId) {
+    projectId = projectId || 'default';
+
+    // 1. localStorageに保存
+    try {
+      const localStorageKey = 'factor_labels_' + projectId;
+      localStorage.setItem(localStorageKey, JSON.stringify(labels));
+      console.log('Factor labels saved to localStorage:', labels);
+    } catch (e) {
+      console.warn('Failed to save factor labels to localStorage:', e);
+    }
+
+    // 2. プロジェクトファイルに保存（ダウンロード形式）
+    try {
+      const blob = new Blob([JSON.stringify(labels, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'analysis_labels.json';
+      // ダウンロードを促すメッセージを表示
+      const message = '因子ラベルを保存しました。\n\n保存先: projects/' + projectId + '/analysis_labels.json\n\nファイルをダウンロードして、上記のパスに配置してください。';
+      alert(message);
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.warn('Failed to save factor labels to file:', e);
+    }
+  }
+
+  /**
+   * 因子名を取得（ラベルがあればラベル、なければデフォルト名）
+   * @param {number} factorIndex - 因子インデックス（0始まり）
+   * @param {Object} labels - 因子ラベルオブジェクト
+   * @returns {string} 因子名
+   */
+  function getFactorName(factorIndex, labels) {
+    const factorKey = 'F' + (factorIndex + 1);
+    if (labels && labels[factorKey]) {
+      return labels[factorKey];
+    }
+    return '因子' + (factorIndex + 1);
+  }
+
+  /**
+   * 因子分析結果を表示
+   * @param {Object} result - 因子分析結果
+   */
+  function renderFactorAnalysisResult(result) {
+    const container = document.getElementById('factor-analysis-result');
+    if (!container) {
+      console.warn('Factor analysis result container not found');
+      return;
+    }
+
+    // プロジェクトIDを取得（結果オブジェクトから、またはlocalStorageから）
+    const projectId = result.projectId || localStorage.getItem('projectId') || 'default';
+    
+    // 因子ラベルを読み込む（結果オブジェクトに既にある場合はそれを使用）
+    const labels = result.factorLabels || loadFactorLabels(projectId);
+    
+    // 結果オブジェクトにラベルを保存（後で使用）
+    result.factorLabels = labels;
+    result.projectId = projectId;
+
+    let html = '<div style="padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">';
+    html += '<h3 style="margin-top: 0; color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px;">因子分析結果</h3>';
+
+    // 固有値一覧表
+    html += '<div style="margin-top: 20px;">';
+    html += '<h4 style="color: #555; margin-bottom: 10px;">固有値一覧</h4>';
+    html += '<table border="1" style="border-collapse: collapse; width: 100%; margin-bottom: 20px;">';
+    html += '<thead><tr style="background: #f9f9f9;"><th style="padding: 10px;">因子</th><th style="padding: 10px;">固有値</th><th style="padding: 10px;">Kaiser基準</th></tr></thead>';
+    html += '<tbody>';
+    
+    result.eigenvalues.forEach(function(eigenvalue, index) {
+      const isSignificant = eigenvalue > 1;
+      const color = isSignificant ? '#48bb78' : '#999';
+      html += '<tr>';
+      html += '<td style="padding: 10px; font-weight: 600;">因子' + (index + 1) + '</td>';
+      html += '<td style="padding: 10px; color: ' + color + '; font-weight: 600;">' + eigenvalue.toFixed(3) + '</td>';
+      html += '<td style="padding: 10px; color: ' + color + ';">' + (isSignificant ? '✓ 採用' : '× 除外') + '</td>';
+      html += '</tr>';
+    });
+    
+    html += '</tbody></table>';
+    html += '<p style="color: #666; font-size: 0.9em;">採用因子数: <strong>' + result.num_factors + '</strong>（Kaiser基準: 固有値 > 1）</p>';
+    html += '</div>';
+
+    // 因子ラベル設定パネル
+    if (result.num_factors > 0) {
+      html += '<div style="margin-top: 30px; padding: 20px; background: #f0f8ff; border: 2px solid #4a90e2; border-radius: 8px;">';
+      html += '<h4 style="color: #333; margin-top: 0; margin-bottom: 15px;">🏷️ 因子ラベル設定</h4>';
+      html += '<p style="color: #666; font-size: 0.9em; margin-bottom: 15px;">各因子に意味のある名前を付けることができます。ラベルは因子スコア表と因子負荷量表に反映されます。</p>';
+      html += '<div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">';
+      
+      for (let i = 0; i < result.num_factors; i++) {
+        const factorKey = 'F' + (i + 1);
+        const currentLabel = labels[factorKey] || '';
+        html += '<div style="display: flex; align-items: center; gap: 10px;">';
+        html += '<label style="font-weight: 600; min-width: 50px; color: #333;">' + factorKey + ':</label>';
+        html += '<input type="text" id="factor-label-' + factorKey + '" value="' + escapeHtml(currentLabel) + '" placeholder="例: 構造理解、転移性、..." style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 1em;">';
+        html += '</div>';
+      }
+      
+      html += '</div>';
+      html += '<button id="save-factor-labels-btn" style="padding: 10px 20px; background: #4a90e2; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1em; font-weight: 600;">💾 ラベルを保存</button>';
+      html += '<div id="factor-labels-status" style="margin-top: 10px; font-size: 0.9em; color: #666;"></div>';
+      html += '</div>';
+    }
+
+    // 因子負荷量表
+    if (result.num_factors > 0 && result.loadings) {
+      html += '<div style="margin-top: 30px;">';
+      html += '<h4 style="color: #555; margin-bottom: 10px;">因子負荷量表（Varimax回転後）</h4>';
+      html += '<div style="overflow-x: auto;">';
+      html += '<table border="1" style="border-collapse: collapse; width: 100%; margin-bottom: 20px;">';
+      html += '<thead><tr style="background: #f9f9f9;">';
+      html += '<th style="padding: 10px;">変数</th>';
+      for (let i = 0; i < result.num_factors; i++) {
+        const factorName = getFactorName(i, labels);
+        html += '<th style="padding: 10px;">' + escapeHtml(factorName) + '</th>';
+      }
+      html += '</tr></thead>';
+      html += '<tbody>';
+      
+      Object.keys(result.loadings).forEach(function(variable) {
+        html += '<tr>';
+        html += '<td style="padding: 10px; font-weight: 600;">' + escapeHtml(variable) + '</td>';
+        result.loadings[variable].forEach(function(loading) {
+          const absLoading = Math.abs(loading);
+          const color = absLoading > 0.5 ? '#2d7bf4' : absLoading > 0.3 ? '#f6ad55' : '#999';
+          html += '<td style="padding: 10px; color: ' + color + '; font-weight: ' + (absLoading > 0.5 ? '600' : 'normal') + ';">' + loading.toFixed(3) + '</td>';
+        });
+        html += '</tr>';
+      });
+      
+      html += '</tbody></table>';
+      html += '</div>';
+      html += '</div>';
+    }
+
+    // 生徒ごとの因子スコア表
+    if (result.num_factors > 0 && result.factor_scores) {
+      html += '<div style="margin-top: 30px;">';
+      html += '<h4 style="color: #555; margin-bottom: 10px;">生徒ごとの因子スコア</h4>';
+      html += '<div style="margin-bottom: 10px;">';
+      html += '<button id="export-factor-scores-csv" style="padding: 8px 16px; background: #48bb78; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9em;">CSV エクスポート</button>';
+      html += '</div>';
+      html += '<div style="overflow-x: auto; max-height: 400px; overflow-y: auto;">';
+      html += '<table border="1" style="border-collapse: collapse; width: 100%;">';
+      html += '<thead style="position: sticky; top: 0; background: #f9f9f9;"><tr>';
+      html += '<th style="padding: 10px;">生徒ID</th>';
+      for (let i = 0; i < result.num_factors; i++) {
+        const factorName = getFactorName(i, labels);
+        html += '<th style="padding: 10px;">' + escapeHtml(factorName) + '</th>';
+      }
+      html += '</tr></thead>';
+      html += '<tbody>';
+      
+      Object.keys(result.factor_scores).forEach(function(studentId) {
+        html += '<tr>';
+        html += '<td style="padding: 10px; font-weight: 600;">' + escapeHtml(studentId) + '</td>';
+        for (let i = 0; i < result.num_factors; i++) {
+          const score = result.factor_scores[studentId]['F' + (i + 1)];
+          html += '<td style="padding: 10px;">' + (score !== undefined ? score.toFixed(3) : '-') + '</td>';
+        }
+        html += '</tr>';
+      });
+      
+      html += '</tbody></table>';
+      html += '</div>';
+      html += '</div>';
+
+      // CSVエクスポート機能
+      setTimeout(function() {
+        const exportBtn = document.getElementById('export-factor-scores-csv');
+        if (exportBtn) {
+          exportBtn.addEventListener('click', function() {
+            exportFactorScoresToCSV(result);
+          });
+        }
+      }, 100);
+    }
+
+    html += '</div>';
+    container.innerHTML = html;
+
+    // 因子分析実行後、クラスタリングセクションを表示
+    if (result.num_factors > 0 && result.factor_scores) {
+      const clusteringSection = document.getElementById('clustering-section');
+      if (clusteringSection) {
+        clusteringSection.style.display = 'block';
+      }
+    }
+
+    // 問題貢献度セクションを表示
+    if (result.num_factors > 0 && result.loadings) {
+      renderProblemContributions(result, labels);
+    }
+
+    // Vector Mapを表示
+    if (result.num_factors >= 2 && result.factor_scores && result.loadings) {
+      const clusteringResult = window.currentClusteringResult || null;
+      renderVectorMap(result.factor_scores, result.loadings, clusteringResult, labels, result.num_factors);
+    }
+
+    // 因子ラベル保存ボタンのイベントリスナー
+    setTimeout(function() {
+      const saveLabelsBtn = document.getElementById('save-factor-labels-btn');
+      const statusDiv = document.getElementById('factor-labels-status');
+      
+      if (saveLabelsBtn) {
+        saveLabelsBtn.addEventListener('click', function() {
+          // 入力されたラベルを収集
+          const newLabels = {};
+          for (let i = 0; i < result.num_factors; i++) {
+            const factorKey = 'F' + (i + 1);
+            const input = document.getElementById('factor-label-' + factorKey);
+            if (input && input.value.trim()) {
+              newLabels[factorKey] = input.value.trim();
+            }
+          }
+
+          // ラベルを保存
+          saveFactorLabels(newLabels, projectId);
+
+          // 結果オブジェクトを更新
+          result.factorLabels = newLabels;
+          if (window.currentFactorAnalysisResult) {
+            window.currentFactorAnalysisResult.factorLabels = newLabels;
+          }
+
+          // ステータス表示
+          if (statusDiv) {
+            statusDiv.innerHTML = '<span style="color: #48bb78;">✓ ラベルを保存しました。表のヘッダーを更新しました。</span>';
+          }
+
+          // 因子スコア表と因子負荷量表のヘッダーを更新
+          updateFactorTableHeaders(result, newLabels);
+        });
+      }
+    }, 100);
+  }
+
+  /**
+   * 因子スコア表と因子負荷量表のヘッダーを更新
+   * @param {Object} result - 因子分析結果
+   * @param {Object} labels - 因子ラベルオブジェクト
+   */
+  function updateFactorTableHeaders(result, labels) {
+    // 因子負荷量表のヘッダーを更新
+    const loadingsTable = document.querySelector('#factor-analysis-result table');
+    if (loadingsTable) {
+      const headerRow = loadingsTable.querySelector('thead tr');
+      if (headerRow) {
+        const headerCells = headerRow.querySelectorAll('th');
+        if (headerCells.length > 1) {
+          for (let i = 1; i < headerCells.length && i <= result.num_factors; i++) {
+            const factorName = getFactorName(i - 1, labels);
+            headerCells[i].textContent = factorName;
+          }
+        }
+      }
+    }
+
+    // 因子スコア表のヘッダーを更新
+    const scoresTable = document.querySelectorAll('#factor-analysis-result table')[1];
+    if (scoresTable) {
+      const headerRow = scoresTable.querySelector('thead tr');
+      if (headerRow) {
+        const headerCells = headerRow.querySelectorAll('th');
+        if (headerCells.length > 1) {
+          for (let i = 1; i < headerCells.length && i <= result.num_factors; i++) {
+            const factorName = getFactorName(i - 1, labels);
+            headerCells[i].textContent = factorName;
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * 因子スコアをCSV形式でエクスポート
+   * @param {Object} result - 因子分析結果
+   */
+  function exportFactorScoresToCSV(result) {
+    if (!result.factor_scores || result.num_factors === 0) {
+      alert('エクスポートするデータがありません。');
+      return;
+    }
+
+    // 因子ラベルを取得
+    const labels = result.factorLabels || {};
+    
+    let csv = '生徒ID';
+    for (let i = 0; i < result.num_factors; i++) {
+      const factorName = getFactorName(i, labels);
+      csv += ',' + escapeCsvValue(factorName);
+    }
+    csv += '\n';
+
+    Object.keys(result.factor_scores).forEach(function(studentId) {
+      csv += escapeCsvValue(studentId);
+      for (let i = 0; i < result.num_factors; i++) {
+        const score = result.factor_scores[studentId]['F' + (i + 1)];
+        csv += ',' + (score !== undefined ? score.toFixed(3) : '');
+      }
+      csv += '\n';
+    });
+
+    // ダウンロード
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'factor_scores_' + new Date().toISOString().slice(0, 10) + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  /**
+   * CSV値のエスケープ
+   * @param {string} value - エスケープする値
+   * @returns {string} エスケープ済み値
+   */
+  function escapeCsvValue(value) {
+    if (value === null || value === undefined) {
+      return '';
+    }
+    const str = String(value);
+    if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+      return '"' + str.replace(/"/g, '""') + '"';
+    }
+    return str;
+  }
+
+  /**
+   * k-meansクラスタリングを実行
+   * @param {Object} factorScores - 因子スコアオブジェクト
+   * @param {number} k - クラスタ数
+   * @returns {Object} クラスタリング結果
+   */
+  function runClustering(factorScores, k) {
+    if (!factorScores || typeof factorScores !== 'object') {
+      throw new Error('因子スコアが無効です');
+    }
+
+    if (typeof window.Clustering === 'undefined' || typeof window.Clustering.kmeans !== 'function') {
+      throw new Error('クラスタリングモジュールが読み込まれていません。clustering.js を確認してください。');
+    }
+
+    try {
+      const result = window.Clustering.kmeans(factorScores, k);
+      return result;
+    } catch (error) {
+      console.error('Clustering error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * クラスタリング結果を表示
+   * @param {Object} clusteringResult - クラスタリング結果
+   * @param {Object} factorLabels - 因子ラベルオブジェクト（オプション）
+   */
+  function renderClusteringResult(clusteringResult, factorLabels) {
+    factorLabels = factorLabels || {};
+    const container = document.getElementById('clustering-result');
+    if (!container) {
+      console.warn('Clustering result container not found');
+      return;
+    }
+
+    let html = '<div style="padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">';
+    html += '<h3 style="margin-top: 0; color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px;">クラスタリング結果（k=' + clusteringResult.k + '）</h3>';
+
+    // クラスタごとの平均因子スコア
+    html += '<div style="margin-top: 20px;">';
+    html += '<h4 style="color: #555; margin-bottom: 10px;">クラスタごとの平均因子スコア</h4>';
+    html += '<div style="overflow-x: auto;">';
+    html += '<table border="1" style="border-collapse: collapse; width: 100%; margin-bottom: 20px;">';
+    html += '<thead><tr style="background: #f9f9f9;">';
+    html += '<th style="padding: 10px;">クラスタ</th>';
+    
+    const factorKeys = clusteringResult.factor_keys || [];
+    factorKeys.forEach(function(factorKey) {
+      const factorIndex = parseInt(factorKey.substring(1)) - 1;
+      const factorName = getFactorName(factorIndex, factorLabels);
+      html += '<th style="padding: 10px;">' + escapeHtml(factorName) + '</th>';
+    });
+    html += '<th style="padding: 10px;">生徒数</th>';
+    html += '</tr></thead>';
+    html += '<tbody>';
+
+    // クラスタごとの生徒数を計算
+    const clusterCounts = {};
+    Object.keys(clusteringResult.labels).forEach(function(studentId) {
+      const clusterId = clusteringResult.labels[studentId];
+      clusterCounts[clusterId] = (clusterCounts[clusterId] || 0) + 1;
+    });
+
+    // クラスタカラー（最大10クラスタまで）
+    const clusterColors = [
+      '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
+      '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B739', '#95A5A6'
+    ];
+
+    clusteringResult.cluster_centers.forEach(function(center, clusterId) {
+      const color = clusterColors[clusterId % clusterColors.length];
+      html += '<tr style="background: ' + color + '20;">';
+      html += '<td style="padding: 10px; font-weight: 600; background: ' + color + '40;">クラスタ ' + clusterId + '</td>';
+      
+      factorKeys.forEach(function(factorKey) {
+        const value = center[factorKey] || 0;
+        html += '<td style="padding: 10px;">' + value.toFixed(3) + '</td>';
+      });
+      
+      html += '<td style="padding: 10px; font-weight: 600;">' + (clusterCounts[clusterId] || 0) + '人</td>';
+      html += '</tr>';
+    });
+
+    html += '</tbody></table>';
+    html += '</div>';
+    html += '</div>';
+
+    // 生徒一覧 + クラスターID
+    html += '<div style="margin-top: 30px;">';
+    html += '<h4 style="color: #555; margin-bottom: 10px;">生徒一覧（クラスタ別）</h4>';
+    html += '<div style="overflow-x: auto; max-height: 400px; overflow-y: auto;">';
+    html += '<table border="1" style="border-collapse: collapse; width: 100%;">';
+    html += '<thead style="position: sticky; top: 0; background: #f9f9f9;"><tr>';
+    html += '<th style="padding: 10px;">生徒ID</th>';
+    html += '<th style="padding: 10px;">クラスタ</th>';
+    factorKeys.forEach(function(factorKey) {
+      const factorIndex = parseInt(factorKey.substring(1)) - 1;
+      const factorName = getFactorName(factorIndex, factorLabels);
+      html += '<th style="padding: 10px;">' + escapeHtml(factorName) + '</th>';
+    });
+    html += '</tr></thead>';
+    html += '<tbody>';
+
+    // クラスタごとにグループ化して表示
+    const studentsByCluster = {};
+    Object.keys(clusteringResult.labels).forEach(function(studentId) {
+      const clusterId = clusteringResult.labels[studentId];
+      if (!studentsByCluster[clusterId]) {
+        studentsByCluster[clusterId] = [];
+      }
+      studentsByCluster[clusterId].push(studentId);
+    });
+
+    // クラスタID順にソート
+    const sortedClusterIds = Object.keys(studentsByCluster).map(function(id) { return parseInt(id); }).sort(function(a, b) { return a - b; });
+
+    sortedClusterIds.forEach(function(clusterId) {
+      const color = clusterColors[clusterId % clusterColors.length];
+      studentsByCluster[clusterId].forEach(function(studentId) {
+        html += '<tr style="background: ' + color + '20;">';
+        html += '<td style="padding: 10px; font-weight: 600;">' + escapeHtml(studentId) + '</td>';
+        html += '<td style="padding: 10px; font-weight: 600; background: ' + color + '40;">クラスタ ' + clusterId + '</td>';
+        
+        // 因子スコアを表示（元のfactor_scoresから取得）
+        const factorScores = window.currentFactorScores || {};
+        const studentScores = factorScores[studentId] || {};
+        factorKeys.forEach(function(factorKey) {
+          const score = studentScores[factorKey];
+          html += '<td style="padding: 10px;">' + (score !== undefined ? score.toFixed(3) : '-') + '</td>';
+        });
+        
+        html += '</tr>';
+      });
+    });
+
+    html += '</tbody></table>';
+    html += '</div>';
+    html += '</div>';
+
+    // 2Dプロット（Canvas）
+    html += '<div style="margin-top: 30px;">';
+    html += '<h4 style="color: #555; margin-bottom: 10px;">2D散布図（F1-F2）</h4>';
+    html += '<div style="border: 1px solid #ddd; border-radius: 4px; padding: 10px; background: #fafafa;">';
+    html += '<canvas id="clustering-plot" width="800" height="600" style="max-width: 100%; height: auto; background: white; border: 1px solid #ccc;"></canvas>';
+    html += '<div id="clustering-legend" style="margin-top: 15px; display: flex; flex-wrap: wrap; gap: 15px;"></div>';
+    html += '</div>';
+    html += '</div>';
+
+    html += '</div>';
+    container.innerHTML = html;
+
+    // グローバル変数に保存（Vector Mapで使用）
+    window.currentClusteringResult = clusteringResult;
+
+    // Canvasで2Dプロットを描画
+    setTimeout(function() {
+      drawClusteringPlot(clusteringResult, factorLabels);
+      
+      // Vector Mapを更新（既に表示されている場合）
+      if (window.currentVectorMapRenderer && window.currentFactorScores && window.currentFactorAnalysisResult) {
+        const factorLabels = window.currentFactorAnalysisResult.factorLabels || {};
+        window.currentVectorMapRenderer.setData(
+          window.currentFactorScores,
+          window.currentFactorAnalysisResult.loadings,
+          clusteringResult,
+          factorLabels
+        );
+        window.currentVectorMapRenderer.draw();
+      }
+    }, 100);
+  }
+
+  /**
+   * クラスタリング結果を2Dプロットで描画
+   * @param {Object} clusteringResult - クラスタリング結果
+   * @param {Object} factorLabels - 因子ラベルオブジェクト（オプション）
+   */
+  function drawClusteringPlot(clusteringResult, factorLabels) {
+    factorLabels = factorLabels || {};
+    const canvas = document.getElementById('clustering-plot');
+    if (!canvas) {
+      console.warn('Clustering plot canvas not found');
+      return;
+    }
+
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    const padding = 60;
+
+    // クリア
+    ctx.clearRect(0, 0, width, height);
+
+    // 因子キーを取得（F1, F2を使用）
+    const factorKeys = clusteringResult.factor_keys || [];
+    if (factorKeys.length < 2) {
+      ctx.fillStyle = '#999';
+      ctx.font = '16px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('因子が2つ以上必要です', width / 2, height / 2);
+      return;
+    }
+
+    const factorKey1 = factorKeys[0]; // F1
+    const factorKey2 = factorKeys[1]; // F2
+
+    // 因子スコアを取得
+    const studentFactorScores = window.currentFactorScores || {};
+
+    // データ範囲を計算（実際のデータ点から）
+    let minX = Infinity, maxX = -Infinity;
+    let minY = Infinity, maxY = -Infinity;
+
+    Object.keys(clusteringResult.labels).forEach(function(studentId) {
+      const scores = studentFactorScores[studentId];
+      if (scores) {
+        const x = scores[factorKey1] || 0;
+        const y = scores[factorKey2] || 0;
+        minX = Math.min(minX, x);
+        maxX = Math.max(maxX, x);
+        minY = Math.min(minY, y);
+        maxY = Math.max(maxY, y);
+      }
+    });
+
+    // データがない場合はクラスタ中心から範囲を計算
+    if (minX === Infinity) {
+      clusteringResult.cluster_centers.forEach(function(center) {
+        const x = center[factorKey1] || 0;
+        const y = center[factorKey2] || 0;
+        minX = Math.min(minX, x);
+        maxX = Math.max(maxX, x);
+        minY = Math.min(minY, y);
+        maxY = Math.max(maxY, y);
+      });
+    }
+
+    // マージンを追加
+    const rangeX = maxX - minX || 1;
+    const rangeY = maxY - minY || 1;
+    minX -= rangeX * 0.1;
+    maxX += rangeX * 0.1;
+    minY -= rangeY * 0.1;
+    maxY += rangeY * 0.1;
+
+    // 座標変換関数
+    function toCanvasX(value) {
+      return padding + (value - minX) / (maxX - minX) * (width - 2 * padding);
+    }
+
+    function toCanvasY(value) {
+      return height - padding - (value - minY) / (maxY - minY) * (height - 2 * padding);
+    }
+
+    // 背景を描画
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, width, height);
+
+    // グリッド線を描画
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.lineWidth = 1;
+    
+    // X軸のグリッド
+    const xSteps = 5;
+    for (let i = 0; i <= xSteps; i++) {
+      const x = minX + (maxX - minX) * (i / xSteps);
+      const canvasX = toCanvasX(x);
+      ctx.beginPath();
+      ctx.moveTo(canvasX, padding);
+      ctx.lineTo(canvasX, height - padding);
+      ctx.stroke();
+    }
+
+    // Y軸のグリッド
+    const ySteps = 5;
+    for (let i = 0; i <= ySteps; i++) {
+      const y = minY + (maxY - minY) * (i / ySteps);
+      const canvasY = toCanvasY(y);
+      ctx.beginPath();
+      ctx.moveTo(padding, canvasY);
+      ctx.lineTo(width - padding, canvasY);
+      ctx.stroke();
+    }
+
+    // 軸を描画
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 2;
+
+    // X軸
+    ctx.beginPath();
+    ctx.moveTo(padding, height - padding);
+    ctx.lineTo(width - padding, height - padding);
+    ctx.stroke();
+
+    // Y軸
+    ctx.beginPath();
+    ctx.moveTo(padding, padding);
+    ctx.lineTo(padding, height - padding);
+    ctx.stroke();
+
+    // 軸ラベル
+    ctx.fillStyle = '#333';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    
+    const factorName1 = getFactorName(parseInt(factorKey1.substring(1)) - 1, factorLabels);
+    const factorName2 = getFactorName(parseInt(factorKey2.substring(1)) - 1, factorLabels);
+    
+    ctx.fillText(factorName1, width / 2, height - 10);
+    
+    ctx.save();
+    ctx.translate(15, height / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText(factorName2, 0, 0);
+    ctx.restore();
+
+    // クラスタカラー
+    const clusterColors = [
+      '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
+      '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B739', '#95A5A6'
+    ];
+
+    // クラスタごとに点を描画
+    const studentsByCluster = {};
+    Object.keys(clusteringResult.labels).forEach(function(studentId) {
+      const clusterId = clusteringResult.labels[studentId];
+      if (!studentsByCluster[clusterId]) {
+        studentsByCluster[clusterId] = [];
+      }
+      studentsByCluster[clusterId].push(studentId);
+    });
+
+    // 因子スコアを取得（元のデータから）
+    // 注意: ここではクラスタリング結果から因子スコアを取得できないため、
+    // グローバル変数から取得する必要がある
+    const plotFactorScores = window.currentFactorScores || {};
+
+    // 各クラスタの点を描画
+    Object.keys(studentsByCluster).forEach(function(clusterIdStr) {
+      const clusterId = parseInt(clusterIdStr);
+      const color = clusterColors[clusterId % clusterColors.length];
+
+      studentsByCluster[clusterIdStr].forEach(function(studentId) {
+        const scores = plotFactorScores[studentId];
+        if (scores) {
+          const x = scores[factorKey1] || 0;
+          const y = scores[factorKey2] || 0;
+
+          // 点を描画
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.arc(toCanvasX(x), toCanvasY(y), 6, 0, Math.PI * 2);
+          ctx.fill();
+
+          // 境界線（白）
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+      });
+    });
+
+    // クラスタ中心を描画
+    clusteringResult.cluster_centers.forEach(function(center, clusterId) {
+      const x = center[factorKey1] || 0;
+      const y = center[factorKey2] || 0;
+      const color = clusterColors[clusterId % clusterColors.length];
+
+      // 中心点を描画（大きめの×印）
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 3;
+      const size = 10;
+      const cx = toCanvasX(x);
+      const cy = toCanvasY(y);
+      
+      ctx.beginPath();
+      ctx.moveTo(cx - size, cy - size);
+      ctx.lineTo(cx + size, cy + size);
+      ctx.moveTo(cx + size, cy - size);
+      ctx.lineTo(cx - size, cy + size);
+      ctx.stroke();
+    });
+
+    // 凡例を描画
+    const legendDiv = document.getElementById('clustering-legend');
+    if (legendDiv) {
+      let legendHtml = '';
+      Object.keys(studentsByCluster).forEach(function(clusterIdStr) {
+        const clusterId = parseInt(clusterIdStr);
+        const color = clusterColors[clusterId % clusterColors.length];
+        const count = studentsByCluster[clusterIdStr].length;
+        
+        legendHtml += '<div style="display: flex; align-items: center; gap: 8px;">';
+        legendHtml += '<div style="width: 20px; height: 20px; background: ' + color + '; border: 1px solid #333; border-radius: 4px;"></div>';
+        legendHtml += '<span style="font-weight: 600;">クラスタ ' + clusterId + '</span>';
+        legendHtml += '<span style="color: #666;">(' + count + '人)</span>';
+        legendHtml += '</div>';
+      });
+      legendDiv.innerHTML = legendHtml;
+    }
+  }
+
+  /**
+   * 問題ごとの因子寄与度を表示
+   * @param {Object} result - 因子分析結果
+   * @param {Object} factorLabels - 因子ラベルオブジェクト（オプション）
+   */
+  function renderProblemContributions(result, factorLabels) {
+    factorLabels = factorLabels || {};
+    const container = document.getElementById('problem-contributions-section');
+    if (!container) {
+      console.warn('Problem contributions container not found');
+      return;
+    }
+
+    if (!result.loadings || result.num_factors === 0) {
+      container.style.display = 'none';
+      return;
+    }
+
+    container.style.display = 'block';
+
+    let html = '<div style="padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">';
+    html += '<h3 style="margin-top: 0; color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px;">📊 問題ごとの因子寄与度（Problem → Factor Loadings）</h3>';
+    html += '<p style="color: #666; margin-bottom: 15px; font-size: 0.9em;">各問題がどの因子に最も影響しているかを確認できます。支配因子は絶対値が最大の因子です。</p>';
+
+    // CSVエクスポートボタン
+    html += '<div style="margin-bottom: 15px;">';
+    html += '<button id="export-problem-contributions-csv" style="padding: 8px 16px; background: #48bb78; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9em;">📥 問題貢献度をCSVとしてダウンロード</button>';
+    html += '</div>';
+
+    // 表を生成
+    html += '<div style="overflow-x: auto;">';
+    html += '<table border="1" style="border-collapse: collapse; width: 100%; margin-bottom: 20px;">';
+    html += '<thead><tr style="background: #f9f9f9;">';
+    html += '<th style="padding: 10px; text-align: left;">Question ID</th>';
+    
+    // 因子列のヘッダー
+    for (let i = 0; i < result.num_factors; i++) {
+      const factorName = getFactorName(i, factorLabels);
+      html += '<th style="padding: 10px; text-align: center;">' + escapeHtml(factorName) + '</th>';
+    }
+    
+    html += '<th style="padding: 10px; text-align: center;">支配因子</th>';
+    html += '<th style="padding: 10px; text-align: center;">強度 (Strength)</th>';
+    html += '</tr></thead>';
+    html += '<tbody>';
+
+    // クラスタカラー（支配因子のハイライト用）
+    const factorColors = [
+      '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
+      '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B739', '#95A5A6'
+    ];
+
+    // 各問題を処理
+    Object.keys(result.loadings).forEach(function(questionId) {
+      const loadings = result.loadings[questionId];
+      if (!loadings || loadings.length === 0) {
+        return;
+      }
+
+      // 支配因子を計算（絶対値が最大の因子）
+      let dominantFactorIndex = 0;
+      let maxAbsLoading = Math.abs(loadings[0] || 0);
+      
+      for (let i = 1; i < result.num_factors && i < loadings.length; i++) {
+        const absLoading = Math.abs(loadings[i] || 0);
+        if (absLoading > maxAbsLoading) {
+          maxAbsLoading = absLoading;
+          dominantFactorIndex = i;
+        }
+      }
+
+      const dominantFactorName = getFactorName(dominantFactorIndex, factorLabels);
+      const dominantColor = factorColors[dominantFactorIndex % factorColors.length];
+
+      html += '<tr>';
+      html += '<td style="padding: 10px; font-weight: 600;">' + escapeHtml(questionId) + '</td>';
+
+      // 各因子の負荷量を表示
+      for (let i = 0; i < result.num_factors; i++) {
+        const loading = loadings[i] || 0;
+        const absLoading = Math.abs(loading);
+        
+        // 支配因子のセルを強調
+        const isDominant = i === dominantFactorIndex;
+        const cellStyle = isDominant 
+          ? 'padding: 10px; text-align: center; background: ' + dominantColor + '40; font-weight: 600; border: 2px solid ' + dominantColor + ';'
+          : 'padding: 10px; text-align: center;';
+        
+        // 色分け（絶対値に応じて）
+        let textColor = '#999';
+        if (absLoading > 0.5) {
+          textColor = '#2d7bf4';
+        } else if (absLoading > 0.3) {
+          textColor = '#f6ad55';
+        }
+        
+        html += '<td style="' + cellStyle + ' color: ' + textColor + ';">' + loading.toFixed(3) + '</td>';
+      }
+
+      // 支配因子
+      html += '<td style="padding: 10px; text-align: center; background: ' + dominantColor + '40; font-weight: 600; border: 2px solid ' + dominantColor + ';">' + escapeHtml(dominantFactorName) + '</td>';
+      
+      // 強度
+      html += '<td style="padding: 10px; text-align: center; font-weight: 600; color: ' + dominantColor + ';">' + maxAbsLoading.toFixed(3) + '</td>';
+      
+      html += '</tr>';
+    });
+
+    html += '</tbody></table>';
+    html += '</div>';
+    html += '</div>';
+
+    container.innerHTML = html;
+
+    // CSVエクスポートボタンのイベントリスナー
+    setTimeout(function() {
+      const exportBtn = document.getElementById('export-problem-contributions-csv');
+      if (exportBtn) {
+        exportBtn.addEventListener('click', function() {
+          exportProblemContributionsToCSV(result, factorLabels);
+        });
+      }
+    }, 100);
+  }
+
+  /**
+   * 問題貢献度をCSV形式でエクスポート
+   * @param {Object} result - 因子分析結果
+   * @param {Object} factorLabels - 因子ラベルオブジェクト（オプション）
+   */
+  function exportProblemContributionsToCSV(result, factorLabels) {
+    factorLabels = factorLabels || {};
+    
+    if (!result.loadings || result.num_factors === 0) {
+      alert('エクスポートするデータがありません。');
+      return;
+    }
+
+    let csv = 'Question ID';
+    
+    // 因子列のヘッダー
+    for (let i = 0; i < result.num_factors; i++) {
+      const factorName = getFactorName(i, factorLabels);
+      csv += ',' + escapeCsvValue(factorName);
+    }
+    
+    csv += ',支配因子,強度 (Strength)\n';
+
+    // 各問題を処理
+    Object.keys(result.loadings).forEach(function(questionId) {
+      const loadings = result.loadings[questionId];
+      if (!loadings || loadings.length === 0) {
+        return;
+      }
+
+      // 支配因子を計算
+      let dominantFactorIndex = 0;
+      let maxAbsLoading = Math.abs(loadings[0] || 0);
+      
+      for (let i = 1; i < result.num_factors && i < loadings.length; i++) {
+        const absLoading = Math.abs(loadings[i] || 0);
+        if (absLoading > maxAbsLoading) {
+          maxAbsLoading = absLoading;
+          dominantFactorIndex = i;
+        }
+      }
+
+      const dominantFactorName = getFactorName(dominantFactorIndex, factorLabels);
+
+      csv += escapeCsvValue(questionId);
+      
+      // 各因子の負荷量
+      for (let i = 0; i < result.num_factors; i++) {
+        const loading = loadings[i] || 0;
+        csv += ',' + loading.toFixed(3);
+      }
+      
+      csv += ',' + escapeCsvValue(dominantFactorName);
+      csv += ',' + maxAbsLoading.toFixed(3);
+      csv += '\n';
+    });
+
+    // CSVをダウンロード
+    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'problem_contributions.csv';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
+  // 古いVector Map Rendererは削除済み（理解階層ダッシュボードのみ使用）
+  // 以下の関数は使用されていませんが、admin/analysis.htmlで参照される可能性があるため残しています
+  function VectorMapRenderer(canvasElement) {
+    this.canvas = canvasElement;
+    this.ctx = canvasElement.getContext('2d');
+    this.width = canvasElement.width;
+    this.height = canvasElement.height;
+    this.padding = 80;
+    
+    // データ
+    this.factorScores = null;
+    this.loadings = null;
+    this.clusteringResult = null;
+    this.factorLabels = {};
+    
+    // 表示設定
+    this.showProblemVectors = true;
+    this.showStudentVectors = true;
+    this.showClusterCenters = true;
+    this.showAverageVector = true;
+    
+    // 軸設定
+    this.xAxisFactor = 0; // F1
+    this.yAxisFactor = 1; // F2
+    
+    // 座標範囲
+    this.minX = -1;
+    this.maxX = 1;
+    this.minY = -1;
+    this.maxY = 1;
+  }
+
+  /**
+   * データを設定
+   */
+  VectorMapRenderer.prototype.setData = function(factorScores, loadings, clusteringResult, factorLabels) {
+    this.factorScores = factorScores || {};
+    this.loadings = loadings || {};
+    this.clusteringResult = clusteringResult || null;
+    this.factorLabels = factorLabels || {};
+    
+    // 座標範囲を計算
+    this.calculateBounds();
+  };
+
+  /**
+   * 座標範囲を計算
+   */
+  VectorMapRenderer.prototype.calculateBounds = function() {
+    let minX = Infinity, maxX = -Infinity;
+    let minY = Infinity, maxY = -Infinity;
+    
+    const xKey = 'F' + (this.xAxisFactor + 1);
+    const yKey = 'F' + (this.yAxisFactor + 1);
+    
+    // 因子スコアから範囲を計算
+    if (this.factorScores) {
+      Object.keys(this.factorScores).forEach(function(studentId) {
+        const scores = this.factorScores[studentId];
+        if (scores[xKey] !== undefined) {
+          minX = Math.min(minX, scores[xKey]);
+          maxX = Math.max(maxX, scores[xKey]);
+        }
+        if (scores[yKey] !== undefined) {
+          minY = Math.min(minY, scores[yKey]);
+          maxY = Math.max(maxY, scores[yKey]);
+        }
+      }.bind(this));
+    }
+    
+    // 問題ベクトルから範囲を計算
+    if (this.loadings) {
+      Object.keys(this.loadings).forEach(function(questionId) {
+        const loading = this.loadings[questionId];
+        if (loading && loading[this.xAxisFactor] !== undefined) {
+          minX = Math.min(minX, loading[this.xAxisFactor]);
+          maxX = Math.max(maxX, loading[this.xAxisFactor]);
+        }
+        if (loading && loading[this.yAxisFactor] !== undefined) {
+          minY = Math.min(minY, loading[this.yAxisFactor]);
+          maxY = Math.max(maxY, loading[this.yAxisFactor]);
+        }
+      }.bind(this));
+    }
+    
+    // クラスタ中心から範囲を計算
+    if (this.clusteringResult && this.clusteringResult.cluster_centers) {
+      this.clusteringResult.cluster_centers.forEach(function(center) {
+        if (center[xKey] !== undefined) {
+          minX = Math.min(minX, center[xKey]);
+          maxX = Math.max(maxX, center[xKey]);
+        }
+        if (center[yKey] !== undefined) {
+          minY = Math.min(minY, center[yKey]);
+          maxY = Math.max(maxY, center[yKey]);
+        }
+      });
+    }
+    
+    // マージンを追加
+    const rangeX = maxX - minX || 1;
+    const rangeY = maxY - minY || 1;
+    this.minX = minX - rangeX * 0.15;
+    this.maxX = maxX + rangeX * 0.15;
+    this.minY = minY - rangeY * 0.15;
+    this.maxY = maxY + rangeY * 0.15;
+  };
+
+  /**
+   * 座標変換（データ座標 → Canvas座標）
+   */
+  VectorMapRenderer.prototype.toCanvasX = function(value) {
+    return this.padding + (value - this.minX) / (this.maxX - this.minX) * (this.width - 2 * this.padding);
+  };
+
+  VectorMapRenderer.prototype.toCanvasY = function(value) {
+    return this.height - this.padding - (value - this.minY) / (this.maxY - this.minY) * (this.height - 2 * this.padding);
+  };
+
+  /**
+   * 背景とグリッドを描画
+   */
+  VectorMapRenderer.prototype.drawBackground = function() {
+    const ctx = this.ctx;
+    
+    // 背景
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, this.width, this.height);
+    
+    // グリッド線
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.lineWidth = 1;
+    
+    // X軸のグリッド
+    const xSteps = 5;
+    for (let i = 0; i <= xSteps; i++) {
+      const x = this.minX + (this.maxX - this.minX) * (i / xSteps);
+      const canvasX = this.toCanvasX(x);
+      ctx.beginPath();
+      ctx.moveTo(canvasX, this.padding);
+      ctx.lineTo(canvasX, this.height - this.padding);
+      ctx.stroke();
+    }
+    
+    // Y軸のグリッド
+    const ySteps = 5;
+    for (let i = 0; i <= ySteps; i++) {
+      const y = this.minY + (this.maxY - this.minY) * (i / ySteps);
+      const canvasY = this.toCanvasY(y);
+      ctx.beginPath();
+      ctx.moveTo(this.padding, canvasY);
+      ctx.lineTo(this.width - this.padding, canvasY);
+      ctx.stroke();
+    }
+    
+    // 軸を描画
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 2;
+    
+    // X軸
+    const zeroY = this.toCanvasY(0);
+    ctx.beginPath();
+    ctx.moveTo(this.padding, zeroY);
+    ctx.lineTo(this.width - this.padding, zeroY);
+    ctx.stroke();
+    
+    // Y軸
+    const zeroX = this.toCanvasX(0);
+    ctx.beginPath();
+    ctx.moveTo(zeroX, this.padding);
+    ctx.lineTo(zeroX, this.height - this.padding);
+    ctx.stroke();
+    
+    // 軸ラベル
+    ctx.fillStyle = '#333';
+    ctx.font = '14px sans-serif';
+    ctx.textAlign = 'center';
+    
+    const xFactorName = getFactorName(this.xAxisFactor, this.factorLabels);
+    const yFactorName = getFactorName(this.yAxisFactor, this.factorLabels);
+    
+    ctx.fillText(xFactorName, this.width / 2, this.height - 20);
+    
+    ctx.save();
+    ctx.translate(20, this.height / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText(yFactorName, 0, 0);
+    ctx.restore();
+  };
+
+  /**
+   * 矢印を描画
+   */
+  VectorMapRenderer.prototype.drawArrow = function(x1, y1, x2, y2, color, lineWidth) {
+    const ctx = this.ctx;
+    color = color || '#333';
+    lineWidth = lineWidth || 2;
+    
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const angle = Math.atan2(dy, dx);
+    const arrowLength = 10;
+    const arrowAngle = Math.PI / 6;
+    
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = lineWidth;
+    
+    // 線を描画
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    
+    // 矢印の先端を描画
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(
+      x2 - arrowLength * Math.cos(angle - arrowAngle),
+      y2 - arrowLength * Math.sin(angle - arrowAngle)
+    );
+    ctx.lineTo(
+      x2 - arrowLength * Math.cos(angle + arrowAngle),
+      y2 - arrowLength * Math.sin(angle + arrowAngle)
+    );
+    ctx.closePath();
+    ctx.fill();
+  };
+
+  /**
+   * 問題ベクトルを描画
+   */
+  VectorMapRenderer.prototype.drawProblemVectors = function() {
+    if (!this.showProblemVectors || !this.loadings) {
+      return;
+    }
+    
+    const ctx = this.ctx;
+    const xKey = 'F' + (this.xAxisFactor + 1);
+    const yKey = 'F' + (this.yAxisFactor + 1);
+    
+    Object.keys(this.loadings).forEach(function(questionId) {
+      const loading = this.loadings[questionId];
+      if (!loading || loading.length <= Math.max(this.xAxisFactor, this.yAxisFactor)) {
+        return;
+      }
+      
+      const x = loading[this.xAxisFactor] || 0;
+      const y = loading[this.yAxisFactor] || 0;
+      
+      const canvasX = this.toCanvasX(x);
+      const canvasY = this.toCanvasY(y);
+      
+      // 原点からベクトルを描画
+      const originX = this.toCanvasX(0);
+      const originY = this.toCanvasY(0);
+      
+      // 矢印を描画
+      this.drawArrow(originX, originY, canvasX, canvasY, '#4ECDC4', 1.5);
+      
+      // 点を描画
+      ctx.fillStyle = '#4ECDC4';
+      ctx.beginPath();
+      ctx.arc(canvasX, canvasY, 4, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // 問題IDを表示（小さく）
+      ctx.fillStyle = '#666';
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(questionId, canvasX, canvasY - 8);
+    }.bind(this));
+  };
+
+  /**
+   * 生徒ベクトルを描画
+   */
+  VectorMapRenderer.prototype.drawStudentVectors = function() {
+    if (!this.showStudentVectors || !this.factorScores) {
+      return;
+    }
+    
+    const ctx = this.ctx;
+    const xKey = 'F' + (this.xAxisFactor + 1);
+    const yKey = 'F' + (this.yAxisFactor + 1);
+    
+    // クラスタカラー
+    const clusterColors = [
+      '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
+      '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B739', '#95A5A6'
+    ];
+    
+    Object.keys(this.factorScores).forEach(function(studentId) {
+      const scores = this.factorScores[studentId];
+      if (!scores) {
+        return;
+      }
+      
+      const x = scores[xKey] || 0;
+      const y = scores[yKey] || 0;
+      
+      const canvasX = this.toCanvasX(x);
+      const canvasY = this.toCanvasY(y);
+      
+      // クラスタリング結果があれば色分け
+      let color = '#666';
+      if (this.clusteringResult && this.clusteringResult.labels) {
+        const clusterId = this.clusteringResult.labels[studentId];
+        if (clusterId !== undefined) {
+          color = clusterColors[clusterId % clusterColors.length];
+        }
+      }
+      
+      // 点を描画
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(canvasX, canvasY, 5, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // 境界線
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }.bind(this));
+  };
+
+  /**
+   * クラスター中心を描画
+   */
+  VectorMapRenderer.prototype.drawClusterCenters = function() {
+    if (!this.showClusterCenters || !this.clusteringResult || !this.clusteringResult.cluster_centers) {
+      return;
+    }
+    
+    const ctx = this.ctx;
+    const xKey = 'F' + (this.xAxisFactor + 1);
+    const yKey = 'F' + (this.yAxisFactor + 1);
+    
+    const clusterColors = [
+      '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
+      '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B739', '#95A5A6'
+    ];
+    
+    this.clusteringResult.cluster_centers.forEach(function(center, clusterId) {
+      const x = center[xKey] || 0;
+      const y = center[yKey] || 0;
+      
+      const canvasX = this.toCanvasX(x);
+      const canvasY = this.toCanvasY(y);
+      const color = clusterColors[clusterId % clusterColors.length];
+      
+      // 大きな点を描画
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(canvasX, canvasY, 10, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // 境界線
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      
+      // クラスタIDを表示
+      ctx.fillStyle = '#333';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('C' + clusterId, canvasX, canvasY - 15);
+    }.bind(this));
+  };
+
+  /**
+   * 平均ベクトルを描画
+   */
+  VectorMapRenderer.prototype.drawAverageVector = function() {
+    if (!this.showAverageVector || !this.loadings) {
+      return;
+    }
+    
+    const ctx = this.ctx;
+    let sumX = 0;
+    let sumY = 0;
+    let count = 0;
+    
+    Object.keys(this.loadings).forEach(function(questionId) {
+      const loading = this.loadings[questionId];
+      if (!loading || loading.length <= Math.max(this.xAxisFactor, this.yAxisFactor)) {
+        return;
+      }
+      
+      sumX += loading[this.xAxisFactor] || 0;
+      sumY += loading[this.yAxisFactor] || 0;
+      count++;
+    }.bind(this));
+    
+    if (count === 0) {
+      return;
+    }
+    
+    const avgX = sumX / count;
+    const avgY = sumY / count;
+    
+    const originX = this.toCanvasX(0);
+    const originY = this.toCanvasY(0);
+    const canvasX = this.toCanvasX(avgX);
+    const canvasY = this.toCanvasY(avgY);
+    
+    // 太い矢印で描画
+    this.drawArrow(originX, originY, canvasX, canvasY, '#FF6B6B', 3);
+    
+    // ラベル
+    ctx.fillStyle = '#FF6B6B';
+    ctx.font = 'bold 12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('平均', canvasX, canvasY - 10);
+  };
+
+  /**
+   * クリア
+   */
+  VectorMapRenderer.prototype.clear = function() {
+    this.ctx.clearRect(0, 0, this.width, this.height);
+  };
+
+  /**
+   * 描画
+   */
+  VectorMapRenderer.prototype.draw = function() {
+    this.clear();
+    this.drawBackground();
+    this.drawProblemVectors();
+    this.drawStudentVectors();
+    this.drawClusterCenters();
+    this.drawAverageVector();
+  };
+
+  // 古いrenderVectorMap関数は削除済み（理解階層ダッシュボードのみ使用）
+  // 以下の関数は使用されていませんが、admin/analysis.htmlで参照される可能性があるため残しています
+  function renderVectorMap(factorScores, loadings, clusteringResult, factorLabels, numFactors) {
+    const container = document.getElementById('vector-map-section');
+    if (!container) {
+      console.warn('Vector map container not found');
+      return;
+    }
+
+    if (!factorScores || !loadings || numFactors < 2) {
+      container.style.display = 'none';
+      return;
+    }
+
+    container.style.display = 'block';
+
+    let html = '<div style="padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">';
+    html += '<h3 style="margin-top: 0; color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px;">🗺️ Vector Map（思考の可視化）</h3>';
+    html += '<p style="color: #666; margin-bottom: 15px; font-size: 0.9em;">因子分析とクラスタリング結果を2D座標空間で可視化します。</p>';
+
+    // 表示切替チェックボックス
+    html += '<div style="margin-bottom: 15px; padding: 15px; background: #f9f9f9; border-radius: 4px;">';
+    html += '<div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center;">';
+    html += '<label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">';
+    html += '<input type="checkbox" id="vector-map-show-problems" checked>';
+    html += '<span>問題ベクトル</span>';
+    html += '</label>';
+    html += '<label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">';
+    html += '<input type="checkbox" id="vector-map-show-students" checked>';
+    html += '<span>生徒ベクトル</span>';
+    html += '</label>';
+    html += '<label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">';
+    html += '<input type="checkbox" id="vector-map-show-clusters" checked>';
+    html += '<span>クラスター中心</span>';
+    html += '</label>';
+    html += '<label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">';
+    html += '<input type="checkbox" id="vector-map-show-average" checked>';
+    html += '<span>平均ベクトル</span>';
+    html += '</label>';
+    html += '</div>';
+    html += '</div>';
+
+    // 軸選択UI
+    html += '<div style="margin-bottom: 15px; padding: 15px; background: #f9f9f9; border-radius: 4px;">';
+    html += '<div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">';
+    html += '<div style="display: flex; align-items: center; gap: 10px;">';
+    html += '<label style="font-weight: 600;">X軸:</label>';
+    html += '<select id="vector-map-x-axis" style="padding: 5px 10px; border: 1px solid #ddd; border-radius: 4px;">';
+    for (let i = 0; i < numFactors; i++) {
+      const factorName = getFactorName(i, factorLabels);
+      html += '<option value="' + i + '"' + (i === 0 ? ' selected' : '') + '>' + escapeHtml(factorName) + '</option>';
+    }
+    html += '</select>';
+    html += '</div>';
+    html += '<div style="display: flex; align-items: center; gap: 10px;">';
+    html += '<label style="font-weight: 600;">Y軸:</label>';
+    html += '<select id="vector-map-y-axis" style="padding: 5px 10px; border: 1px solid #ddd; border-radius: 4px;">';
+    for (let i = 0; i < numFactors; i++) {
+      const factorName = getFactorName(i, factorLabels);
+      html += '<option value="' + i + '"' + (i === 1 ? ' selected' : '') + '>' + escapeHtml(factorName) + '</option>';
+    }
+    html += '</select>';
+    html += '</div>';
+    html += '</div>';
+    html += '</div>';
+
+    // Canvas
+    html += '<div style="border: 1px solid #ddd; border-radius: 4px; padding: 10px; background: #fafafa;">';
+    html += '<canvas id="vector-map-canvas" width="800" height="600" style="max-width: 100%; height: auto; background: white; border: 1px solid #ccc;"></canvas>';
+    html += '</div>';
+
+    html += '</div>';
+    container.innerHTML = html;
+
+    // VectorMapRendererを初期化
+    setTimeout(function() {
+      const canvas = document.getElementById('vector-map-canvas');
+      if (!canvas) {
+        return;
+      }
+
+      const renderer = new VectorMapRenderer(canvas);
+      renderer.setData(factorScores, loadings, clusteringResult, factorLabels);
+
+      // 描画
+      renderer.draw();
+
+      // 表示切替チェックボックスのイベントリスナー
+      const showProblems = document.getElementById('vector-map-show-problems');
+      const showStudents = document.getElementById('vector-map-show-students');
+      const showClusters = document.getElementById('vector-map-show-clusters');
+      const showAverage = document.getElementById('vector-map-show-average');
+
+      function updateDisplay() {
+        renderer.showProblemVectors = showProblems.checked;
+        renderer.showStudentVectors = showStudents.checked;
+        renderer.showClusterCenters = showClusters.checked;
+        renderer.showAverageVector = showAverage.checked;
+        renderer.draw();
+      }
+
+      if (showProblems) showProblems.addEventListener('change', updateDisplay);
+      if (showStudents) showStudents.addEventListener('change', updateDisplay);
+      if (showClusters) showClusters.addEventListener('change', updateDisplay);
+      if (showAverage) showAverage.addEventListener('change', updateDisplay);
+
+      // 軸選択のイベントリスナー
+      const xAxisSelect = document.getElementById('vector-map-x-axis');
+      const yAxisSelect = document.getElementById('vector-map-y-axis');
+
+      function updateAxes() {
+        renderer.xAxisFactor = parseInt(xAxisSelect.value);
+        renderer.yAxisFactor = parseInt(yAxisSelect.value);
+        renderer.calculateBounds();
+        renderer.draw();
+      }
+
+      if (xAxisSelect) xAxisSelect.addEventListener('change', updateAxes);
+      if (yAxisSelect) yAxisSelect.addEventListener('change', updateAxes);
+
+      // グローバル変数に保存（後で更新時に使用）
+      window.currentVectorMapRenderer = renderer;
+    }, 100);
+  }
+
+  // 理解階層ダッシュボードのみを公開
   Object.assign(global.AnalysisDashboard, {
     loadQuizLog: loadQuizLog,
     mergeAllSessions: mergeAllSessions,
-    computeOverallStats: computeOverallStats,
-    computePerQuestionStats: computePerQuestionStats,
-    computeConceptConfusions: computeConceptConfusions,
-    computeResponseTimeProfile: computeResponseTimeProfile,
-    computePathPatterns: computePathPatterns,
-    computeGlossaryUsage: computeGlossaryUsage,
-    computeVectorStats: computeVectorStats,
-    renderOverallStats: renderOverallStats,
-    renderQuestionStats: renderQuestionStats,
-    renderConfusionStats: renderConfusionStats,
-    renderResponseTimeStats: renderResponseTimeStats,
-    renderPathStats: renderPathStats,
-    renderGlossaryStats: renderGlossaryStats,
-    renderVectorStats: renderVectorStats,
-    renderAll: renderAll,
-    renderAllWithProject: renderAllWithProject,
+    renderMasteryDashboard: renderMasteryDashboard,
+    updateKPI: updateKPI,
+    drawCharts: drawCharts,
+    listRecommendations: listRecommendations,
     analyze: analyze,
     getQuizVersionsFromLogs: getQuizVersionsFromLogs,
     filterLogsByVersion: filterLogsByVersion,
-    runClusterAnalysis: runClusterAnalysis,
-    convertLogsToCSV: convertLogsToCSV,
-    renderClusterAnalysis: renderClusterAnalysis,
-    computeJSONDiff: computeJSONDiff,
-    renderJSONDiff: renderJSONDiff,
     escapeHtml: escapeHtml
   });
 
@@ -1957,7 +3269,7 @@
     return;
   }
 
-function loadStudentListForAnalysis() {
+  function loadStudentListForAnalysis() {
     // DatasetLoader を使用して他のタブと同じ方法でデータセット一覧を取得
     if (typeof DatasetLoader === 'undefined') {
         console.error('DatasetLoader is not available');

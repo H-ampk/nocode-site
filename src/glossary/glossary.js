@@ -2,6 +2,8 @@
  * Glossary Editor - フォームベースの用語集編集機能
  */
 
+import { callOllama } from "../core/ai.js";
+
 (function (global) {
   'use strict';
 
@@ -366,6 +368,32 @@
   }
 
   /**
+   * Glossary 自動生成（AI）
+   * @param {string} term - 用語名
+   * @returns {Promise<Object>} { definition, example, tags }
+   */
+  async function autoGenerateGlossary(term) {
+    const prompt = `
+あなたは教育AIです。以下の専門語の簡潔な説明を作ってください。
+語: ${term}
+
+出力形式は strict JSON:
+{
+  "definition": "60字以内の定義",
+  "example": "概念を説明する短い例",
+  "tags": ["#専門領域"]
+}`;
+
+    try {
+      const jsonText = await callOllama("phi3:3.8b", prompt);
+      return JSON.parse(jsonText);
+    } catch (error) {
+      console.error('Glossary自動生成エラー:', error);
+      throw error;
+    }
+  }
+
+  /**
    * カスタム分野を追加する
    */
   function addCustomDomain() {
@@ -494,6 +522,91 @@
         }
       });
     }
+
+    // AI自動生成ボタン
+    var autoGenerateButton = document.getElementById('autoGenerateButton');
+    if (autoGenerateButton) {
+      autoGenerateButton.addEventListener('click', async function () {
+        var wordInput = document.getElementById('termWord');
+        var definitionTextarea = document.getElementById('termDefinition');
+        
+        if (!wordInput || !definitionTextarea) {
+          alert('フォーム要素が見つかりません');
+          return;
+        }
+
+        var term = wordInput.value.trim();
+        if (!term) {
+          alert('用語名を入力してください');
+          return;
+        }
+
+        // ボタンを無効化してローディング表示
+        autoGenerateButton.disabled = true;
+        autoGenerateButton.textContent = '生成中...';
+
+        try {
+          var result = await autoGenerateGlossary(term);
+          
+          // 結果をフォームに反映
+          if (result.definition) {
+            definitionTextarea.value = result.definition;
+          }
+          
+          // タグを分野として設定
+          if (result.tags && Array.isArray(result.tags)) {
+            // 既存のチェックボックスをクリア
+            var domainCheckboxes = document.querySelectorAll('input[name="domain"]');
+            domainCheckboxes.forEach(function (cb) {
+              cb.checked = false;
+            });
+            
+            // タグを分野として追加
+            var domainContainer = document.getElementById('domainCheckboxes');
+            if (domainContainer) {
+              result.tags.forEach(function (tag) {
+                // # を除去
+                var domain = tag.replace(/^#/, '').trim();
+                if (!domain) return;
+                
+                // 既存のチェックボックスを探す
+                var existingCheckbox = document.querySelector('input[name="domain"][value="' + escapeHtml(domain) + '"]');
+                if (existingCheckbox) {
+                  existingCheckbox.checked = true;
+                } else {
+                  // 新しいチェックボックスを追加
+                  var label = document.createElement('label');
+                  label.style.display = 'block';
+                  label.style.margin = '0.3rem 0';
+                  
+                  var checkbox = document.createElement('input');
+                  checkbox.type = 'checkbox';
+                  checkbox.name = 'domain';
+                  checkbox.value = domain;
+                  checkbox.checked = true;
+                  
+                  var span = document.createElement('span');
+                  span.textContent = ' ' + domain;
+                  
+                  label.appendChild(checkbox);
+                  label.appendChild(span);
+                  domainContainer.appendChild(label);
+                }
+              });
+            }
+          }
+          
+          alert('自動生成が完了しました！\n\n定義: ' + (result.definition || '（なし）') + '\n例文: ' + (result.example || '（なし）'));
+        } catch (error) {
+          console.error('自動生成エラー:', error);
+          alert('自動生成に失敗しました。\nエラー: ' + (error.message || '不明なエラー'));
+        } finally {
+          // ボタンを再有効化
+          autoGenerateButton.disabled = false;
+          autoGenerateButton.textContent = '🤖 AI自動生成';
+        }
+      });
+    }
   }
 
   // グローバルに公開
@@ -505,7 +618,8 @@
     editTerm: editTerm,
     deleteTerm: deleteTerm,
     saveGlossary: saveGlossary,
-    addCustomDomain: addCustomDomain
+    addCustomDomain: addCustomDomain,
+    autoGenerateGlossary: autoGenerateGlossary
   };
 
 })(window);

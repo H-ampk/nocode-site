@@ -14,8 +14,13 @@ console.log("⭐ editor.js loaded (legacy wrapper)");
 // ==========================================================
 // 初期化の二重発火を防ぐ（editor_main.js と統合）
 // ==========================================================
+if (window.__editor_initialized) {
+    console.warn("[Editor] initialization skipped (already initialized)");
+    return;
+}
+window.__editor_initialized = true;
 window.addEventListener("DOMContentLoaded", () => {
-    if (window.__EDITOR_INIT__) {
+    if (window.__EDITOR_INIT__ || window.__editor_initialized) {
         console.log("⚠️ Editor初期化は既に完了しています（二重発火防止）");
         return;
     }
@@ -527,7 +532,7 @@ function loadTemplate(templateKey) {
     }
     window.gameData = cloneTemplateData(template.gameData);
     selectedNodeId = window.gameData.startNode || (window.gameData.questions[0] ? window.gameData.questions[0].id : null);
-    nodeIdCounter = calculateNextNodeIdCounterFromData(gameData);
+    nodeIdCounter = calculateNextNodeIdCounterFromData(window.gameData);
     updateUI();
     showPreview();
     alert(`${template.name}テンプレートを読み込みました！`);
@@ -714,6 +719,11 @@ function updateBackgroundImageSelect(questionId) {
 // ドロップゾーンのクリックでファイル選択
 // 注意: このイベントリスナーは editor_init.js で統合管理されるため、
 // ここでは削除しないが、editor_init.js が優先される
+if (window.__editor_initialized) {
+    console.warn("[Editor] initialization skipped (already initialized)");
+} else {
+    window.__editor_initialized = true;
+}
 document.addEventListener('DOMContentLoaded', function() {
     console.log("⭐ DOMContentLoaded #1: ドロップゾーン初期化 (legacy, may be overridden by editor_init.js)");
     // ドロップゾーンのクリックイベントは動的に追加する必要があるため、
@@ -1388,7 +1398,7 @@ window.refreshVectorAxis = function() {
     cachedGlossary = null;
     
     // 現在編集中の質問がある場合は、ベクトル設定UIを再描画
-    const question = gameData.questions.find(function(q) { return q.id === selectedNodeId; });
+    const question = window.gameData.questions.find(function(q) { return q.id === selectedNodeId; });
     if (!question) return;
     
     setTimeout(function() {
@@ -1611,9 +1621,10 @@ function collectScoreVector(choiceId) {
 }
 
 // 通常クイズ用のベクトル設定UIを表示
+// ベクトル設定UIは削除されました（理解階層設定UIに置き換え）
 function renderVectorSettingsForQuestion(question) {
-    const area = document.getElementById('vectorSettingArea');
-    if (!area) return;
+    // この関数は非推奨です。理解階層設定UIを使用してください。
+    return;
     
     // 選択肢がない場合はメッセージを表示
     if (!Array.isArray(question.choices) || question.choices.length === 0) {
@@ -1661,8 +1672,8 @@ function renderVectorSettingsForQuestion(question) {
     
     // Glossaryが読み込まれている場合は評価軸UIを表示
     try {
-        // 既存のベクトル設定を取得
-        const existingVectors = question.vector_scores || {};
+        // 既存のベクトル設定を取得（新形式: vector、旧形式: vector_scores）
+        const existingVectors = question.vector || question.vector_scores || {};
         
         // 各選択肢ごとに評価軸UIを表示
         const vectorHtml = question.choices.map(function(choice, index) {
@@ -1673,7 +1684,29 @@ function renderVectorSettingsForQuestion(question) {
                 choice.id = choiceId;
             }
             
-            const existingVector = existingVectors[choiceId] || {};
+            // 既存のベクトル値を取得（新形式と旧形式の両方に対応）
+            let existingVector = existingVectors[choiceId] || {};
+            
+            // 旧形式（vector_scores）から新形式（vector）に変換
+            if (question.vector_scores && question.vector_scores[choiceId] && !question.vector) {
+                const oldVector = question.vector_scores[choiceId];
+                const newVector = {};
+                Object.keys(oldVector).forEach(function(axisId) {
+                    const value = oldVector[axisId];
+                    if (typeof value === 'number') {
+                        // 旧形式: -1/0/+1 → 新形式: {x: value, y: 0}
+                        newVector[axisId] = { x: value, y: 0 };
+                    } else if (typeof value === 'object' && value.x !== undefined) {
+                        // 既に新形式の場合
+                        newVector[axisId] = value;
+                    }
+                });
+                if (Object.keys(newVector).length > 0) {
+                    if (!question.vector) question.vector = {};
+                    question.vector[choiceId] = newVector;
+                    existingVector = newVector;
+                }
+            }
             
             return `
                 <div style="margin-bottom: 25px; padding: 15px; background: #fafafa; border: 1px solid #ddd; border-radius: 8px;">
@@ -1701,7 +1734,26 @@ function renderVectorSettingsForQuestion(question) {
                 choice.id = choiceId;
             }
             
-            const existingVector = (question.vector_scores || {})[choiceId] || {};
+            // 既存のベクトル値を取得（新形式を優先）
+            let existingVector = (question.vector || question.vector_scores || {})[choiceId] || {};
+            
+            // 旧形式から新形式への変換（必要に応じて）
+            if (question.vector_scores && question.vector_scores[choiceId] && !question.vector) {
+                const oldVector = question.vector_scores[choiceId];
+                const newVector = {};
+                Object.keys(oldVector).forEach(function(axisId) {
+                    const value = oldVector[axisId];
+                    if (typeof value === 'number') {
+                        newVector[axisId] = { x: value, y: 0 };
+                    }
+                });
+                if (Object.keys(newVector).length > 0) {
+                    if (!question.vector) question.vector = {};
+                    question.vector[choiceId] = newVector;
+                    existingVector = newVector;
+                }
+            }
+            
             renderVectorAxisUI(glossaryTerms, choiceId, question.id, existingVector);
         });
         
@@ -1716,8 +1768,10 @@ function renderVectorSettingsForQuestion(question) {
     }
 }
 
-// テンプレートを読み込んで評価軸UIを更新
+// ベクトル設定UIは削除されました（理解階層設定UIに置き換え）
 function loadGlossaryTemplateForQuestion(questionId) {
+    // この関数は非推奨です。理解階層設定UIを使用してください。
+    return;
     // 通常クイズと診断クイズの両方のセレクトを確認
     const select = document.getElementById(`glossaryTemplateSelect-${questionId}`) || 
                    document.getElementById(`glossaryTemplateSelect-diagnostic-${questionId}`);
@@ -1755,7 +1809,7 @@ function loadGlossaryTemplateForQuestion(questionId) {
     cachedGlossary = null;
     
     // 評価軸UIを再描画（少し遅延させて確実に更新）
-    const question = gameData.questions.find(function(q) { return q.id === questionId; });
+    const question = window.gameData.questions.find(function(q) { return q.id === questionId; });
     if (question) {
         setTimeout(function() {
             if (question.type === 'diagnostic_question') {
@@ -1781,8 +1835,90 @@ function loadGlossaryTemplateForQuestion(questionId) {
     }
 }
 
-// 通常クイズ用の評価軸UIを描画
+// ベクトル設定UIは削除されました（理解階層設定UIに置き換え）
+function buildVectorMapUI(axisId, term, choiceId, questionId, existingVector) {
+    // この関数は非推奨です。理解階層設定UIを使用してください。
+    return null;
+    const card = document.createElement('div');
+    card.className = 'vector-map-card';
+    card.style.cssText = 'margin-bottom: 20px; padding: 15px; background: #fafafa; border: 1px solid #ddd; border-radius: 8px;';
+    card.setAttribute('data-axis', axisId);
+    card.setAttribute('data-choice', choiceId);
+    
+    const termName = escapeHtml(term.name || axisId);
+    const definition = escapeHtml(term.definition || '（説明なし）');
+    
+    // 既存のベクトル値を取得（互換性: vector_scores または vector）
+    let currentX = 0;
+    let currentY = 0;
+    if (existingVector && existingVector[axisId]) {
+        const vec = existingVector[axisId];
+        if (typeof vec === 'object' && vec.x !== undefined && vec.y !== undefined) {
+            currentX = Math.max(-1, Math.min(1, vec.x));
+            currentY = Math.max(-1, Math.min(1, vec.y));
+        } else if (typeof vec === 'number') {
+            // 旧形式（-1/0/+1）の互換性
+            currentX = vec;
+            currentY = 0;
+        }
+    }
+    
+    // SVGサイズ
+    const size = 200;
+    const center = size / 2;
+    const scale = center - 20; // マージン20px
+    
+    // SVG座標から論理座標への変換
+    const svgX = center + currentX * scale;
+    const svgY = center - currentY * scale; // Y軸は反転
+    
+    const uniqueId = `${questionId}-${choiceId}-${axisId}`.replace(/[^a-zA-Z0-9-]/g, '_');
+    
+    card.innerHTML = `
+        <div style="margin-bottom: 10px;">
+            <div style="font-weight: bold; font-size: 1.1rem; color: #333; margin-bottom: 4px;">${termName}</div>
+            <div style="font-size: 0.9rem; color: #666; margin-bottom: 8px;">${definition}</div>
+            <div style="font-size: 0.85rem; color: #888;">
+                座標: (<span id="coord-x-${uniqueId}">${currentX.toFixed(2)}</span>, <span id="coord-y-${uniqueId}">${currentY.toFixed(2)}</span>)
+            </div>
+        </div>
+        <div style="position: relative; width: ${size}px; height: ${size}px; margin: 0 auto; border: 1px solid #ccc; border-radius: 4px; background: #fff;">
+            <svg id="vector-map-${uniqueId}" width="${size}" height="${size}" style="display: block;">
+                <!-- グリッド線 -->
+                <line x1="${center}" y1="0" x2="${center}" y2="${size}" stroke="#ddd" stroke-width="1"/>
+                <line x1="0" y1="${center}" x2="${size}" y2="${center}" stroke="#ddd" stroke-width="1"/>
+                <!-- 象限の境界線 -->
+                <line x1="0" y1="${center - scale}" x2="${size}" y2="${center - scale}" stroke="#e0e0e0" stroke-width="0.5" stroke-dasharray="2,2"/>
+                <line x1="0" y1="${center + scale}" x2="${size}" y2="${center + scale}" stroke="#e0e0e0" stroke-width="0.5" stroke-dasharray="2,2"/>
+                <line x1="${center - scale}" y1="0" x2="${center - scale}" y2="${size}" stroke="#e0e0e0" stroke-width="0.5" stroke-dasharray="2,2"/>
+                <line x1="${center + scale}" y1="0" x2="${center + scale}" y2="${size}" stroke="#e0e0e0" stroke-width="0.5" stroke-dasharray="2,2"/>
+                <!-- 軸ラベル -->
+                <text x="${size - 5}" y="${center - 5}" text-anchor="end" font-size="10" fill="#666">強まる</text>
+                <text x="5" y="${center - 5}" text-anchor="start" font-size="10" fill="#666">弱まる</text>
+                <text x="${center + 5}" y="15" text-anchor="start" font-size="10" fill="#666">深まる</text>
+                <text x="${center + 5}" y="${size - 5}" text-anchor="start" font-size="10" fill="#666">浅まる</text>
+                <!-- ドラッグ可能な点 -->
+                <circle id="vector-point-${uniqueId}" 
+                        cx="${svgX}" cy="${svgY}" 
+                        r="8" 
+                        fill="#4a90e2" 
+                        stroke="#2d5aa0" 
+                        stroke-width="2"
+                        style="cursor: move;"
+                        data-axis="${axisId}"
+                        data-choice="${choiceId}"
+                        data-question="${questionId}"/>
+            </svg>
+        </div>
+    `;
+    
+    return card;
+}
+
+// ベクトル設定UIは削除されました（理解階層設定UIに置き換え）
 function renderVectorAxisUI(glossaryTerms, choiceId, questionId, existingVector) {
+    // この関数は非推奨です。理解階層設定UIを使用してください。
+    return;
     const container = document.getElementById(`vectorAxisList-${choiceId}`);
     if (!container) return;
     
@@ -1797,76 +1933,183 @@ function renderVectorAxisUI(glossaryTerms, choiceId, questionId, existingVector)
         if (!term || !term.id) return;
         
         // term.idから評価軸キーを取得（例: "concept.logic" → "logic"）
-        const key = term.id.split('.').pop();
-        const currentValue = existingVector[key] !== undefined ? existingVector[key] : 0;
+        const axisId = term.id.split('.').pop();
         
-        const card = document.createElement('div');
-        card.className = 'score-axis-card';
-        card.setAttribute('data-axis', key);
-        card.setAttribute('data-choice', choiceId);
-        
-        const termName = escapeHtml(term.name || key);
-        const definition = escapeHtml(term.definition || '（説明なし）');
-        
-        card.innerHTML = `
-            <div class="axis-title">${termName} (${escapeHtml(key)})</div>
-            <div class="axis-desc">${definition}</div>
-            <div class="score-radio-group">
-                <label style="cursor: pointer;">
-                    <input type="radio" name="${escapeHtml(choiceId)}-${escapeHtml(key)}" value="-1" ${currentValue === -1 ? 'checked' : ''} 
-                           onchange="updateVectorAxisScore('${escapeHtml(questionId)}', '${escapeHtml(choiceId)}', '${escapeHtml(key)}', -1)">
-                    <span>-1 弱まる</span>
-                </label>
-                <label style="cursor: pointer;">
-                    <input type="radio" name="${escapeHtml(choiceId)}-${escapeHtml(key)}" value="0" ${currentValue === 0 ? 'checked' : ''} 
-                           onchange="updateVectorAxisScore('${escapeHtml(questionId)}', '${escapeHtml(choiceId)}', '${escapeHtml(key)}', 0)">
-                    <span>0 影響なし</span>
-                </label>
-                <label style="cursor: pointer;">
-                    <input type="radio" name="${escapeHtml(choiceId)}-${escapeHtml(key)}" value="1" ${currentValue === 1 ? 'checked' : ''} 
-                           onchange="updateVectorAxisScore('${escapeHtml(questionId)}', '${escapeHtml(choiceId)}', '${escapeHtml(key)}', 1)">
-                    <span>+1 強まる</span>
-                </label>
-            </div>
-        `;
-        
+        const card = buildVectorMapUI(axisId, term, choiceId, questionId, existingVector);
         container.appendChild(card);
+        
+        // ドラッグイベントを設定
+        setupVectorMapDrag(questionId, choiceId, axisId);
     });
 }
 
-// 通常クイズ用の評価軸スコアを更新
-function updateVectorAxisScore(questionId, choiceId, axis, value) {
-    const question = gameData.questions.find(function(q) { return q.id === questionId; });
+// 2Dベクトル地図のドラッグ操作を設定
+function setupVectorMapDrag(questionId, choiceId, axisId) {
+    const uniqueId = `${questionId}-${choiceId}-${axisId}`.replace(/[^a-zA-Z0-9-]/g, '_');
+    const pointId = `vector-point-${uniqueId}`;
+    const svgId = `vector-map-${uniqueId}`;
+    
+    // 少し遅延させてDOM要素が確実に存在するようにする
+    setTimeout(function() {
+        const point = document.getElementById(pointId);
+        const svg = document.getElementById(svgId);
+        if (!point || !svg) {
+            console.warn('Vector map elements not found:', pointId, svgId);
+            return;
+        }
+        
+        const size = 200;
+        const center = size / 2;
+        const scale = center - 20;
+        
+        let isDragging = false;
+        
+        // 座標変換: SVG座標 → 論理座標 (-1〜+1)
+        function svgToLogical(svgX, svgY) {
+            const x = (svgX - center) / scale;
+            const y = (center - svgY) / scale; // Y軸は反転
+            return {
+                x: Math.max(-1, Math.min(1, x)),
+                y: Math.max(-1, Math.min(1, y))
+            };
+        }
+        
+        // 座標変換: 論理座標 → SVG座標
+        function logicalToSvg(logicalX, logicalY) {
+            return {
+                x: center + logicalX * scale,
+                y: center - logicalY * scale
+            };
+        }
+        
+        // マウスダウン
+        point.addEventListener('mousedown', function(e) {
+            e.preventDefault();
+            isDragging = true;
+            point.style.cursor = 'grabbing';
+        });
+        
+        // マウスムーブ
+        function handleMouseMove(e) {
+            if (!isDragging) return;
+            
+            const rect = svg.getBoundingClientRect();
+            const svgX = e.clientX - rect.left;
+            const svgY = e.clientY - rect.top;
+            
+            const logical = svgToLogical(svgX, svgY);
+            
+            // 点の位置を更新
+            const svgPos = logicalToSvg(logical.x, logical.y);
+            point.setAttribute('cx', svgPos.x);
+            point.setAttribute('cy', svgPos.y);
+            
+            // 座標表示を更新
+            const coordX = document.getElementById(`coord-x-${uniqueId}`);
+            const coordY = document.getElementById(`coord-y-${uniqueId}`);
+            if (coordX) coordX.textContent = logical.x.toFixed(2);
+            if (coordY) coordY.textContent = logical.y.toFixed(2);
+            
+            // ベクトル値を更新
+            updateVectorMapValue(questionId, choiceId, axisId, logical.x, logical.y);
+        }
+        
+        // マウスアップ
+        function handleMouseUp() {
+            if (isDragging) {
+                isDragging = false;
+                point.style.cursor = 'move';
+            }
+        }
+        
+        // グローバルイベントリスナー
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
+        
+        // SVG全体をクリックしてもドラッグできるようにする（オプション）
+        svg.addEventListener('click', function(e) {
+            if (e.target === svg || e.target.tagName === 'line' || e.target.tagName === 'text') {
+                const rect = svg.getBoundingClientRect();
+                const svgX = e.clientX - rect.left;
+                const svgY = e.clientY - rect.top;
+                
+                const logical = svgToLogical(svgX, svgY);
+                const svgPos = logicalToSvg(logical.x, logical.y);
+                
+                point.setAttribute('cx', svgPos.x);
+                point.setAttribute('cy', svgPos.y);
+                
+                const coordX = document.getElementById(`coord-x-${uniqueId}`);
+                const coordY = document.getElementById(`coord-y-${uniqueId}`);
+                if (coordX) coordX.textContent = logical.x.toFixed(2);
+                if (coordY) coordY.textContent = logical.y.toFixed(2);
+                
+                updateVectorMapValue(questionId, choiceId, axisId, logical.x, logical.y);
+            }
+        });
+    }, 100);
+}
+
+// 2Dベクトル地図の値を更新
+function updateVectorMapValue(questionId, choiceId, axisId, x, y) {
+    const question = window.gameData.questions.find(function(q) { return q.id === questionId; });
     if (!question) return;
     
+    // vector オブジェクトを初期化（vector_scores との互換性も保つ）
+    if (!question.vector) {
+        question.vector = {};
+    }
+    if (!question.vector[choiceId]) {
+        question.vector[choiceId] = {};
+    }
+    
+    // 値が (0, 0) の場合は削除（影響なし）
+    if (Math.abs(x) < 0.01 && Math.abs(y) < 0.01) {
+        delete question.vector[choiceId][axisId];
+    } else {
+        question.vector[choiceId][axisId] = { x: x, y: y };
+    }
+    
+    // 空のvectorの場合は削除
+    if (Object.keys(question.vector[choiceId]).length === 0) {
+        delete question.vector[choiceId];
+    }
+    
+    // 空のvectorの場合は削除
+    if (Object.keys(question.vector).length === 0) {
+        delete question.vector;
+    }
+    
+    // 互換性: vector_scores も更新（旧形式）
     if (!question.vector_scores) {
         question.vector_scores = {};
     }
-    
     if (!question.vector_scores[choiceId]) {
         question.vector_scores[choiceId] = {};
     }
     
-    if (value === 0) {
-        // 0の場合は削除（影響なし）
-        delete question.vector_scores[choiceId][axis];
+    // x値のみを vector_scores に保存（後方互換性）
+    if (Math.abs(x) < 0.01 && Math.abs(y) < 0.01) {
+        delete question.vector_scores[choiceId][axisId];
     } else {
-        question.vector_scores[choiceId][axis] = value;
-    }
-    
-    // 空のvectorの場合は削除
-    if (Object.keys(question.vector_scores[choiceId]).length === 0) {
-        delete question.vector_scores[choiceId];
-    }
-    
-    // 空のvector_scoresの場合は削除
-    if (Object.keys(question.vector_scores).length === 0) {
-        delete question.vector_scores;
+        // x値を -1/0/+1 に丸める（旧形式との互換性）
+        const roundedX = Math.round(x);
+        question.vector_scores[choiceId][axisId] = roundedX;
     }
     
     updateVectorJson(question);
+    if (typeof updateUI === 'function') {
     updateUI();
+    }
+    if (typeof showPreview === 'function') {
     showPreview();
+    }
+}
+
+// 通常クイズ用の評価軸スコアを更新（後方互換性のため残す）
+function updateVectorAxisScore(questionId, choiceId, axis, value) {
+    // 旧形式（-1/0/+1）から新形式（{x, y}）に変換
+    updateVectorMapValue(questionId, choiceId, axis, value, 0);
 }
 
 // 通常クイズ用のベクトルJSONを更新（詳細表示用）
@@ -1874,8 +2117,9 @@ function updateVectorJson(question) {
     const jsonContainer = document.getElementById('vectorSettingJson');
     if (!jsonContainer) return;
     
-    const vectorScores = question.vector_scores || {};
-    jsonContainer.textContent = JSON.stringify(vectorScores, null, 2);
+    // 新形式（vector）を優先表示、なければ旧形式（vector_scores）
+    const vectorData = question.vector || question.vector_scores || {};
+    jsonContainer.textContent = JSON.stringify(vectorData, null, 2);
 }
 
 // 通常クイズ用のベクトルスコアを収集
@@ -1986,9 +2230,248 @@ function showResultEditor(result) {
     `;
 }
 
-// 選択肢リストを更新
+// 統合選択肢カードUIを表示
+// 単一の選択肢をレンダリングする関数
+function renderChoice(choice) {
+    const div = document.createElement("div");
+    div.className = "choice-card";
+
+    // measure色帯を決定（最初のmeasureが優先、なければ識別をデフォルト）
+    const choiceMeasure = Array.isArray(choice.measure) ? choice.measure : [];
+    const firstMeasure = choiceMeasure.length > 0 ? choiceMeasure[0] : '識別';
+    // CSSクラス名を生成（日本語measure名から）
+    const measureClassMap = {
+        '識別': 'measure-identify',
+        '説明': 'measure-explain',
+        '適用': 'measure-apply',
+        '区別': 'measure-differentiate',
+        '転移': 'measure-transfer',
+        '構造化': 'measure-structure'
+    };
+    const measureClass = measureClassMap[firstMeasure] || 'measure-identify';
+
+    const bar = document.createElement("div");
+    bar.className = "choice-measure " + measureClass;
+    div.appendChild(bar);
+
+    const text = document.createElement("div");
+    text.innerText = choice.text || '';
+    div.appendChild(text);
+
+    return div;
+}
+
+function renderChoices(question) {
+    const container = document.getElementById('choicesContainer');
+    if (!container) {
+        // フォールバック: 既存のchoicesListもサポート
+        if (typeof updateChoicesList === 'function') {
+            return updateChoicesList(question);
+        }
+        return;
+    }
+    
+    container.innerHTML = '';
+    
+    if (!Array.isArray(question.choices)) {
+        question.choices = [];
+    }
+    
+    const masteryLevels = window.MASTERY_LEVELS || ['識別', '説明', '適用', '区別', '転移', '構造化'];
+    
+    question.choices.forEach((choice, index) => {
+        const choiceId = choice.id || choice.value || `choice_${index}`;
+        if (!choice.id && !choice.value) {
+            choice.id = choiceId;
+        }
+        
+        const choiceMeasure = Array.isArray(choice.measure) ? choice.measure : [];
+        const isCorrect = choice.correct === true || choice.isCorrect === true;
+        const misconception = choice.misconception || '';
+        
+        const div = document.createElement('div');
+        div.className = 'choice-card';
+        div.dataset.index = index;
+        div.dataset.choiceId = choiceId;
+        
+        // measure色帯を決定（最初のmeasureが優先、なければ識別をデフォルト）
+        const firstMeasure = choiceMeasure.length > 0 ? choiceMeasure[0] : '識別';
+        // CSSクラス名を生成（日本語measure名から）
+        const measureClassMap = {
+            '識別': 'measure-identify',
+            '説明': 'measure-explain',
+            '適用': 'measure-apply',
+            '区別': 'measure-differentiate',
+            '転移': 'measure-transfer',
+            '構造化': 'measure-structure'
+        };
+        const measureClass = measureClassMap[firstMeasure] || 'measure-identify';
+        
+        div.innerHTML = `
+            <div class="choice-measure-tag ${measureClass}"></div>
+            <div class="choice-card-header">
+                <span class="choice-handle" title="ドラッグして並び替え">≡</span>
+                <input class="choice-text" type="text"
+                       placeholder="選択肢${index + 1}"
+                       value="${escapeHtml(choice.text || '')}">
+                <button class="btn btn-danger delete-choice-btn">削除</button>
+            </div>
+            
+            <div class="mt-2">
+                <label style="display: flex; align-items: center; gap: 6px;">
+                    <input type="checkbox" class="choice-correct" ${isCorrect ? 'checked' : ''}>
+                    正解
+                </label>
+            </div>
+            
+            <div class="mt-2">
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #2d3748;">誤概念タグ：</label>
+                <input class="choice-misconception" type="text"
+                       placeholder="例：交絡因子"
+                       value="${escapeHtml(misconception)}">
+            </div>
+            
+            <div class="mt-2">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3748;">理解階層（measure）:</label>
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    ${masteryLevels.map(k => `
+                        <label class="measure-tag m${k}" style="display: inline-flex; align-items: center; gap: 4px;">
+                            <input type="checkbox"
+                                   class="choice-measure"
+                                   data-measure="${k}"
+                                   ${choiceMeasure.includes(k) ? 'checked' : ''}>
+                            ${k}
+                        </label>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        
+        container.appendChild(div);
+    });
+    
+    // イベント設定
+    activateChoiceEvents(question);
+    
+    // ドラッグ&ドロップで並び替え
+    if (typeof Sortable !== 'undefined') {
+        // 既存のSortableインスタンスを破棄
+        if (container._sortable) {
+            container._sortable.destroy();
+        }
+        
+        container._sortable = new Sortable(container, {
+            handle: '.choice-handle',
+            animation: 150,
+            onEnd: function(evt) {
+                const moved = question.choices.splice(evt.oldIndex, 1)[0];
+                question.choices.splice(evt.newIndex, 0, moved);
+                renderChoices(question);
+                if (typeof updateUI === 'function') updateUI();
+                if (typeof showPreview === 'function') showPreview();
+            }
+        });
+    }
+    
+    // 理解階層設定UIを再描画（通常クイズの場合のみ）
+    if (question.type !== 'diagnostic_question') {
+        setTimeout(function() {
+            if (typeof window.updateChoiceMasteryList === 'function') {
+                window.updateChoiceMasteryList(question);
+            }
+        }, 100);
+    }
+}
+
+// 選択肢カードのイベントを設定
+function activateChoiceEvents(question) {
+    const container = document.getElementById('choicesContainer');
+    if (!container) return;
+    
+    // 削除ボタン
+    container.querySelectorAll('.delete-choice-btn').forEach((btn, i) => {
+        btn.onclick = function() {
+            question.choices.splice(i, 1);
+            renderChoices(question);
+            if (typeof updateUI === 'function') updateUI();
+            if (typeof showPreview === 'function') showPreview();
+        };
+    });
+    
+    // テキスト編集
+    container.querySelectorAll('.choice-text').forEach((input, i) => {
+        input.oninput = function(e) {
+            if (question.choices[i]) {
+                question.choices[i].text = e.target.value;
+                if (typeof updateUI === 'function') updateUI();
+                if (typeof showPreview === 'function') showPreview();
+            }
+        };
+    });
+    
+    // 正解チェックボックス
+    container.querySelectorAll('.choice-correct').forEach((input, i) => {
+        input.onchange = function(e) {
+            if (question.choices[i]) {
+                question.choices[i].correct = e.target.checked;
+                question.choices[i].isCorrect = e.target.checked; // 後方互換性
+                if (typeof updateUI === 'function') updateUI();
+                if (typeof showPreview === 'function') showPreview();
+            }
+        };
+    });
+    
+    // 誤概念タグ
+    container.querySelectorAll('.choice-misconception').forEach((input, i) => {
+        input.oninput = function(e) {
+            if (question.choices[i]) {
+                const value = e.target.value.trim();
+                question.choices[i].misconception = value || null;
+                if (typeof updateUI === 'function') updateUI();
+                if (typeof showPreview === 'function') showPreview();
+            }
+        };
+    });
+    
+    // measureチェックボックス
+    container.querySelectorAll('.choice-measure').forEach((input) => {
+        input.onchange = function(e) {
+            const card = e.target.closest('.choice-card');
+            if (!card) return;
+            const idx = parseInt(card.dataset.index, 10);
+            if (isNaN(idx) || !question.choices[idx]) return;
+            
+            const measure = e.target.dataset.measure;
+            const choice = question.choices[idx];
+            
+            if (!Array.isArray(choice.measure)) {
+                choice.measure = [];
+            }
+            
+            if (e.target.checked) {
+                if (!choice.measure.includes(measure)) {
+                    choice.measure.push(measure);
+                }
+            } else {
+                choice.measure = choice.measure.filter(m => m !== measure);
+            }
+            
+            if (typeof updateUI === 'function') updateUI();
+            if (typeof showPreview === 'function') showPreview();
+        };
+    });
+}
+
+// 選択肢リストを更新（後方互換性のため残す）
 function updateChoicesList(question) {
+    // 新しい統合UIを優先
+    const container = document.getElementById('choicesContainer');
+    if (container && typeof renderChoices === 'function') {
+        return renderChoices(question);
+    }
+    
     const choicesList = document.getElementById('choicesList');
+    if (!choicesList) return;
     choicesList.innerHTML = '';
     
     question.choices.forEach((choice, index) => {
@@ -2001,28 +2484,107 @@ function updateChoicesList(question) {
             choice.id = choiceId;
         }
         
+        // 選択肢のmeasureを取得（既存のmeasureまたは空配列）
+        const choiceMeasure = Array.isArray(choice.measure) ? choice.measure : [];
+        const masteryLevels = window.MASTERY_LEVELS || ['識別', '説明', '適用', '区別', '転移', '構造化'];
+        
+        choiceDiv.setAttribute('data-choice-index', index);
+        choiceDiv.setAttribute('data-choice-id', choiceId);
         choiceDiv.innerHTML = `
+            <span class="drag-handle" title="ドラッグして並び替え">☰</span>
             <input type="text" value="${escapeHtml(choice.text)}" 
                    placeholder="選択肢 ${index + 1}"
+                   class="choice-text"
                    onchange="updateChoice('${question.id}', ${index}, 'text', this.value)">
             <select onchange="updateChoiceNext('${question.id}', ${index}, this.value)" 
                     style="padding: 8px; border: 2px solid #e2e8f0; border-radius: 5px; flex: 1;">
                 ${getNextNodeOptions(choice.nextId)}
             </select>
             ${question.enableGrading ? `
-            <label style="display: flex; align-items: center; gap: 5px; white-space: nowrap;">
-                <input type="checkbox" ${choice.isCorrect ? 'checked' : ''} onchange="updateChoiceCorrect('${question.id}', ${index}, this.checked)">
-                正解
-            </label>` : ''}
+            <div style="display: flex; flex-direction: column; gap: 10px; padding: 10px; background: #f7fafc; border-radius: 8px; margin-top: 10px;">
+                <label style="display: flex; align-items: center; gap: 5px;">
+                    <input type="checkbox" ${choice.isCorrect || choice.correct ? 'checked' : ''} 
+                           onchange="updateChoiceCorrect('${question.id}', ${index}, this.checked)">
+                    正解
+                </label>
+                <label style="display: flex; flex-direction: column; gap: 5px;">
+                    <span style="font-size: 0.9em; color: #4a5568;">誤概念タグ:</span>
+                    <input type="text" 
+                           value="${escapeHtml(choice.misconception || '')}" 
+                           placeholder="例: 交絡因子"
+                           class="choice-misconception"
+                           onchange="updateChoiceMisconception('${question.id}', ${index}, this.value)"
+                           style="padding: 6px; border: 1px solid #cbd5e0; border-radius: 4px;">
+                </label>
+                <div class="choice-measure" style="display: flex; flex-direction: column; gap: 5px;">
+                    <span style="font-size: 0.9em; color: #4a5568; font-weight: 600;">理解階層:</span>
+                    <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+                        ${masteryLevels.map(level => `
+                            <label class="measure-tag m${level}" style="display: inline-flex; align-items: center; gap: 4px;">
+                                <input type="checkbox" 
+                                       data-level="${level}"
+                                       ${choiceMeasure.includes(level) ? 'checked' : ''}
+                                       onchange="updateChoiceMeasure('${question.id}', ${index}, '${level}', this.checked)">
+                                ${level}
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>` : ''}
             <button onclick="removeChoice('${question.id}', ${index})">削除</button>
         `;
         choicesList.appendChild(choiceDiv);
     });
     
-    // ベクトル設定UIを再描画（通常クイズの場合のみ）
+    // ドラッグ＆ドロップで並び替え可能にする
+    if (typeof Sortable !== 'undefined') {
+        // 既存のSortableインスタンスを破棄
+        if (choicesList._sortable) {
+            choicesList._sortable.destroy();
+        }
+        
+        new Sortable(choicesList, {
+            animation: 150,
+            handle: '.drag-handle',
+            onEnd: function(evt) {
+                // 並び順が変わったら選択肢の順序を更新
+                const items = Array.from(choicesList.children);
+                const newChoices = [];
+                
+                // 各アイテムから選択肢データを取得
+                items.forEach(function(item) {
+                    const choiceId = item.getAttribute('data-choice-id');
+                    if (choiceId) {
+                        // 既存の選択肢から該当するものを検索
+                        const existingChoice = question.choices.find(function(c) {
+                            return (c.id === choiceId) || (c.value && String(c.value) === choiceId) || 
+                                   (c.id && c.id === choiceId);
+                        });
+                        if (existingChoice) {
+                            newChoices.push(existingChoice);
+                        }
+                    }
+                });
+                
+                // 選択肢の順序を更新
+                if (newChoices.length === question.choices.length) {
+                    question.choices = newChoices;
+                    
+                    // UIを再描画
+                    updateChoicesList(question);
+                    updateUI();
+                    showPreview();
+                }
+            }
+        });
+    }
+    
+    // 理解階層設定UIを再描画（通常クイズの場合のみ）
     if (question.type !== 'diagnostic_question') {
         setTimeout(function() {
-            renderVectorSettingsForQuestion(question);
+            if (typeof window.updateChoiceMasteryList === 'function') {
+                window.updateChoiceMasteryList(question);
+            }
         }, 100);
     }
 }
@@ -2083,7 +2645,47 @@ function toggleGrading(questionId, enabled) {
 function updateChoiceCorrect(questionId, index, isCorrect) {
     const question = gameData.questions.find(q => q.id === questionId);
     if (!question || !Array.isArray(question.choices) || !question.choices[index]) return;
-    question.choices[index].isCorrect = Boolean(isCorrect);
+    const choice = question.choices[index];
+    choice.isCorrect = Boolean(isCorrect);
+    choice.correct = Boolean(isCorrect); // 後方互換性のため両方設定
+    updateUI();
+    showPreview();
+}
+
+// 選択肢の誤概念タグを更新
+function updateChoiceMisconception(questionId, index, misconception) {
+    const question = gameData.questions.find(q => q.id === questionId);
+    if (!question || !Array.isArray(question.choices) || !question.choices[index]) return;
+    const choice = question.choices[index];
+    choice.misconception = misconception && misconception.trim() ? misconception.trim() : null;
+    updateUI();
+    showPreview();
+}
+
+// 選択肢の理解階層measureを更新
+function updateChoiceMeasure(questionId, index, level, checked) {
+    const question = gameData.questions.find(q => q.id === questionId);
+    if (!question || !Array.isArray(question.choices) || !question.choices[index]) return;
+    const choice = question.choices[index];
+    
+    // measure配列を初期化（存在しない場合）
+    if (!Array.isArray(choice.measure)) {
+        choice.measure = [];
+    }
+    
+    if (checked) {
+        // 追加（重複チェック）
+        if (!choice.measure.includes(level)) {
+            choice.measure.push(level);
+        }
+    } else {
+        // 削除
+        const levelIndex = choice.measure.indexOf(level);
+        if (levelIndex !== -1) {
+            choice.measure.splice(levelIndex, 1);
+        }
+    }
+    
     updateUI();
     showPreview();
 }
@@ -2409,19 +3011,77 @@ function updateResultProperty(resultId, property, value) {
 }
 
 // 選択肢を追加
-function addChoice(questionId) {
-    const question = gameData.questions.find(q => q.id === questionId);
+// measure の初期値（v2.0仕様）
+const defaultMeasure = {
+    "識別": 0,
+    "説明": 0,
+    "適用": 0,
+    "区別": 0,
+    "転移": 0,
+    "構造化": 0
+};
+
+// 新規問題作成（v2.0仕様）
+function createNewQuestion() {
+    const now = new Date().toISOString();
+    return {
+        id: "q_" + Date.now(),
+        question: "",
+        type: "single",
+        choices: [],
+        measure: { ...defaultMeasure },
+        meta: {
+            difficulty: "medium",
+            rt_expected: 1500,
+            created_at: now,
+            updated_at: now
+        }
+    };
+}
+
+// UI生成：選択肢（v2.0仕様）
+function addChoice(questionId, text = "") {
+    const question = (window.gameData || gameData).questions.find(q => q.id === questionId);
     if (question) {
+        if (!Array.isArray(question.choices)) {
+            question.choices = [];
+        }
         const nextValue = question.choices.length;
+        const choiceId = "c" + Math.random().toString(36).slice(2);  // v2.0: ランダムID
         question.choices.push({
-            text: `選択肢${nextValue + 1}`,
-            value: nextValue,
-            nextId: null,
-            isCorrect: false
+            id: choiceId,  // v2.0: id必須
+            text: text || `選択肢${nextValue + 1}`,
+            tags: [],  // v2.0: tags追加
+            is_correct: false,  // v2.0: is_correct（旧isCorrect/correctから変更）
+            value: nextValue,  // 互換性のため残す
+            nextId: null,  // 互換性のため残す
+            isCorrect: false,  // 互換性のため残す
+            correct: false,  // 互換性のため残す
+            misconception: null,  // 互換性のため残す
+            measure: [] // 選択肢ごとの理解階層measure
         });
-        updateUI();
-        showPreview();
+        
+        // 新しい統合UIを使用
+        if (typeof renderChoices === 'function') {
+            renderChoices(question);
+        } else {
+            updateUI();
+        }
+        if (typeof showPreview === 'function') showPreview();
+        
+        // 理解階層設定UIを更新
+        if (question.type !== 'diagnostic_question' && typeof window.updateChoiceMasteryList === 'function') {
+            setTimeout(() => window.updateChoiceMasteryList(question), 100);
+        }
     }
+}
+
+// グローバルに公開（後方互換性のため）
+if (typeof window !== 'undefined') {
+    window.renderChoices = renderChoices;
+    window.activateChoiceEvents = activateChoiceEvents;
+    window.addChoice = addChoice;
+    window.updateChoicesList = updateChoicesList; // 後方互換性のため残す
 }
 
 // 選択肢を更新
@@ -2448,18 +3108,6 @@ function updateChoiceNext(questionId, choiceIndex, nextId) {
 function removeChoice(questionId, choiceIndex) {
     const question = gameData.questions.find(q => q.id === questionId);
     if (question && question.choices[choiceIndex]) {
-        const removedChoice = question.choices[choiceIndex];
-        const choiceId = removedChoice.id || removedChoice.value;
-        
-        // 関連するベクトル設定も削除
-        if (choiceId && question.vector_scores && question.vector_scores[choiceId]) {
-            delete question.vector_scores[choiceId];
-            // 空のvector_scoresの場合は削除
-            if (Object.keys(question.vector_scores).length === 0) {
-                delete question.vector_scores;
-            }
-        }
-        
         question.choices.splice(choiceIndex, 1);
         // 値を再割り当て
         question.choices.forEach((choice, index) => {
@@ -2467,6 +3115,10 @@ function removeChoice(questionId, choiceIndex) {
         });
         updateUI();
         showPreview();
+        // 理解階層設定UIを更新
+        if (question.type !== 'diagnostic_question' && typeof window.updateChoiceMasteryList === 'function') {
+            setTimeout(() => window.updateChoiceMasteryList(question), 100);
+        }
     }
 }
 
@@ -2768,6 +3420,9 @@ window.saveProjectAs = function() {
         
         // localStorage に保存
         try {
+            // Zero-Project Mode対応: projectIdを使って保存
+            const projectId = window.projectId || localStorage.getItem("project_id") || "temp_project";
+            
             const projectMeta = {
                 name: gameData.title || finalFileName.replace(".json", ""),
                 filename: finalFileName,
@@ -2784,7 +3439,9 @@ window.saveProjectAs = function() {
             filtered.push(projectMeta);
 
             localStorage.setItem("projects", JSON.stringify(filtered));
-            console.log("[Editor] プロジェクトを localStorage に保存しました:", projectMeta.name);
+            // project_{projectId} としても保存
+            localStorage.setItem(`project_${projectId}`, JSON.stringify(gameData));
+            console.log("[Editor] プロジェクトを localStorage に保存しました:", projectMeta.name, "(projectId:", projectId + ")");
         } catch (storageError) {
             console.warn("[Editor] localStorage への保存に失敗しました:", storageError);
         }
@@ -2941,6 +3598,7 @@ async function saveQuiz() {
 // editor の現在状態から quiz.json を構築
 function buildQuizDataFromEditor() {
     // gameData から quiz.json 形式に変換
+    const gameData = window.gameData || {};
     const quizData = {
         version: gameData.version || 1,
         startNode: gameData.startNode || null,
@@ -2966,8 +3624,19 @@ function buildQuizDataFromEditor() {
                         id: choice.id || choice.value,
                         text: choice.text || '',
                         nextId: choice.nextId || null,
-                        isCorrect: choice.isCorrect || false
+                        isCorrect: choice.isCorrect || choice.correct || false,
+                        correct: choice.correct !== undefined ? choice.correct : (choice.isCorrect || false)
                     };
+                    
+                    // 誤概念タグを追加
+                    if (choice.misconception) {
+                        c.misconception = choice.misconception;
+                    }
+                    
+                    // 理解階層measureを追加（選択肢レベル）
+                    if (Array.isArray(choice.measure) && choice.measure.length > 0) {
+                        c.measure = choice.measure;
+                    }
                     
                     // vector がある場合は追加
                     if (choice.vector && typeof choice.vector === 'object') {
@@ -2981,6 +3650,11 @@ function buildQuizDataFromEditor() {
                     
                     return c;
                 });
+            }
+            
+            // 旧 question.measure を削除（選択肢レベルに移行済みのため）
+            if (q.measure) {
+                delete q.measure;
             }
             
             // その他のプロパティを保持
@@ -2998,6 +3672,16 @@ function buildQuizDataFromEditor() {
             }
             if (question.next) {
                 q.next = question.next;
+            }
+            
+            // 2Dベクトル地図のデータを保存（新形式: vector）
+            if (question.vector && typeof question.vector === 'object') {
+                q.vector = question.vector;
+            }
+            
+            // 後方互換性のため vector_scores も保存
+            if (question.vector_scores && typeof question.vector_scores === 'object') {
+                q.vector_scores = question.vector_scores;
             }
             
             return q;
@@ -3745,6 +4429,10 @@ function escapeHtml(text) {
 // 初期化
 // 注意: このイベントリスナーは editor_init.js で統合管理されるため、
 // ここでは削除しないが、editor_init.js が優先される
+if (window.__editor_initialized) {
+    console.warn("[Editor] initialization skipped (already initialized)");
+    return;
+}
 document.addEventListener('DOMContentLoaded', function() {
     console.log("⭐ DOMContentLoaded #2: Editor初期化開始 (legacy, may be overridden by editor_init.js)");
     console.log("⭐ Editor init started");
@@ -4342,9 +5030,12 @@ function startAutosave() {
         const json = JSON.stringify(gameData);
         if (json !== lastSavedState) {
             try {
+                // Zero-Project Mode対応: projectIdを使って保存
+                const projectId = window.projectId || localStorage.getItem("project_id") || "temp_project";
                 localStorage.setItem("autosave_project", json);
+                localStorage.setItem(`project_${projectId}`, json);
                 lastSavedState = json;
-                console.log("[Editor] オートセーブ完了");
+                console.log("[Editor] オートセーブ完了 (projectId:", projectId + ")");
             } catch (e) {
                 console.warn("[Editor] オートセーブに失敗:", e);
             }
@@ -4362,6 +5053,10 @@ function stopAutosave() {
 // オートセーブを開始
 // 注意: このイベントリスナーは editor_init.js で統合管理されるため、
 // ここでは削除しないが、editor_init.js が優先される
+if (window.__editor_initialized) {
+    console.warn("[Editor] initialization skipped (already initialized)");
+    return;
+}
 document.addEventListener('DOMContentLoaded', function() {
     console.log("⭐ DOMContentLoaded #3: イベントリスナー登録開始 (legacy, may be overridden by editor_init.js)");
     console.log("⭐ Registering editor event listeners");

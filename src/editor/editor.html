@@ -22,29 +22,13 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            font-family: "Inter", "Noto Sans JP", sans-serif;
+            background: var(--bg-main, #F4F5F3);
+            margin: 0;
+            padding: 0;
+            color: var(--text-main, #2E3E34);
+            height: 100vh;
             overflow: hidden;
-            display: grid;
-            grid-template-columns: 300px 1fr 400px;
-            height: calc(100vh - 40px);
-        }
-
-        .sidebar {
-            background: #2d3748;
-            color: white;
-            padding: 20px;
-            overflow-y: auto;
         }
 
         .sidebar h2 {
@@ -59,44 +43,46 @@
         }
 
         .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--accent, #3F5F4F);
             color: white;
             border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
+            padding: 10px 18px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 1em;
             width: 100%;
             margin: 5px 0;
-            transition: all 0.3s ease;
+            transition: background 0.2s;
             font-weight: 600;
+            font-family: "Inter", "Noto Sans JP", sans-serif;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            background: var(--accent-hover, #4A6F5C);
         }
 
         .btn-secondary {
-            background: #4a5568;
+            background: var(--bg-sidebar, #ECEDEA);
+            color: var(--text-main, #2E3E34);
+            border: 1px solid var(--border, #D6D6D6);
         }
 
         .btn-danger {
-            background: #e53e3e;
+            background: #D7A3A3;
+            color: white;
         }
 
-        .main-editor {
-            padding: 30px;
-            overflow-y: auto;
-            background: #f7fafc;
+        .btn-danger:hover {
+            background: #C89393;
         }
+
 
         .editor-header {
             margin-bottom: 30px;
         }
 
         .editor-header h1 {
-            color: #2d3748;
+            color: var(--text-main, #2E3E34);
             font-size: 2em;
             margin-bottom: 10px;
         }
@@ -108,7 +94,7 @@
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            color: #2d3748;
+            color: var(--text-main, #2E3E34);
             font-weight: 600;
         }
 
@@ -116,16 +102,18 @@
         .form-group textarea {
             width: 100%;
             padding: 12px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            border: 1px solid var(--border, #D6D6D6);
+            border-radius: 6px;
             font-size: 1em;
-            transition: border-color 0.3s;
+            transition: border-color 0.2s;
+            font-family: "Inter", "Noto Sans JP", sans-serif;
+            background: #FFFFFF;
         }
 
         .form-group input:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--accent, #3F5F4F);
         }
 
         .form-group textarea {
@@ -138,10 +126,10 @@
         }
 
         .choice-item {
-            background: white;
+            background: #FFFFFF;
             padding: 15px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            border: 1px solid var(--border, #D6D6D6);
+            border-radius: 6px;
             margin-bottom: 10px;
             display: flex;
             align-items: center;
@@ -189,32 +177,26 @@
             cursor: pointer;
         }
 
-        .preview-panel {
-            background: #1a202c;
-            color: white;
-            padding: 20px;
-            overflow-y: auto;
-        }
 
         .node {
-            background: white;
-            color: #2d3748;
+            background: #FFFFFF;
+            color: var(--text-main, #2E3E34);
             padding: 15px;
-            border-radius: 10px;
+            border: 1px solid var(--border, #D6D6D6);
+            border-radius: 6px;
             margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: none;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: border-color 0.2s;
         }
 
         .node:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            border-color: var(--accent, #3F5F4F);
         }
 
         .node.selected {
-            border: 3px solid #667eea;
-            background: #edf2f7;
+            border-left: 3px solid var(--accent, #3F5F4F);
+            background: rgba(63, 95, 79, 0.05);
         }
 
         .node-title {
@@ -378,22 +360,6 @@
             user-select: none;
         }
 
-        /* 通常クイズ用のベクトル設定UI */
-        #vectorSettingArea {
-            margin-top: 15px;
-        }
-
-        #vectorSettingArea h3 {
-            margin-top: 20px;
-            margin-bottom: 10px;
-            color: #333;
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        #vectorSettingArea > div {
-            margin-bottom: 20px;
-        }
 
         .save-button {
             padding: 8px 12px;
@@ -422,20 +388,6 @@
             // window.currentGlossary に設定（常に { terms: {...} } の形式）
             window.currentGlossary = glossaryData;
             
-            // ベクトル設定UIを即座に更新（diagnostic / normal 両方）
-            if (typeof window.refreshVectorAxis === 'function') {
-                window.refreshVectorAxis();
-            } else {
-                    // エディタモジュールがまだ読み込まれていない場合は、読み込み後に実行
-                var checkRefresh = function() {
-                    if (typeof window.refreshVectorAxis === 'function') {
-                        window.refreshVectorAxis();
-                    } else {
-                        setTimeout(checkRefresh, 100);
-                    }
-                };
-                setTimeout(checkRefresh, 100);
-            }
         }
         
         // GlossaryLoader を使って直接 Glossary を読み込む（iframe 不要）
@@ -462,11 +414,17 @@
                 var globalGlossary = results[1];
                 
                 // GlossaryLoader.mergeGlossaries を使って統合
+                // mergeGlossaries は termId をキーとするオブジェクトを返す
                 var merged = GlossaryLoader.mergeGlossaries([globalGlossary, projectGlossary]);
                 
-                // terms をオブジェクト形式に変換（配列の場合は変換）
+                // terms をオブジェクト形式に変換
+                // merged 自体が terms オブジェクト（termId をキーとする）
                 var terms = {};
-                if (merged.terms) {
+                if (merged && typeof merged === 'object') {
+                    // merged が既に termId をキーとするオブジェクトの場合
+                    terms = merged;
+                } else if (merged && merged.terms) {
+                    // 互換性: merged.terms が存在する場合
                     if (Array.isArray(merged.terms)) {
                         merged.terms.forEach(function(term) {
                             if (term && term.id) {
@@ -511,11 +469,6 @@
                     window.currentGlossary = glossary;
                     console.log('[Editor] localStorage から Glossary を復元しました:', glossary);
                     
-                    // ベクトル設定UIを更新（存在する場合）
-                    if (typeof window.refreshVectorAxis === 'function') {
-                        window.refreshVectorAxis();
-                        console.log('[Editor] ベクトル設定UIを更新しました');
-                    }
                 }
             } catch (e) {
                 console.warn('[Editor] localStorage からの Glossary 読み込みに失敗しました:', e);
@@ -524,9 +477,8 @@
     </script>
 </head>
 <body>
-    <div class="container">
-        <!-- 左サイドバー -->
-        <div class="sidebar">
+    <div id="layout">
+        <aside id="sidebar">
             <h2>📋 ノード一覧</h2>
             
             <div class="sidebar-section">
@@ -536,6 +488,8 @@
                 <button class="btn" id="btn-add-result">+ 結果を追加</button>
                 <button class="btn btn-secondary" id="btn-save-project">💾 プロジェクトを保存</button>
                 <button class="btn btn-secondary" id="saveQuizButton">💾 バージョン保存</button>
+                <button class="btn btn-secondary" id="btn-generate-concept-graph">🕸️ Concept Graph生成</button>
+                <button class="btn btn-secondary" id="btn-sync-glossary-graph">🔄 Glossary / ConceptGraph 同期</button>
                 <button class="btn btn-secondary" id="btn-open-project-shelf" onclick="location.href='../../admin/bookshelf.html'">📂 プロジェクトを読み込み</button>
                 <input type="file" id="fileInput" accept=".json" style="display: none;">
             </div>
@@ -569,10 +523,9 @@
                 <h3 style="margin-bottom: 10px; font-size: 1em;">ノード</h3>
                 <div id="nodeList"></div>
             </div>
-        </div>
+        </aside>
 
-        <!-- メインエディタ -->
-        <div class="main-editor">
+        <main id="editor-main">
             <div class="editor-header">
                 <div style="margin-bottom: 10px;">
                     <button class="back-btn" onclick="location.href='../../admin/bookshelf.html'" style="background: #333; color: white; padding: 6px 12px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.9em; margin-bottom: 10px;">
@@ -589,25 +542,73 @@
                     <p style="margin-top: 20px;">左側の「質問を追加」ボタンをクリックして、最初の質問を作成してください。</p>
                 </div>
             </div>
-        </div>
 
-        <!-- 右サイドバー（プレビュー） -->
-        <div class="preview-panel">
+            <!-- measure 編集UI（6軸版、v2.0仕様） -->
+            <div id="measurePanel" class="measure-panel" style="display:none; margin-top:20px; padding:20px; background:#f7fafc; border-radius:8px; border:1px solid #e2e8f0;">
+                <label style="font-weight:600; margin-bottom:12px; display:block; color:#2d3748;">理解階層（6カテゴリ）</label>
+                <div class="measure-grid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px;">
+                    <div class="measure-item" data-key="識別" style="padding:12px; background:#fff; border:2px solid #e2e8f0; border-radius:6px; cursor:pointer; text-align:center; transition:all 0.2s;">
+                        識別
+                    </div>
+                    <div class="measure-item" data-key="説明" style="padding:12px; background:#fff; border:2px solid #e2e8f0; border-radius:6px; cursor:pointer; text-align:center; transition:all 0.2s;">
+                        説明
+                    </div>
+                    <div class="measure-item" data-key="適用" style="padding:12px; background:#fff; border:2px solid #e2e8f0; border-radius:6px; cursor:pointer; text-align:center; transition:all 0.2s;">
+                        適用
+                    </div>
+                    <div class="measure-item" data-key="区別" style="padding:12px; background:#fff; border:2px solid #e2e8f0; border-radius:6px; cursor:pointer; text-align:center; transition:all 0.2s;">
+                        区別
+                    </div>
+                    <div class="measure-item" data-key="転移" style="padding:12px; background:#fff; border:2px solid #e2e8f0; border-radius:6px; cursor:pointer; text-align:center; transition:all 0.2s;">
+                        転移
+                    </div>
+                    <div class="measure-item" data-key="構造化" style="padding:12px; background:#fff; border:2px solid #e2e8f0; border-radius:6px; cursor:pointer; text-align:center; transition:all 0.2s;">
+                        構造化
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <section id="preview-pane">
             <h2 style="margin-bottom: 20px; border-bottom: 2px solid #4a5568; padding-bottom: 10px;">🔍 プレビュー</h2>
             <div id="previewContent">
                 <div class="empty-state" style="color: #718096;">
                     <p>ノードを選択するとプレビューが表示されます</p>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
+
+    <!-- Glossary 編集パネル（v3.0） -->
+    <section id="glossaryPanel" class="glossary-panel" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:#F4F5F3; z-index:2000; padding:30px; overflow-y:auto;">
+        <div style="max-width:1200px; margin:0 auto;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; padding-bottom:20px; border-bottom:2px solid #D6D6D6;">
+                <h2 style="color:#2E3E34; font-size:2em; margin:0;">📚 Glossary（概念リスト）v3.0</h2>
+                <button id="closeGlossaryBtn" class="btn-secondary" style="padding:10px 20px; background:#ECEDEA; color:#2E3E34; border:1px solid #D6D6D6; border-radius:6px; cursor:pointer; font-weight:600;">
+                    閉じる
+                </button>
+            </div>
+            <div id="glossaryList" style="margin-bottom:20px;">
+                <div class="empty-state" style="text-align:center; padding:40px; color:#999;">
+                    <p>概念がまだ登録されていません。「概念を追加」ボタンで追加してください。</p>
+                </div>
+            </div>
+            <button id="addConceptBtn" class="btn-primary" style="background:#3F5F4F; color:white; padding:12px 24px; border:none; border-radius:6px; cursor:pointer; font-weight:600; font-size:1em;">
+                ＋ 概念を追加
+            </button>
+        </div>
+    </section>
 
     <link rel="stylesheet" href="../../public/css/editor.css" />
     <!-- 依存関係: Config と GlossaryLoader を先に読み込む -->
     <script src="../core/config.js"></script>
     <script src="../core/GlossaryLoader.js"></script>
+    <!-- SortableJS for drag & drop -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <!-- メインエディタスクリプト: モジュール化されたバージョンのみ -->
     <script type="module" src="editor_main.js"></script>
+    <!-- レガシー関数（renderVectorSettingsForQuestion など）を読み込む -->
+    <script src="../../editor.js"></script>
     <!-- 初期化スクリプト: すべての初期化を統合管理（IIFEのため通常スクリプトとして読み込む） -->
     <script src="editor_init.js"></script>
 </body>
