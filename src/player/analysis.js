@@ -668,3 +668,141 @@
 
 })(window);
 
+// ===============================
+// LLM Tabs / Output Logic
+// ===============================
+
+(function() {
+  'use strict';
+
+  const llmTabs = document.querySelectorAll(".llm-tab");
+  const llmOutputBox = document.getElementById("llm-output-box");
+
+  if (!llmTabs.length || !llmOutputBox) {
+    // LLMタブが存在しない場合は早期リターン
+    return;
+  }
+
+  let llmResults = {
+    insight: "",
+    weakness: "",
+    recommend: ""
+  };
+
+  // ---- タブ切り替え ----
+  llmTabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      llmTabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+
+      const target = tab.dataset.tab;
+      updateLLMTab(target);
+    });
+  });
+
+  function updateLLMTab(key) {
+    if (llmOutputBox) {
+      llmOutputBox.innerText = llmResults[key] || "データなし";
+    }
+  }
+
+  // ---- 出力パース ----
+  function parseLLMResult(text) {
+    llmResults.insight =
+      text.match(/<INSIGHT>([\s\S]*?)<\/INSIGHT>/)?.[1]?.trim() || "";
+
+    llmResults.weakness =
+      text.match(/<WEAKNESS>([\s\S]*?)<\/WEAKNESS>/)?.[1]?.trim() || "";
+
+    llmResults.recommend =
+      text.match(/<RECOMMEND>([\s\S]*?)<\/RECOMMEND>/)?.[1]?.trim() || "";
+  }
+
+  // ---- LLM呼び出し ----
+  async function fetchLocalLLM(summaryText) {
+    const prompt = `
+以下の学習データをもとに、3つの観点から分析してください。
+
+1. 洞察（Insight）
+2. 弱点分析（Weakness）
+3. 推奨教材（Recommendation）
+
+=== 学習データ ===
+${summaryText}
+
+出力フォーマット:
+<INSIGHT>
+...
+</INSIGHT>
+
+<WEAKNESS>
+...
+</WEAKNESS>
+
+<RECOMMEND>
+...
+</RECOMMEND>
+`;
+
+    try {
+      const res = await fetch("http://localhost:11434/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "phi3:3.8b",
+          prompt: prompt,
+          stream: false
+        })
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      const json = await res.json();
+      return json.response || "";
+    } catch (error) {
+      console.error("LLM呼び出しエラー:", error);
+      return `<INSIGHT>LLM呼び出しに失敗しました: ${error.message}</INSIGHT>\n<WEAKNESS>エラーが発生しました</WEAKNESS>\n<RECOMMEND>ローカルLLM（Ollama）が起動しているか確認してください</RECOMMEND>`;
+    }
+  }
+
+  // ---- セッション読込後の分析処理をフック ----
+  async function runLLMAnalysis(sessionSummaryText) {
+    if (!llmOutputBox) return;
+
+    llmOutputBox.innerText = "ローカルLLMが分析中…";
+
+    try {
+      const text = await fetchLocalLLM(sessionSummaryText);
+      parseLLMResult(text);
+
+      // デフォルトで「洞察」タブを表示
+      const insightTab = document.querySelector('.llm-tab[data-tab="insight"]');
+      if (insightTab) {
+        llmTabs.forEach(t => t.classList.remove("active"));
+        insightTab.classList.add("active");
+      }
+      updateLLMTab("insight");
+    } catch (error) {
+      console.error("LLM分析エラー:", error);
+      llmOutputBox.innerText = `エラーが発生しました: ${error.message}`;
+    }
+  }
+
+  // グローバルに公開（他のスクリプトから呼び出し可能にする）
+  window.runLLMAnalysis = runLLMAnalysis;
+
+  // DOMContentLoaded時に初期化
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      // 初期状態で「洞察」タブを表示
+      updateLLMTab("insight");
+    });
+  } else {
+    // 既にDOMが読み込まれている場合
+    updateLLMTab("insight");
+  }
+
+})();
+

@@ -10,21 +10,86 @@
   <div class="container">
     <h1>学習データ分析ダッシュボード</h1>
     
+    <!-- データセット選択UI（A1） -->
+    <div class="dataset-selector" style="margin: 20px 0; padding: 15px; background: #f5f5f5; border-radius: 8px;">
+      <label for="datasetSelect" style="font-weight: bold; display: block; margin-bottom: 8px;">
+        データセットを選択：
+      </label>
+      <select id="datasetSelect" style="width: 100%; max-width: 500px; padding: 8px; font-size: 14px; border: 2px solid #ddd; border-radius: 4px;">
+        <option value="">読み込み中...</option>
+      </select>
+    </div>
+    
     <!-- タブメニュー -->
     <div class="tab-menu">
       <button class="tab-btn active" data-tab="overview">全体概要</button>
       <button class="tab-btn" data-tab="questions">問題別分析</button>
       <button class="tab-btn" data-tab="confusions">概念混同分析</button>
+      <button class="tab-btn" data-tab="concept-understanding">概念理解分析</button>
       <button class="tab-btn" data-tab="response-time">反応時間プロファイル</button>
       <button class="tab-btn" data-tab="paths">迷いパターン分析</button>
       <button class="tab-btn" data-tab="glossary-history">Glossary 提示履歴</button>
+      <button class="tab-btn" data-tab="insights">📘 理解構造レポート</button>
+      <button class="tab-btn" data-tab="pattern-summary">研究傾向サマリ</button>
       <button class="tab-btn" data-tab="analysis-run">📊 分析実行</button>
       <button class="tab-btn" data-tab="rt-dist">反応時間 分布分析</button>
     </div>
 
     <!-- タブページ -->
     <div class="tab-pages">
-      <!-- その他のタブページ（将来実装） -->
+      <!-- 全体概要タブ -->
+      <div class="tab-page" id="tab-overview">
+        <h2>全体概要</h2>
+        
+        <!-- サマリーセクション（黒背景カードUI） -->
+        <div id="summary-section" class="summary-grid">
+          <!-- 総回答数カード -->
+          <div class="dash-card" id="summary-total-answers">
+            <h3>総回答数</h3>
+            <div class="card-value" id="summary-total-answers-value">-</div>
+          </div>
+
+          <!-- 平均正答率カード -->
+          <div class="dash-card" id="summary-accuracy">
+            <h3>平均正答率</h3>
+            <div class="card-value" id="summary-accuracy-value">-</div>
+          </div>
+
+          <!-- 最弱理解階層カード -->
+          <div class="dash-card" id="summary-weakest-layer">
+            <h3>最弱理解階層</h3>
+            <div class="card-value" id="summary-weakest-layer-value">-</div>
+          </div>
+
+          <!-- 誤概念ランキングカード -->
+          <div class="dash-card" id="summary-mistake-ranking">
+            <h3>誤概念ランキング</h3>
+            <div class="card-list" id="summary-mistake-ranking-list">
+              <p style="color: #888;">データを選択してください</p>
+            </div>
+          </div>
+
+          <!-- 平均反応時間カード -->
+          <div class="dash-card" id="summary-avg-response-time">
+            <h3>平均反応時間</h3>
+            <div class="card-value" id="summary-avg-response-time-value">-</div>
+          </div>
+
+          <!-- 平均パス長カード -->
+          <div class="dash-card" id="summary-avg-path-length">
+            <h3>平均パス長</h3>
+            <div class="card-value" id="summary-avg-path-length-value">-</div>
+          </div>
+        </div>
+
+        <!-- 概念スコアテーブル -->
+        <div style="margin-top: 30px;">
+          <h3>概念別統計</h3>
+          <div id="concept-score-table-container">
+            <p style="color: #888;">データを選択すると、概念別の統計が表示されます。</p>
+          </div>
+        </div>
+      </div>
       
       <!-- 📊 分析実行タブ -->
       <div class="tab-page" id="tab-analysis-run" style="display:none;">
@@ -50,6 +115,59 @@
         <div id="analysis-result-area" style="margin-top:20px;"></div>
       </div>
 
+      <!-- 📘 理解構造レポートタブ -->
+      <div class="tab-page" id="tab-insights" style="display:none;">
+        <h2>📘 学習者の理解構造レポート</h2>
+        <div id="insights-report" style="margin-top: 20px;">
+          <p style="color: #888;">データセットを選択すると、理解構造レポートが表示されます。</p>
+        </div>
+      </div>
+
+      <!-- 研究傾向サマリタブ -->
+      <div class="tab-page" id="tab-pattern-summary" style="display:none;">
+        <h2>研究傾向サマリ</h2>
+        <p style="color: #666; margin-bottom: 20px;">統計結果から検出された傾向を研究用にサマリします。</p>
+        <div id="pattern-summary-container">
+          <p style="color: #888;">データセットを選択すると、研究傾向サマリが表示されます。</p>
+        </div>
+      </div>
+
+      <!-- 概念理解分析タブ -->
+      <div class="tab-page" id="tab-concept-understanding" style="display:none;">
+        <h2>概念理解分析</h2>
+        <p style="color: #666; margin-bottom: 20px;">各概念の理解傾向を全体平均からの偏差で表示します。</p>
+        <div id="concept-heatmap-container">
+          <p style="color: #888;">データセットを選択すると、概念理解分析が表示されます。</p>
+        </div>
+        
+        <!-- 概念依存関係グラフ -->
+        <div style="margin-top: 40px;">
+          <h3>概念依存関係グラフ</h3>
+          <p style="color: #666; margin-bottom: 20px;">概念間の共起関係と誤答連鎖を可視化します。</p>
+          <div id="concept-dependency-container">
+            <p style="color: #888;">データセットを選択すると、概念依存関係グラフが表示されます。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 反応時間プロファイルタブ -->
+      <div class="tab-page" id="tab-response-time" style="display:none;">
+        <h2>反応時間プロファイル</h2>
+        <p style="color: #666; margin-bottom: 20px;">概念別・正誤別の反応時間分布を分析します。</p>
+        <div id="response-time-profile-container">
+          <p style="color: #888;">データセットを選択すると、反応時間プロファイルが表示されます。</p>
+        </div>
+      </div>
+
+      <!-- 迷いパターン分析タブ -->
+      <div class="tab-page" id="tab-paths" style="display:none;">
+        <h2>迷いパターン分析</h2>
+        <p style="color: #666; margin-bottom: 20px;">誤答時の選択肢遷移パターンを可視化します。</p>
+        <div id="mistake-topology-container">
+          <p style="color: #888;">データセットを選択すると、迷いパターン分析が表示されます。</p>
+        </div>
+      </div>
+
       <!-- 反応時間 分布分析タブ -->
       <div class="tab-page" id="tab-rt-dist" style="display:none;">
         <h3>反応時間 分布分析（Julia）</h3>
@@ -59,7 +177,7 @@
     </div>
   </div>
 
-  <script src="js/dashboard.js"></script>
+  <script type="module" src="js/dashboard.js"></script>
 </body>
 </html>
 

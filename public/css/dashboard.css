@@ -222,3 +222,252 @@ h1 {
   text-decoration: underline;
 }
 
+
+/* ============================================================
+   黒背景カードUI�E�Eashboard Summary Section�E�`n   ============================================================ */
+
+/* サマリーグリチE�� */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 20px 0;
+  margin-top: 20px;
+}
+
+/* ダチE��ュボ�EドカーチE*/
+.dash-card {
+  background: #121212;
+  border-radius: 16px;
+  padding: 24px;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.dash-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.dash-card h3 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dash-card .card-value {
+  font-size: 32px;
+  font-weight: bold;
+  color: #fff;
+  margin: 8px 0;
+}
+
+.dash-card .card-list {
+  margin-top: 12px;
+}
+
+.dash-card .card-list-item {
+  padding: 8px 0;
+  border-bottom: 1px solid #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dash-card .card-list-item:last-child {
+  border-bottom: none;
+}
+
+.dash-card .card-list-label {
+  color: #ccc;
+  font-size: 14px;
+}
+
+.dash-card .card-list-value {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* レスポンシブ対忁E*/
+@media (max-width: 768px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .dash-card {
+    padding: 20px;
+  }
+  
+  .dash-card .card-value {
+    font-size: 28px;
+  }
+}
+
+/* ============================================================
+   理解構造レポートタブ
+   ============================================================ */
+
+#insights-report {
+  line-height: 1.8;
+}
+
+#insights-report h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 1.2em;
+  font-weight: 600;
+}
+
+#insights-report > div {
+  margin-bottom: 24px;
+}
+
+#insights-report .insight-item {
+  margin-bottom: 16px;
+  padding: 16px;
+  background: #f9f9f9;
+  border-left: 4px solid #666;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+#insights-report .insight-item:hover {
+  background: #f0f0f0;
+}
+
+#insights-report .insight-item.critical {
+  border-left-color: #d32f2f;
+  background: #ffebee;
+}
+
+#insights-report .insight-item.warning {
+  border-left-color: #f57c00;
+  background: #fff3e0;
+}
+
+#insights-report .insight-item.info {
+  border-left-color: #1976d2;
+  background: #e3f2fd;
+}
+
+#insights-report .insight-item.success {
+  border-left-color: #388e3c;
+  background: #e8f5e9;
+}
+
+/* ============================================================
+   概念スコアテーブル
+   ============================================================ */
+
+#concept-score-table-container table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#concept-score-table-container th {
+  padding: 12px;
+  text-align: left;
+  background: #f5f5f5;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #ddd;
+}
+
+#concept-score-table-container th:not(:first-child) {
+  text-align: right;
+}
+
+#concept-score-table-container td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+#concept-score-table-container td:not(:first-child) {
+  text-align: right;
+}
+
+#concept-score-table-container tr:last-child td {
+  border-bottom: none;
+}
+
+#concept-score-table-container tr:hover {
+  background: #f9f9f9;
+}
+
+/* ============================================================
+   概念理解分析ヒートマップ
+   ============================================================ */
+
+.concept-heatmap-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-top: 20px;
+}
+
+.concept-heatmap-table th {
+  padding: 12px;
+  text-align: center;
+  background: #f5f5f5;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #ddd;
+  border-right: 1px solid #eee;
+}
+
+.concept-heatmap-table th:first-child {
+  text-align: left;
+}
+
+.concept-heatmap-table td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  border-right: 1px solid #eee;
+  position: relative;
+}
+
+.concept-heatmap-table td.concept-name {
+  text-align: left;
+  font-weight: 600;
+  background: #fafafa;
+}
+
+.concept-heatmap-table .heatmap-cell {
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.concept-heatmap-table .heatmap-cell:hover {
+  opacity: 0.8;
+}
+
+.concept-heatmap-table .heatmap-value {
+  font-weight: 600;
+  color: #333;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+}
+
+.concept-heatmap-table tr:last-child td {
+  border-bottom: none;
+}
+
+.concept-heatmap-table th:last-child,
+.concept-heatmap-table td:last-child {
+  border-right: none;
+}
+

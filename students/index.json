@@ -1,266 +1,11 @@
 {
   "datasets": [
     {
-      "file": "quiz_log_dummy.json",
-      "dataset_name": "quiz_log_dummy",
-      "type": "class",
-      "sessions": [
-        {
-          "session_id": "session_001",
-          "index": 0,
-          "date": "2025-11-02T07:39:37.819678Z"
-        },
-        {
-          "session_id": "session_002",
-          "index": 1,
-          "date": "2025-11-12T18:04:14.681326Z"
-        },
-        {
-          "session_id": "session_003",
-          "index": 2,
-          "date": "2025-11-19T09:46:17.011404Z"
-        },
-        {
-          "session_id": "session_004",
-          "index": 3,
-          "date": "2025-11-07T09:56:23.106160Z"
-        },
-        {
-          "session_id": "session_005",
-          "index": 4,
-          "date": "2025-11-06T19:53:06.771475Z"
-        },
-        {
-          "session_id": "session_006",
-          "index": 5,
-          "date": "2025-11-12T14:44:06.937830Z"
-        },
-        {
-          "session_id": "session_007",
-          "index": 6,
-          "date": "2025-10-27T04:06:02.081556Z"
-        },
-        {
-          "session_id": "session_008",
-          "index": 7,
-          "date": "2025-10-29T15:42:58.206034Z"
-        },
-        {
-          "session_id": "session_009",
-          "index": 8,
-          "date": "2025-10-28T06:56:43.233240Z"
-        },
-        {
-          "session_id": "session_010",
-          "index": 9,
-          "date": "2025-10-28T15:38:49.320553Z"
-        },
-        {
-          "session_id": "session_011",
-          "index": 10,
-          "date": "2025-11-13T11:48:09.121968Z"
-        },
-        {
-          "session_id": "session_012",
-          "index": 11,
-          "date": "2025-11-12T07:18:12.372970Z"
-        },
-        {
-          "session_id": "session_013",
-          "index": 12,
-          "date": "2025-10-22T01:17:17.050436Z"
-        },
-        {
-          "session_id": "session_014",
-          "index": 13,
-          "date": "2025-11-19T02:26:12.726073Z"
-        },
-        {
-          "session_id": "session_015",
-          "index": 14,
-          "date": "2025-10-31T15:36:54.292036Z"
-        },
-        {
-          "session_id": "session_016",
-          "index": 15,
-          "date": "2025-10-26T06:49:15.862183Z"
-        },
-        {
-          "session_id": "session_017",
-          "index": 16,
-          "date": "2025-10-29T12:33:15.211155Z"
-        },
-        {
-          "session_id": "session_018",
-          "index": 17,
-          "date": "2025-11-14T22:01:28.212111Z"
-        },
-        {
-          "session_id": "session_019",
-          "index": 18,
-          "date": "2025-10-27T02:52:04.937029Z"
-        },
-        {
-          "session_id": "session_020",
-          "index": 19,
-          "date": "2025-11-08T23:34:15.528824Z"
-        },
-        {
-          "session_id": "session_021",
-          "index": 20,
-          "date": "2025-11-04T00:57:34.688727Z"
-        },
-        {
-          "session_id": "session_022",
-          "index": 21,
-          "date": "2025-11-18T15:20:04.559576Z"
-        },
-        {
-          "session_id": "session_023",
-          "index": 22,
-          "date": "2025-10-24T07:56:36.633812Z"
-        },
-        {
-          "session_id": "session_024",
-          "index": 23,
-          "date": "2025-10-29T19:33:14.552598Z"
-        },
-        {
-          "session_id": "session_025",
-          "index": 24,
-          "date": "2025-11-08T21:44:55.342818Z"
-        },
-        {
-          "session_id": "session_026",
-          "index": 25,
-          "date": "2025-11-11T09:47:15.570812Z"
-        },
-        {
-          "session_id": "session_027",
-          "index": 26,
-          "date": "2025-10-21T15:00:33.011693Z"
-        },
-        {
-          "session_id": "session_028",
-          "index": 27,
-          "date": "2025-10-23T04:37:23.356586Z"
-        },
-        {
-          "session_id": "session_029",
-          "index": 28,
-          "date": "2025-10-28T23:22:08.914847Z"
-        },
-        {
-          "session_id": "session_030",
-          "index": 29,
-          "date": "2025-11-03T06:24:03.018454Z"
-        },
-        {
-          "session_id": "session_031",
-          "index": 30,
-          "date": "2025-10-26T18:16:33.943144Z"
-        },
-        {
-          "session_id": "session_032",
-          "index": 31,
-          "date": "2025-11-11T20:00:31.819781Z"
-        },
-        {
-          "session_id": "session_033",
-          "index": 32,
-          "date": "2025-11-09T01:05:32.192902Z"
-        },
-        {
-          "session_id": "session_034",
-          "index": 33,
-          "date": "2025-10-23T02:59:56.112597Z"
-        },
-        {
-          "session_id": "session_035",
-          "index": 34,
-          "date": "2025-10-22T16:38:52.073263Z"
-        },
-        {
-          "session_id": "session_036",
-          "index": 35,
-          "date": "2025-10-22T09:03:00.138319Z"
-        },
-        {
-          "session_id": "session_037",
-          "index": 36,
-          "date": "2025-10-22T10:17:21.771132Z"
-        },
-        {
-          "session_id": "session_038",
-          "index": 37,
-          "date": "2025-11-15T20:44:47.199966Z"
-        },
-        {
-          "session_id": "session_039",
-          "index": 38,
-          "date": "2025-11-10T23:41:10.496123Z"
-        },
-        {
-          "session_id": "session_040",
-          "index": 39,
-          "date": "2025-11-07T17:41:47.352541Z"
-        },
-        {
-          "session_id": "session_041",
-          "index": 40,
-          "date": "2025-10-30T19:14:58.317387Z"
-        },
-        {
-          "session_id": "session_042",
-          "index": 41,
-          "date": "2025-11-01T01:27:52.413613Z"
-        },
-        {
-          "session_id": "session_043",
-          "index": 42,
-          "date": "2025-11-10T13:19:26.134053Z"
-        },
-        {
-          "session_id": "session_044",
-          "index": 43,
-          "date": "2025-10-30T02:49:26.029067Z"
-        },
-        {
-          "session_id": "session_045",
-          "index": 44,
-          "date": "2025-11-20T05:11:16.016463Z"
-        },
-        {
-          "session_id": "session_046",
-          "index": 45,
-          "date": "2025-10-24T05:28:57.631517Z"
-        },
-        {
-          "session_id": "session_047",
-          "index": 46,
-          "date": "2025-10-30T00:28:54.342537Z"
-        },
-        {
-          "session_id": "session_048",
-          "index": 47,
-          "date": "2025-11-16T16:57:29.056244Z"
-        },
-        {
-          "session_id": "session_049",
-          "index": 48,
-          "date": "2025-11-06T04:18:03.650216Z"
-        },
-        {
-          "session_id": "session_050",
-          "index": 49,
-          "date": "2025-11-07T09:17:08.984634Z"
-        }
-      ]
-    },
-    {
+      "id": "demo_student_demo_project_02",
       "file": "demo_project_02_logs.json",
-      "dataset_name": "demo_project_02",
-      "type": "class",
+      "name": "demo_student_demo_project_02",
+      "type": "quiz",
+      "logs": 250,
       "sessions": [
         {
           "session_id": "session_1761548978_000",
@@ -512,12 +257,15 @@
           "index": 49,
           "date": "2025-11-12T16:09:38.015887Z"
         }
-      ]
+      ],
+      "updated_at": "2025-12-16T01:09:42.504Z"
     },
     {
+      "id": "demo_student_demo_project_03",
       "file": "demo_project_03_logs.json",
-      "dataset_name": "demo_project_03",
-      "type": "class",
+      "name": "demo_student_demo_project_03",
+      "type": "quiz",
+      "logs": 250,
       "sessions": [
         {
           "session_id": "session_1761635378_000",
@@ -769,7 +517,269 @@
           "index": 49,
           "date": "2025-11-06T16:09:38.026913Z"
         }
-      ]
+      ],
+      "updated_at": "2025-12-16T01:09:42.505Z"
+    },
+    {
+      "id": "quiz_log_dummy",
+      "file": "quiz_log_dummy.json",
+      "name": "quiz_log_dummy",
+      "type": "class",
+      "logs": 50,
+      "sessions": [
+        {
+          "session_id": "session_001",
+          "index": 0,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_002",
+          "index": 1,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_003",
+          "index": 2,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_004",
+          "index": 3,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_005",
+          "index": 4,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_006",
+          "index": 5,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_007",
+          "index": 6,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_008",
+          "index": 7,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_009",
+          "index": 8,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_010",
+          "index": 9,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_011",
+          "index": 10,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_012",
+          "index": 11,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_013",
+          "index": 12,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_014",
+          "index": 13,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_015",
+          "index": 14,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_016",
+          "index": 15,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_017",
+          "index": 16,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_018",
+          "index": 17,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_019",
+          "index": 18,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_020",
+          "index": 19,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_021",
+          "index": 20,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_022",
+          "index": 21,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_023",
+          "index": 22,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_024",
+          "index": 23,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_025",
+          "index": 24,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_026",
+          "index": 25,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_027",
+          "index": 26,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_028",
+          "index": 27,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_029",
+          "index": 28,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_030",
+          "index": 29,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_031",
+          "index": 30,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_032",
+          "index": 31,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_033",
+          "index": 32,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_034",
+          "index": 33,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_035",
+          "index": 34,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_036",
+          "index": 35,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_037",
+          "index": 36,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_038",
+          "index": 37,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_039",
+          "index": 38,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_040",
+          "index": 39,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_041",
+          "index": 40,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_042",
+          "index": 41,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_043",
+          "index": 42,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_044",
+          "index": 43,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_045",
+          "index": 44,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_046",
+          "index": 45,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_047",
+          "index": 46,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_048",
+          "index": 47,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_049",
+          "index": 48,
+          "date": "2025-12-16T01:09:42.507Z"
+        },
+        {
+          "session_id": "session_050",
+          "index": 49,
+          "date": "2025-12-16T01:09:42.507Z"
+        }
+      ],
+      "updated_at": "2025-11-18T09:20:05.409942Z"
     }
-  ]
+  ],
+  "generated_at": "2025-12-16T01:09:42.507Z"
 }

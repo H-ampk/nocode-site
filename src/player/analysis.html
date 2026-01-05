@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>学習分析ダッシュボード</title>
+  <link rel="stylesheet" href="../public/css/main.css" />
+  <link rel="stylesheet" href="analysis.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="white-section">
+    <h1>📊 学習分析ダッシュボード</h1>
+    
+    <!-- セッション選択 -->
+    <div id="session-selector" style="margin: 20px 0;">
+      <label for="session-select">セッション選択:</label>
+      <select id="session-select" style="padding: 8px; font-size: 1rem; margin-left: 10px;">
+        <option value="">セッションを選択してください</option>
+      </select>
+    </div>
+    <!-- セッション選択ここまで -->
+
+    <!-- ===== LLM Insights Tabs ===== -->
+    <div id="llm-section" style="margin: 30px 0;">
+      <div id="llm-tabs" style="display: flex; gap: 10px;">
+        <button class="llm-tab active" data-tab="insight">💡 洞察</button>
+        <button class="llm-tab" data-tab="weakness">🔍 弱点分析</button>
+        <button class="llm-tab" data-tab="recommend">📚 推奨教材</button>
+      </div>
+
+      <div id="llm-output-box"
+           style="
+             margin-top: 15px;
+             padding: 20px;
+             background: #f7f7f7;
+             border-radius: 8px;
+             min-height: 120px;
+             line-height: 1.6;
+           ">
+        ローカルLLMが分析中…
+      </div>
+    </div>
+    <!-- ===== End LLM Insights Tabs ===== -->
+  </div>
+
+  <div class="black-section">
+    <div id="dashboard-content">
+      <h2>分析結果</h2>
+      <p>セッションを選択すると、分析結果が表示されます。</p>
+    </div>
+  </div>
+
+  <script src="../core/config.js"></script>
+  <script src="logging.js"></script>
+  <script src="analysis.js"></script>
+  <script>
+    // セッション読み込みとレンダリング
+    (function() {
+      'use strict';
+
+      const sessionSelect = document.getElementById('session-select');
+      const dashboardContent = document.getElementById('dashboard-content');
+
+      // セッション一覧を読み込む
+      function loadSessions() {
+        try {
+          // localStorageからセッションデータを読み込む
+          const logData = localStorage.getItem('studentLogs');
+          if (!logData) {
+            sessionSelect.innerHTML = '<option value="">セッションデータが見つかりません</option>';
+            return;
+          }
+
+          const data = JSON.parse(logData);
+          const sessions = data.sessions || [];
+
+          if (sessions.length === 0) {
+            sessionSelect.innerHTML = '<option value="">セッションデータがありません</option>';
+            return;
+          }
+
+          // セッション選択肢を追加
+          sessionSelect.innerHTML = '<option value="">セッションを選択してください</option>';
+          sessions.forEach((session, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = `セッション ${index + 1} - ${session.generated_at || '日付不明'}`;
+            sessionSelect.appendChild(option);
+          });
+        } catch (error) {
+          console.error('セッション読み込みエラー:', error);
+          sessionSelect.innerHTML = '<option value="">エラー: セッションデータの読み込みに失敗しました</option>';
+        }
+      }
+
+      // セッションが選択されたときの処理
+      function onSessionSelect(event) {
+        const sessionIndex = parseInt(event.target.value);
+        if (isNaN(sessionIndex)) {
+          dashboardContent.innerHTML = '<h2>分析結果</h2><p>セッションを選択すると、分析結果が表示されます。</p>';
+          return;
+        }
+
+        try {
+          const logData = JSON.parse(localStorage.getItem('studentLogs'));
+          const sessions = logData.sessions || [];
+          const session = sessions[sessionIndex];
+
+          if (!session || !session.logs) {
+            dashboardContent.innerHTML = '<h2>エラー</h2><p>セッションデータが見つかりません。</p>';
+            return;
+          }
+
+          // 分析を実行
+          renderAnalysis(session);
+        } catch (error) {
+          console.error('セッション分析エラー:', error);
+          dashboardContent.innerHTML = `<h2>エラー</h2><p>分析中にエラーが発生しました: ${error.message}</p>`;
+        }
+      }
+
+      // 分析結果をレンダリング
+      function renderAnalysis(sessionData) {
+        const logs = sessionData.logs || [];
+        
+        if (logs.length === 0) {
+          dashboardContent.innerHTML = '<h2>分析結果</h2><p>ログデータがありません。</p>';
+          return;
+        }
+
+        // 理解階層プロファイルを計算
+        const profile = window.Analysis.analyzeResponses(logs);
+        const dashboardData = window.Analysis.computeDashboardData(logs, profile);
+
+        // サマリーテキストを生成（LLM用）
+        const summaryText = generateSummaryText(sessionData, dashboardData, profile);
+
+        // ダッシュボードをレンダリング
+        renderDashboard(dashboardData);
+
+        // LLM分析を実行
+        if (typeof window.runLLMAnalysis === 'function') {
+          window.runLLMAnalysis(summaryText);
+        }
+      }
+
+      // サマリーテキストを生成
+      function generateSummaryText(sessionData, dashboardData, profile) {
+        const totalAnswers = dashboardData.totalAnswers || 0;
+        const accuracy = Math.round((dashboardData.accuracy || 0) * 100);
+        const weakestLevel = dashboardData.weakestLevel || '-';
+        const weakLevels = dashboardData.weakLevels || [];
+        const misconceptionLabels = dashboardData.misconceptionBarData?.labels || [];
+        const misconceptionValues = dashboardData.misconceptionBarData?.datasets?.[0]?.data || [];
+
+        let summary = `学習セッション分析結果\n\n`;
+        summary += `総回答数: ${totalAnswers}\n`;
+        summary += `正答率: ${accuracy}%\n`;
+        summary += `最も弱い理解階層: ${weakestLevel}\n\n`;
+
+        summary += `理解階層スコア:\n`;
+        Object.entries(profile).forEach(([level, score]) => {
+          summary += `  ${level}: ${Math.round(score * 10) / 10}\n`;
+        });
+
+        if (weakLevels.length > 0) {
+          summary += `\n弱い理解階層TOP3:\n`;
+          weakLevels.forEach((level, index) => {
+            summary += `  ${index + 1}. ${level}\n`;
+          });
+        }
+
+        if (misconceptionLabels.length > 0 && misconceptionLabels[0] !== '誤概念なし') {
+          summary += `\n誤概念ランキング:\n`;
+          misconceptionLabels.slice(0, 5).forEach((label, index) => {
+            const count = misconceptionValues[index] || 0;
+            summary += `  ${index + 1}. ${label}: ${count}回\n`;
+          });
+        }
+
+        return summary;
+      }
+
+      // ダッシュボードをレンダリング
+      function renderDashboard(dashboardData) {
+        const html = `
+          <h2>分析結果</h2>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+            <div style="background: #2a2a2a; padding: 20px; border-radius: 8px;">
+              <h3>基本統計</h3>
+              <p>総回答数: ${dashboardData.totalAnswers}</p>
+              <p>正答率: ${Math.round((dashboardData.accuracy || 0) * 100)}%</p>
+              <p>最も弱い理解階層: ${dashboardData.weakestLevel}</p>
+            </div>
+            <div style="background: #2a2a2a; padding: 20px; border-radius: 8px;">
+              <h3>弱い理解階層</h3>
+              <ul>
+                ${(dashboardData.weakLevels || []).map(level => `<li>${level}</li>`).join('')}
+              </ul>
+            </div>
+          </div>
+        `;
+        dashboardContent.innerHTML = html;
+      }
+
+      // イベントリスナーを登録
+      if (sessionSelect) {
+        sessionSelect.addEventListener('change', onSessionSelect);
+      }
+
+      // ページ読み込み時にセッション一覧を読み込む
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', loadSessions);
+      } else {
+        loadSessions();
+      }
+    })();
+  </script>
+</body>
+</html>
+

@@ -2,14 +2,17 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const { spawn } = require('child_process');
+const chokidar = require('chokidar');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // 静的ファイルの提供
-app.use(express.static('public'));
-app.use('/students', express.static('students'));
-app.use('/analysis', express.static('analysis'));
+// 注意: express.static() を使う場合、URLパスからディレクトリ名は除外されます
+// 例: public/dashboard.html → http://localhost:3000/dashboard.html（/public/dashboard.html ではない）
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/students', express.static(path.join(__dirname, 'students')));
+app.use('/analysis', express.static(path.join(__dirname, 'analysis')));
 
 // JSONパーサー
 app.use(express.json());
@@ -914,6 +917,181 @@ app.post("/api/dev/clean-all-legacy", (req, res) => {
     console.error("Error cleaning legacy files:", error);
     res.status(500).json({ error: "Failed to clean legacy files: " + error.message });
   }
+});
+
+// ============================================================
+// dataset_index.json 自動生成機能（A2, A3）
+// ============================================================
+
+const STUDENTS_DIR = path.join(__dirname, 'students');
+const DATASET_INDEX_FILE = path.join(STUDENTS_DIR, 'index.json');
+
+/**
+ * dataset_type の自動判定（A3）
+ * @param {string} filePath - JSONファイルのパス
+ * @param {Object} data - 読み込んだJSONデータ
+ * @returns {string} 'class' | 'project' | 'quiz' | 'unknown'
+ */
+function detectDatasetType(filePath, data) {
+  const fileName = path.basename(filePath, '.json');
+  
+  // ルール1: quiz_log_dummy → type=class
+  if (fileName === 'quiz_log_dummy') {
+    return 'class';
+  }
+  
+  // ルール2: project.json を含む（プロジェクトフォルダ内にproject.jsonがある）→ type=project
+  // ただし、studentsフォルダ内では直接判定できないので、データ構造で判定
+  if (data.project_id || data.projectId) {
+    return 'project';
+  }
+  
+  // ルール3: quiz.json がある、または quiz_version がある → type=quiz
+  if (data.quiz_version || (data.sessions && data.sessions.length > 0 && data.sessions[0].quiz_version)) {
+    return 'quiz';
+  }
+  
+  // ルール4: sessions配列がある → type=class (セッションベース)
+  if (data.sessions && Array.isArray(data.sessions) && data.sessions.length > 0) {
+    return 'class';
+  }
+  
+  // ルール5: logs配列がある → type=class (ログベース)
+  if (data.logs && Array.isArray(data.logs) && data.logs.length > 0) {
+    return 'class';
+  }
+  
+  // その他
+  return 'unknown';
+}
+
+/**
+ * dataset_index.json を生成（A2, A3）
+ */
+function generateDatasetIndex() {
+  try {
+    if (!fs.existsSync(STUDENTS_DIR)) {
+      console.warn('students フォルダが存在しません');
+      return;
+    }
+
+    const files = fs.readdirSync(STUDENTS_DIR).filter(f => 
+      f.endsWith('.json') && f !== 'index.json' && f !== 'dataset_index.json'
+    );
+
+    const datasets = [];
+
+    files.forEach(file => {
+      const filePath = path.join(STUDENTS_DIR, file);
+      try {
+        const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        
+        // データセット名を取得
+        const datasetName = data.dataset_name || data.user_id || file.replace('.json', '');
+        
+        // typeを自動判定（A3）
+        const type = data.type || detectDatasetType(filePath, data);
+        
+        // ログ数とセッション数をカウント
+        let logCount = 0;
+        let sessionCount = 0;
+        
+        if (data.logs && Array.isArray(data.logs)) {
+          logCount = data.logs.length;
+        } else if (data.sessions && Array.isArray(data.sessions)) {
+          sessionCount = data.sessions.length;
+          // 各セッションのログ数を合計
+          data.sessions.forEach(session => {
+            if (session.logs && Array.isArray(session.logs)) {
+              logCount += session.logs.length;
+            }
+          });
+        }
+        
+        // セッション情報を抽出
+        const sessions = [];
+        if (data.sessions && Array.isArray(data.sessions)) {
+          data.sessions.forEach((session, index) => {
+            sessions.push({
+              session_id: session.session_id || `session_${index}`,
+              index: index,
+              date: session.generated_at || session.date || new Date().toISOString()
+            });
+          });
+        } else if (data.logs && Array.isArray(data.logs)) {
+          // logs配列のみの場合、単一セッションとして扱う
+          sessions.push({
+            session_id: data.session_id || 'session_0',
+            index: 0,
+            date: data.created_at || data.generated_at || new Date().toISOString()
+          });
+        }
+
+        datasets.push({
+          id: datasetName,
+          file: file,
+          name: datasetName,
+          type: type,
+          logs: logCount,
+          sessions: sessions,
+          updated_at: data.created_at || data.generated_at || new Date().toISOString()
+        });
+      } catch (error) {
+        console.error(`Error processing ${file}:`, error.message);
+      }
+    });
+
+    // dataset_index.json を保存
+    const indexData = {
+      datasets: datasets,
+      generated_at: new Date().toISOString()
+    };
+
+    fs.writeFileSync(DATASET_INDEX_FILE, JSON.stringify(indexData, null, 2) + '\n');
+    console.log(`✅ dataset_index.json を自動生成しました: ${datasets.length}件のデータセット`);
+  } catch (error) {
+    console.error('❌ dataset_index.json 生成エラー:', error);
+  }
+}
+
+// 初回生成
+generateDatasetIndex();
+
+// ファイル監視（A2）
+if (fs.existsSync(STUDENTS_DIR)) {
+  const watcher = chokidar.watch(STUDENTS_DIR, {
+    ignored: /(^|[\/\\])\../, // .gitignore等の隠しファイルを無視
+    persistent: true,
+    ignoreInitial: true
+  });
+
+  watcher.on('add', (filePath) => {
+    if (filePath.endsWith('.json') && !filePath.includes('index.json') && !filePath.includes('dataset_index.json')) {
+      console.log(`📁 新しいJSONファイルが追加されました: ${path.basename(filePath)}`);
+      generateDatasetIndex();
+    }
+  });
+
+  watcher.on('change', (filePath) => {
+    if (filePath.endsWith('.json') && !filePath.includes('index.json') && !filePath.includes('dataset_index.json')) {
+      console.log(`📝 JSONファイルが変更されました: ${path.basename(filePath)}`);
+      generateDatasetIndex();
+    }
+  });
+
+  watcher.on('unlink', (filePath) => {
+    if (filePath.endsWith('.json') && !filePath.includes('index.json') && !filePath.includes('dataset_index.json')) {
+      console.log(`🗑️  JSONファイルが削除されました: ${path.basename(filePath)}`);
+      generateDatasetIndex();
+    }
+  });
+
+  console.log('👀 students フォルダを監視しています...');
+}
+
+// dataset_index.json を提供するエンドポイント（A1用）
+app.get('/data/dataset_index.json', (req, res) => {
+  res.sendFile(DATASET_INDEX_FILE);
 });
 
 // ルートパス
